@@ -40,7 +40,9 @@ Lege Charaktere an, schreibe ihre Geschichte, sammle Bilder und führe ein Tageb
 - Export und Import der gesamten Chronik als JSON-Datei
 
 **Charakterblatt**
-- Kopfbereich mit Medaillon (Porträt oder Wappen), Name, Titel sowie Lebenspunkt- und Mana-Balken
+- Kopfbereich mit Medaillon (Porträt oder Wappen), Name, Titel sowie optionalen Lebenspunkt- und Mana-Balken
+- Charakter-Porträt direkt im Bereich **Aussehen** anzeigen, hinzufügen, ändern und entfernen
+- Lebenspunkte und Mana pro Charakter optional ein-/ausblenden; deaktivierte Werte bleiben gespeichert
 - Obere Reiter: **Charakterblatt**, **Galerie**, **Tagebuch**
 - Seitenleiste im Charakterblatt: **Aussehen**, **Über den Charakter**, **Geschichte**, **Fähigkeiten**, **Attribute**, **Wesen**
 - Sechs Attribute mit Modifikatoren, Lebenskraft, Gesinnung, Erscheinung, Herkunft, Familie, Persönlichkeit, Ideale, Bindungen, Makel, Ausrüstung, Verbündete, Feinde, Ziele und Notizen
@@ -63,6 +65,7 @@ Lege Charaktere an, schreibe ihre Geschichte, sammle Bilder und führe ein Tageb
 - Mittelalterliches Fantasy-Design mit Goldrahmen, Wappenmedaillons und Glutakzenten
 - Schriften: *Cinzel Decorative*, *Cinzel* und *Cormorant Garamond*
 - Responsiv bis aufs Handy, sichtbarer Tastaturfokus, `prefers-reduced-motion` wird beachtet
+- Goldfarben gestaltete Scrollbars passend zur App-Oberfläche
 
 ## Schnellstart
 

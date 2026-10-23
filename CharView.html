@@ -48,6 +48,8 @@
         padding-top: env(safe-area-inset-top, 0px);
         padding-bottom: env(safe-area-inset-bottom, 0px);
         color-scheme: dark;
+        scrollbar-color: var(--gold2) var(--bg);
+        scrollbar-width: thin;
       }
       @media (prefers-color-scheme: light) {
         :root:not([data-theme="dark"]) {
@@ -56,6 +58,21 @@
       }
       html {
         scroll-padding-top: env(safe-area-inset-top, 0px);
+      }
+      ::-webkit-scrollbar {
+        width: 12px;
+        height: 12px;
+      }
+      ::-webkit-scrollbar-track {
+        background: var(--bg);
+      }
+      ::-webkit-scrollbar-thumb {
+        background: linear-gradient(180deg, var(--gold), var(--gold2));
+        border: 3px solid var(--bg);
+        border-radius: 999px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: var(--gold);
       }
       .window-titlebar {
         display: none;
@@ -260,6 +277,22 @@
       .hex svg {
         width: 40px;
         height: 40px;
+      }
+      .appearance-portrait {
+        width: min(100%, 15rem);
+        aspect-ratio: 3 / 4;
+        overflow: hidden;
+        border: 1px solid var(--gold2);
+        border-radius: 3px;
+        background:
+          radial-gradient(circle at 50% 35%, #4a2433, transparent 68%),
+          linear-gradient(160deg, var(--panel), var(--bg));
+        box-shadow: inset 0 0 0 3px var(--bg), 0 8px 20px rgba(0, 0, 0, 0.35);
+      }
+      .appearance-portrait img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
       }
       .card {
         cursor: pointer;
@@ -793,8 +826,10 @@
         diary: [],
         lp: 20,
         lpMax: 20,
+        showLp: true,
         mp: 10,
         mpMax: 10,
+        showMp: true,
         stats: { st: 10, ge: 10, ko: 10, in: 10, we: 10, ch: 10 },
         level: 1,
         gesinnung: "Neutral",
@@ -1246,13 +1281,15 @@
    <p class="italic truncate" style="color:var(--mute)">${esc(c.titel)}</p>
    <p class="mt-1">${esc(c.art)} ${esc(c.klasse)}</p>
    <p class="cz text-sm" style="color:var(--gold)">Stufe ${esc(c.level)}</p></div></div>
-   <div class="bar mt-4"><i class="lp" style="width:${pct(c.lp, c.lpMax)}%"></i></div></article>`,
+   ${showLp(c) ? `<div class="bar mt-4"><i class="lp" style="width:${pct(c.lp, c.lpMax)}%"></i></div>` : ""}</article>`,
        ).join("")}</div>`
      : `<div class="panel text-center py-12"><p class="text-xl mb-4">Keine Helden gefunden. Erschaffe den ersten Namen für die Chronik.</p><button class="btn pri" data-act="new">${ic("plus", "w-4 h-4")}Neuer Held</button></div>`
  }`;
       }
       const pct = (a, b) =>
         Math.max(0, Math.min(100, b ? Math.round((a / b) * 100) : 0));
+      const showLp = (c) => c.showLp !== false;
+      const showMp = (c) => c.showMp !== false;
 
       function vSheet() {
         const c = cur();
@@ -1268,6 +1305,16 @@
           ["gallery", "Galerie", "images", (c.gallery || []).length],
           ["diary", "Tagebuch", "book-open-text", (c.diary || []).length],
         ];
+        const resources = [
+          showLp(c)
+            ? `<div><div class="flex justify-between cz text-sm"><span>${ic("heart-pulse", "w-4 h-4 inline")} Lebenspunkte</span><span>${c.lp}/${c.lpMax}</span></div><div class="bar"><i class="lp" style="width:${pct(c.lp, c.lpMax)}%"></i></div></div>`
+            : "",
+          showMp(c)
+            ? `<div><div class="flex justify-between cz text-sm"><span>${ic("sparkles", "w-4 h-4 inline")} Mana</span><span>${c.mp}/${c.mpMax}</span></div><div class="bar"><i class="mp" style="width:${pct(c.mp, c.mpMax)}%"></i></div></div>`
+            : "",
+        ]
+          .filter(Boolean)
+          .join("");
         return `<div class="flex flex-wrap gap-2 mb-6 justify-between">
   <button class="btn" data-act="back">${ic("arrow-left", "w-4 h-4")}Zurück</button>
   <div class="flex gap-2"><button class="btn" data-edit="${c.id}">${ic("pencil", "w-4 h-4")}Bearbeiten</button>
@@ -1277,9 +1324,7 @@
   <div class="flex-1 min-w-[16rem]"><h1 class="logo text-4xl sm:text-5xl leading-tight">${esc(c.name) || "Namenlos"}</h1>
   <p class="text-xl italic" style="color:var(--mute)">${esc(c.titel)}</p>
   <p class="cz mt-2" style="color:var(--gold)">${esc(c.art)} · ${esc(c.klasse)} · Stufe ${esc(c.level)}</p></div>
-  <div class="w-full sm:w-64 space-y-3">
-   <div><div class="flex justify-between cz text-sm"><span>${ic("heart-pulse", "w-4 h-4 inline")} Lebenspunkte</span><span>${c.lp}/${c.lpMax}</span></div><div class="bar"><i class="lp" style="width:${pct(c.lp, c.lpMax)}%"></i></div></div>
-   <div><div class="flex justify-between cz text-sm"><span>${ic("sparkles", "w-4 h-4 inline")} Mana</span><span>${c.mp}/${c.mpMax}</span></div><div class="bar"><i class="mp" style="width:${pct(c.mp, c.mpMax)}%"></i></div></div></div></div></section>
+  ${resources ? `<div class="w-full sm:w-64 space-y-3">${resources}</div>` : ""}</div></section>
  <nav class="flex flex-wrap gap-2 mb-6" aria-label="Bereiche">${T.map(([k, l, i, n]) => `<button class="btn ${S.tab === k ? "pri" : ""}" data-tab="${k}" aria-current="${S.tab === k}">${ic(i, "w-4 h-4")}${l}${n ? ` (${n})` : ""}</button>`).join("")}</nav>
  ${S.tab === "gallery" ? tGallery(c) : S.tab === "diary" ? tDiary(c) : tSheet(c)}`;
       }
@@ -1303,14 +1348,22 @@
           const m = Math.floor((v - 10) / 2);
           return m >= 0 ? "+" + m : m;
         };
+        const vitality = [
+          showLp(c)
+            ? `<div><div class="flex justify-between cz text-sm mb-1"><span>Lebenspunkte</span><span>${c.lp}/${c.lpMax}</span></div><div class="bar" style="height:14px"><i class="lp" style="width:${pct(c.lp, c.lpMax)}%"></i></div></div>`
+            : "",
+          showMp(c)
+            ? `<div><div class="flex justify-between cz text-sm mb-1"><span>Mana</span><span>${c.mp}/${c.mpMax}</span></div><div class="bar" style="height:14px"><i class="mp" style="width:${pct(c.mp, c.mpMax)}%"></i></div></div>`
+            : "",
+        ]
+          .filter(Boolean)
+          .join("");
         return `<section class="panel"><h3 class="ph">${ic("shield")}Attribute</h3>
   <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">${STATS.map(
     ([k, l, i]) => `
   <div class="stat"><span style="color:var(--gold)">${ic(i)}</span><span class="cz text-sm block">${l}</span><b>${c.stats[k]}</b><span style="color:var(--mute)">Modifikator ${mod(c.stats[k])}</span></div>`,
   ).join("")}</div></section>
- <section class="panel"><h3 class="ph">${ic("heart-pulse")}Lebenskraft</h3><div class="grid gap-4 sm:grid-cols-2">
-  <div><div class="flex justify-between cz text-sm mb-1"><span>Lebenspunkte</span><span>${c.lp}/${c.lpMax}</span></div><div class="bar" style="height:14px"><i class="lp" style="width:${pct(c.lp, c.lpMax)}%"></i></div></div>
-  <div><div class="flex justify-between cz text-sm mb-1"><span>Mana</span><span>${c.mp}/${c.mpMax}</span></div><div class="bar" style="height:14px"><i class="mp" style="width:${pct(c.mp, c.mpMax)}%"></i></div></div></div></section>`;
+ ${vitality ? `<section class="panel"><h3 class="ph">${ic("heart-pulse")}Lebenskraft</h3><div class="grid gap-4 sm:grid-cols-2">${vitality}</div></section>` : ""}`;
       }
       function pStory(c) {
         const e = S.sEdit,
@@ -1330,6 +1383,24 @@
         const out = SECTIONS.filter((s) => sub[3].includes(s.id))
           .map((s) => {
             const rows = s.fields.filter((f) => c[f.k] && !skip.includes(f.k));
+            if (s.id === "er") {
+              return `<section class="panel"><h3 class="ph">${ic(s.icon)}${s.title}</h3>
+  <div class="grid gap-6 sm:grid-cols-[minmax(12rem,0.7fr)_1.3fr] items-start">
+   <div class="flex flex-col items-center gap-3">
+    <div class="appearance-portrait">${c.portrait ? `<img src="${esc(c.portrait)}" alt="Porträt von ${esc(c.name)}">` : `<div class="flex h-full flex-col items-center justify-center gap-3 p-4 text-center" style="color:var(--mute)">${ic("user", "w-12 h-12")}<span>Noch kein Charakter-Porträt</span></div>`}</div>
+    <div class="flex flex-wrap justify-center gap-2">
+     <button class="btn" data-act="portrait">${ic("upload", "w-4 h-4")}${c.portrait ? "Porträt ändern" : "Porträt hinzufügen"}</button>
+     ${c.portrait ? `<button class="btn dng" data-act="portraitdel">${ic("trash-2", "w-4 h-4")}Entfernen</button>` : ""}
+    </div>
+   </div>
+   <div>${rows.length ? `<dl class="grid gap-x-8 gap-y-4 sm:grid-cols-2">${rows
+     .map(
+       (f) => `
+   <div class="${f.full ? "sm:col-span-2" : ""}"><dt class="cz text-sm" style="color:var(--gold)">${f.l}</dt><dd class="pre">${esc(c[f.k])}</dd></div>`,
+     )
+     .join("")}</dl>` : `<p style="color:var(--mute)">Die Beschreibung des Aussehens ist noch leer.</p>`}</div>
+  </div></section>`;
+            }
             if (!rows.length) return "";
             return `<section class="panel"><h3 class="ph">${ic(s.icon)}${s.title}</h3>
    <dl class="grid gap-x-8 gap-y-4 ${s.cols === 2 ? "sm:grid-cols-2" : ""}">${rows
@@ -1469,7 +1540,16 @@
    <button type="button" class="btn" data-step="${k}" data-d="1" aria-label="${l} erhöhen">+</button></div></div>`,
    ).join("")}</div></section>
   <section class="panel"><h3 class="ph">${ic("heart-pulse")}Lebenskraft</h3>
-   <div class="grid grid-cols-2 gap-4">${num("lp", "Lebenspunkte")}${num("lpMax", "Max. Lebenspunkte")}${num("mp", "Mana")}${num("mpMax", "Max. Mana")}</div></section>
+   <div class="space-y-5">
+    <section>
+     <label class="flex items-center gap-3"><input class="settings-check" type="checkbox" data-stat-toggle="showLp" ${showLp(c) ? "checked" : ""}><span>Lebenspunkte anzeigen</span></label>
+     ${showLp(c) ? `<div class="grid grid-cols-2 gap-4 mt-3">${num("lp", "Lebenspunkte")}${num("lpMax", "Max. Lebenspunkte")}</div>` : `<p class="mt-2 text-sm" style="color:var(--mute)">Lebenspunkte sind deaktiviert. Die gespeicherten Werte bleiben erhalten.</p>`}
+    </section>
+    <section>
+     <label class="flex items-center gap-3"><input class="settings-check" type="checkbox" data-stat-toggle="showMp" ${showMp(c) ? "checked" : ""}><span>Mana anzeigen</span></label>
+     ${showMp(c) ? `<div class="grid grid-cols-2 gap-4 mt-3">${num("mp", "Mana")}${num("mpMax", "Max. Mana")}</div>` : `<p class="mt-2 text-sm" style="color:var(--mute)">Mana ist deaktiviert. Die gespeicherten Werte bleiben erhalten.</p>`}
+    </section>
+   </div></section>
  </div>`;
       }
 
@@ -1573,8 +1653,17 @@
         } else if (d.act === "gadd") $("#gfile").click();
         else if (d.act === "portrait") $("#pfile").click();
         else if (d.act === "portraitdel") {
-          S.draft.portrait = "";
-          render(true);
+          if (S.view === "edit") {
+            S.draft.portrait = "";
+            render(true);
+          } else {
+            const c = cur();
+            if (!c) return;
+            c.portrait = "";
+            await Store.save(c);
+            render(true);
+            toast("Porträt entfernt");
+          }
         } else if (d.act === "dnew") {
           S.dEdit = {
             fresh: 1,
@@ -1726,6 +1815,10 @@
       });
       document.addEventListener("change", (e) => {
         if (e.target.dataset.cap !== undefined) Store.persist();
+        if (e.target.dataset.statToggle) {
+          S.draft[e.target.dataset.statToggle] = e.target.checked;
+          render(true);
+        }
       });
       document.addEventListener("input", (e) => {
         const t = e.target,
@@ -1809,7 +1902,16 @@
         e.target.value = "";
         if (!f) return;
         try {
-          S.draft.portrait = await shrink(f, 600, 0.85);
+          const portrait = await shrink(f, 600, 0.85);
+          if (S.view === "edit") {
+            S.draft.portrait = portrait;
+          } else {
+            const c = cur();
+            if (!c) return;
+            c.portrait = portrait;
+            await Store.save(c);
+            toast("Porträt aktualisiert");
+          }
           render(true);
         } catch (x) {
           toast("Bild konnte nicht gelesen werden.");
