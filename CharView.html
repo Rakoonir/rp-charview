@@ -1,0 +1,1796 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>Chronik der Helden – Charakter-Editor</title>
+    <link rel="stylesheet" href="./dist/styles.css" />
+    <link rel="stylesheet" href="./node_modules/@fontsource/cinzel/500.css" />
+    <link rel="stylesheet" href="./node_modules/@fontsource/cinzel/700.css" />
+    <link
+      rel="stylesheet"
+      href="./node_modules/@fontsource/cinzel-decorative/700.css"
+    />
+    <link
+      rel="stylesheet"
+      href="./node_modules/@fontsource/cinzel-decorative/900.css"
+    />
+    <link
+      rel="stylesheet"
+      href="./node_modules/@fontsource/cormorant-garamond/500.css"
+    />
+    <link
+      rel="stylesheet"
+      href="./node_modules/@fontsource/cormorant-garamond/600.css"
+    />
+    <link
+      rel="stylesheet"
+      href="./node_modules/@fontsource/cormorant-garamond/500-italic.css"
+    />
+    <style>
+      :root {
+        --bg: #0d0a11;
+        --bg2: #1a121d;
+        --panel: #211826;
+        --ink: #ecdfc4;
+        --mute: #a89a82;
+        --gold: #d8a64b;
+        --gold2: #8c6425;
+        --ember: #d5502f;
+        --line: rgba(216, 166, 75, 0.35);
+        box-sizing: border-box;
+        padding-top: env(safe-area-inset-top, 0px);
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+        color-scheme: dark;
+      }
+      @media (prefers-color-scheme: light) {
+        :root:not([data-theme="dark"]) {
+          --bg: #0d0a11;
+        }
+      }
+      html {
+        scroll-padding-top: env(safe-area-inset-top, 0px);
+      }
+      body {
+        background:
+          radial-gradient(
+            1200px 600px at 50% -10%,
+            #3a1f2c 0%,
+            transparent 60%
+          ),
+          radial-gradient(
+            800px 500px at 100% 100%,
+            #1d2a2e 0%,
+            transparent 60%
+          ),
+          var(--bg);
+        color: var(--ink);
+        font-family: "Cormorant Garamond", Georgia, serif;
+        font-size: 1.15rem;
+        line-height: 1.5;
+        min-height: 100vh;
+      }
+      h1,
+      h2,
+      h3,
+      .cz {
+        font-family: "Cinzel", "Times New Roman", serif;
+        letter-spacing: 0.04em;
+      }
+      .logo {
+        font-family: "Cinzel Decorative", "Cinzel", serif;
+        font-weight: 900;
+        background: linear-gradient(180deg, #fff2c4, #d8a64b 55%, #8c6425);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        filter: drop-shadow(0 2px 8px rgba(213, 80, 47, 0.45));
+      }
+      .panel {
+        position: relative;
+        background: linear-gradient(160deg, var(--panel), var(--bg2));
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        box-shadow:
+          inset 0 0 0 3px var(--bg),
+          inset 0 0 0 4px var(--gold2),
+          0 10px 30px rgba(0, 0, 0, 0.5);
+        padding: 1.4rem;
+      }
+      .panel::before,
+      .panel::after {
+        content: "❖";
+        position: absolute;
+        color: var(--gold);
+        font-size: 0.8rem;
+        line-height: 1;
+        background: var(--bg);
+        padding: 0 3px;
+      }
+      .panel::before {
+        top: -6px;
+        left: 14px;
+      }
+      .panel::after {
+        bottom: -6px;
+        right: 14px;
+      }
+      .ph {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        color: var(--gold);
+        font-size: 1.05rem;
+        font-weight: 700;
+        border-bottom: 1px solid var(--line);
+        padding-bottom: 0.5rem;
+        margin-bottom: 1rem;
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-family: "Cinzel", serif;
+        font-weight: 700;
+        font-size: 0.9rem;
+        padding: 0.55rem 1rem;
+        border: 1px solid var(--gold2);
+        color: var(--ink);
+        background: linear-gradient(180deg, #3a2a2f, #1d1419);
+        border-radius: 3px;
+        cursor: pointer;
+        transition: 0.15s;
+      }
+      .btn:hover {
+        border-color: var(--gold);
+        box-shadow: 0 0 14px rgba(216, 166, 75, 0.4);
+      }
+      .btn.pri {
+        background: linear-gradient(180deg, #e0b258, #9a6b24);
+        color: #1a1008;
+        border-color: #f3d58a;
+      }
+      .btn.dng:hover {
+        border-color: var(--ember);
+        box-shadow: 0 0 14px rgba(213, 80, 47, 0.5);
+      }
+      .btn:focus-visible,
+      .inp:focus-visible,
+      .crest:focus-visible {
+        outline: 2px solid var(--gold);
+        outline-offset: 2px;
+      }
+      dialog {
+        color: var(--ink);
+        background: transparent;
+        border: 0;
+        padding: 1rem;
+        width: min(100%, 46rem);
+        max-width: none;
+        max-height: 100%;
+      }
+      dialog::backdrop {
+        background: rgba(0, 0, 0, 0.78);
+        backdrop-filter: blur(4px);
+      }
+      .settings-check {
+        accent-color: var(--gold);
+        width: 1.15rem;
+        height: 1.15rem;
+      }
+      .inp {
+        width: 100%;
+        background: #120d15;
+        border: 1px solid var(--gold2);
+        border-radius: 3px;
+        color: var(--ink);
+        padding: 0.45rem 0.7rem;
+        font: inherit;
+      }
+      .inp:focus {
+        border-color: var(--gold);
+        box-shadow: 0 0 10px rgba(216, 166, 75, 0.3);
+      }
+      label.l {
+        display: block;
+        font-family: "Cinzel", serif;
+        font-size: 0.85rem;
+        color: var(--gold);
+        margin-bottom: 0.2rem;
+      }
+      .hex {
+        width: 92px;
+        height: 104px;
+        clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+        background: linear-gradient(160deg, #f3d58a, #8c6425);
+        display: grid;
+        place-items: center;
+        flex: none;
+      }
+      .hex > div {
+        width: 84px;
+        height: 96px;
+        clip-path: inherit;
+        background: radial-gradient(circle at 50% 30%, #4a2433, #14090f);
+        display: grid;
+        place-items: center;
+        color: var(--gold);
+      }
+      .hex svg {
+        width: 40px;
+        height: 40px;
+      }
+      .card {
+        cursor: pointer;
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+      }
+      .card:hover {
+        transform: translateY(-3px);
+      }
+      .bar {
+        height: 8px;
+        background: #120d15;
+        border: 1px solid var(--gold2);
+        border-radius: 2px;
+        overflow: hidden;
+      }
+      .bar > i {
+        display: block;
+        height: 100%;
+      }
+      .lp {
+        background: linear-gradient(90deg, #7d1f1a, #e0513a);
+      }
+      .mp {
+        background: linear-gradient(90deg, #1f3f7d, #4fa3e8);
+      }
+      .stat {
+        text-align: center;
+        border: 1px solid var(--line);
+        background: #150f18;
+        padding: 0.7rem 0.4rem;
+        border-radius: 3px;
+      }
+      .stat b {
+        display: block;
+        font-family: "Cinzel", serif;
+        font-size: 2rem;
+        color: #fff2c4;
+        line-height: 1.1;
+      }
+      .pre {
+        white-space: pre-line;
+      }
+      .crest {
+        border: 1px solid var(--gold2);
+        background: #150f18;
+        color: var(--mute);
+        padding: 0.5rem;
+        border-radius: 3px;
+        cursor: pointer;
+      }
+      .crest[aria-pressed="true"] {
+        border-color: var(--gold);
+        color: var(--gold);
+        box-shadow: 0 0 12px rgba(216, 166, 75, 0.5);
+      }
+      .fade {
+        animation: f 0.5s ease both;
+      }
+      @keyframes f {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .fade {
+          animation: none;
+        }
+        .card {
+          transition: none;
+        }
+      }
+      .gimg {
+        aspect-ratio: 1;
+        overflow: hidden;
+        border: 1px solid var(--gold2);
+        border-radius: 3px;
+        padding: 0;
+        background: #120d15;
+        cursor: pointer;
+      }
+      .gimg img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s;
+      }
+      .gimg:hover img {
+        transform: scale(1.06);
+      }
+      .gimg:focus-visible {
+        outline: 2px solid var(--gold);
+        outline-offset: 2px;
+      }
+      .entry {
+        border-left: 2px solid var(--gold2);
+        padding-left: 1rem;
+      }
+      .side {
+        padding: 0.6rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        position: sticky;
+        top: 1rem;
+      }
+      @media (max-width: 1023px) {
+        .side {
+          flex-direction: row;
+          overflow-x: auto;
+          position: static;
+        }
+      }
+      .sub {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        padding: 0.6rem 0.8rem;
+        font-family: "Cinzel", serif;
+        font-size: 0.92rem;
+        color: var(--mute);
+        border-left: 3px solid transparent;
+        border-radius: 2px;
+        white-space: nowrap;
+        text-align: left;
+        cursor: pointer;
+      }
+      .sub:hover {
+        color: var(--ink);
+        background: #150f18;
+      }
+      .sub.on {
+        color: var(--gold);
+        border-left-color: var(--gold);
+        background: linear-gradient(
+          90deg,
+          rgba(216, 166, 75, 0.18),
+          transparent
+        );
+      }
+      .sub:focus-visible {
+        outline: 2px solid var(--gold);
+        outline-offset: -2px;
+      }
+      .tb {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.2rem;
+        padding: 0.4rem;
+        border: 1px solid var(--gold2);
+        border-bottom: 0;
+        background: #150f18;
+        border-radius: 3px 3px 0 0;
+        position: sticky;
+        top: 0;
+        z-index: 5;
+      }
+      .tb button {
+        padding: 0.35rem 0.5rem;
+        border: 1px solid transparent;
+        color: var(--ink);
+        border-radius: 2px;
+        cursor: pointer;
+      }
+      .tb button:hover {
+        border-color: var(--gold);
+        color: var(--gold);
+      }
+      .tb button:focus-visible {
+        outline: 2px solid var(--gold);
+      }
+      .tb i {
+        width: 1px;
+        background: var(--line);
+        margin: 0 0.3rem;
+      }
+      .rich {
+        line-height: 1.7;
+        overflow-wrap: anywhere;
+      }
+      .rich[contenteditable] {
+        min-height: 18rem;
+        border-radius: 0 0 3px 3px;
+        padding: 1rem;
+      }
+      .rich:empty::before {
+        content: attr(data-ph);
+        color: var(--mute);
+      }
+      .rich h2 {
+        font-family: "Cinzel", serif;
+        font-size: 1.6rem;
+        color: var(--gold);
+        margin: 1.2em 0 0.4em;
+      }
+      .rich h3 {
+        font-family: "Cinzel", serif;
+        font-size: 1.25rem;
+        color: #fff2c4;
+        margin: 1em 0 0.3em;
+      }
+      .rich p {
+        margin: 0.6em 0;
+      }
+      .rich b,
+      .rich strong {
+        color: #fff2c4;
+      }
+      .rich ul {
+        list-style: disc;
+        padding-left: 1.6rem;
+      }
+      .rich ol {
+        list-style: decimal;
+        padding-left: 1.6rem;
+      }
+      .rich blockquote {
+        border-left: 3px solid var(--gold);
+        padding: 0.2rem 1rem;
+        margin: 1em 0;
+        font-style: italic;
+        color: var(--mute);
+        background: rgba(216, 166, 75, 0.06);
+      }
+      .rich hr {
+        border: 0;
+        border-top: 1px solid var(--gold2);
+        margin: 1.6em auto;
+        width: 60%;
+      }
+      .rich img {
+        max-width: 100%;
+        height: auto;
+        margin: 1em auto;
+        display: block;
+        border: 1px solid var(--gold2);
+        border-radius: 3px;
+      }
+      .read {
+        font-size: 1.3rem;
+        line-height: 1.85;
+      }
+      .read > p:first-child::first-letter {
+        font-family: "Cinzel Decorative", serif;
+        font-size: 3.6rem;
+        float: left;
+        line-height: 0.85;
+        padding: 0.08em 0.12em 0 0;
+        color: var(--gold);
+      }
+    </style>
+  </head>
+  <body>
+    <header
+      class="max-w-6xl mx-auto px-4 pt-6 flex flex-wrap items-center justify-between gap-4"
+    >
+      <button
+        id="home"
+        class="flex items-center gap-3 text-left"
+        aria-label="Zur Heldenliste"
+      >
+        <span
+          data-ic="swords"
+          data-c="w-9 h-9"
+          style="color: var(--gold)"
+        ></span>
+        <span class="logo text-3xl sm:text-4xl">Chronik der Helden</span>
+      </button>
+      <nav class="flex flex-wrap gap-2">
+        <button class="btn" data-act="settings">
+          <span aria-hidden="true">⚙</span>Einstellungen
+        </button>
+        <button class="btn" data-act="import">
+          <span data-ic="upload" data-c="w-4 h-4"></span>Importieren
+        </button>
+        <button class="btn" data-act="export">
+          <span data-ic="download" data-c="w-4 h-4"></span>Exportieren
+        </button>
+        <button class="btn pri" data-act="new">
+          <span data-ic="plus" data-c="w-4 h-4"></span>Neuer Held
+        </button>
+      </nav>
+      <input type="file" id="ifile" accept="image/*" class="hidden" /><input
+        type="file"
+        id="pfile"
+        accept="image/*"
+        class="hidden"
+      /><input
+        type="file"
+        id="gfile"
+        accept="image/*"
+        multiple
+        class="hidden"
+      />
+      <input type="file" id="file" accept="application/json" class="hidden" />
+    </header>
+    <main id="app" class="max-w-6xl mx-auto px-4 py-8"></main>
+    <div
+      id="toast"
+      class="fixed left-1/2 -translate-x-1/2 bottom-6 btn pri hidden"
+      role="status"
+    ></div>
+    <dialog id="settings-dialog" aria-labelledby="settings-title">
+      <section class="panel max-h-[88vh] overflow-y-auto">
+        <div class="flex items-start justify-between gap-4">
+          <div>
+            <h2 id="settings-title" class="text-2xl" style="color: var(--gold)">
+              Einstellungen
+            </h2>
+            <p class="mt-1" style="color: var(--mute)">
+              App-Verhalten und Updates verwalten.
+            </p>
+          </div>
+          <button class="btn" data-act="settings-close" aria-label="Einstellungen schließen">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <div class="mt-6 space-y-5">
+          <section>
+            <h3 class="ph">Allgemein</h3>
+            <label class="flex items-center gap-3">
+              <input class="settings-check" type="checkbox" id="settings-autostart" />
+              <span>Beim Anmelden an Windows automatisch starten</span>
+            </label>
+          </section>
+          <section>
+            <h3 class="ph">Updates</h3>
+            <label class="flex items-center gap-3">
+              <input class="settings-check" type="checkbox" id="settings-auto-check" />
+              <span>Beim App-Start automatisch nach Updates suchen</span>
+            </label>
+            <p id="update-status" class="mt-3" role="status" aria-live="polite" style="color: var(--mute)">
+              Noch nicht nach Updates gesucht.
+            </p>
+            <div class="flex flex-wrap gap-2 mt-3">
+              <button class="btn" data-act="check-updates">Jetzt suchen</button>
+              <button class="btn pri hidden" id="install-update" data-act="install-update">
+                Update installieren und neu starten
+              </button>
+            </div>
+          </section>
+          <section>
+            <h3 class="ph">Daten</h3>
+            <p class="text-sm" style="color: var(--mute)">
+              Charaktere werden nur auf diesem Computer gespeichert.
+            </p>
+            <button class="btn mt-3" data-act="open-data-folder">Datenordner öffnen</button>
+          </section>
+        </div>
+        <div class="flex flex-wrap items-center justify-between gap-3 mt-7">
+          <span id="app-version" class="text-sm" style="color: var(--mute)"></span>
+          <div class="flex gap-2">
+            <button class="btn" data-act="settings-close">Schließen</button>
+            <button class="btn pri" data-act="settings-save">Speichern</button>
+          </div>
+        </div>
+      </section>
+    </dialog>
+
+    <script>
+      /* =====================================================================
+   ARCHITEKTUR (desktop-ready)
+   1. core/schema   – Datenmodell, rein deklarativ (UI + Blatt werden daraus erzeugt)
+   2. core/storage  – Adapter. Im Browser IndexedDB (Bilder!, localStorage als Fallback);
+                      in Electron window.desktop = { load(), save(data) } per Preload-Bridge.
+   3. core/store    – Zustand + CRUD, kennt keine DOM-Details
+   4. ui/*          – Views (Liste, Blatt, Editor), Rendering per Template-Strings
+   Beim Umzug in ein Projekt: jeden Abschnitt in eigene Datei (ES-Module) auslagern.
+   ===================================================================== */
+
+      /* ---------- 1. core/schema ---------- */
+      const CRESTS = [
+        "sword",
+        "shield",
+        "wand-2",
+        "skull",
+        "crown",
+        "flame",
+        "gem",
+        "scroll-text",
+      ];
+      const ARTEN = [
+        "Mensch",
+        "Elf",
+        "Zwerg",
+        "Halbling",
+        "Ork",
+        "Gnom",
+        "Tiefling",
+        "Drachenblütiger",
+        "Halbelf",
+        "Untoter",
+      ];
+      const KLASSEN = [
+        "Krieger",
+        "Magier",
+        "Schurke",
+        "Kleriker",
+        "Waldläufer",
+        "Paladin",
+        "Barde",
+        "Druide",
+        "Nekromant",
+        "Assassine",
+      ];
+      const GESINNUNG = [
+        "Rechtschaffen gut",
+        "Neutral gut",
+        "Chaotisch gut",
+        "Rechtschaffen neutral",
+        "Neutral",
+        "Chaotisch neutral",
+        "Rechtschaffen böse",
+        "Neutral böse",
+        "Chaotisch böse",
+      ];
+      const STATS = [
+        ["st", "Stärke", "dumbbell"],
+        ["ge", "Geschick", "wind"],
+        ["ko", "Konstitution", "heart"],
+        ["in", "Intelligenz", "book-open"],
+        ["we", "Weisheit", "sparkles"],
+        ["ch", "Charisma", "crown"],
+      ];
+      const SECTIONS = [
+        {
+          id: "id",
+          title: "Identität",
+          icon: "user",
+          cols: 2,
+          fields: [
+            { k: "name", l: "Name", ph: "z. B. Aldric Sturmwacht" },
+            { k: "titel", l: "Titel", ph: "z. B. Wächter des Nordpasses" },
+            { k: "art", l: "Art / Volk", list: ARTEN },
+            { k: "klasse", l: "Klasse / Beruf", list: KLASSEN },
+            { k: "gesinnung", l: "Gesinnung", opts: GESINNUNG },
+            { k: "geschlecht", l: "Geschlecht" },
+            { k: "alter", l: "Alter", ph: "z. B. 34 Winter" },
+            { k: "level", l: "Stufe", num: 1 },
+          ],
+        },
+        {
+          id: "er",
+          title: "Erscheinung",
+          icon: "eye",
+          cols: 2,
+          fields: [
+            { k: "groesse", l: "Größe", ph: "z. B. 1,82 m" },
+            { k: "gewicht", l: "Gewicht", ph: "z. B. 85 kg" },
+            { k: "augen", l: "Augenfarbe" },
+            { k: "haare", l: "Haarfarbe" },
+            { k: "haut", l: "Hautfarbe" },
+            {
+              k: "besonderheiten",
+              l: "Besondere Merkmale",
+              area: 1,
+              full: 1,
+              ph: "Narben, Tätowierungen, Kleidung …",
+            },
+          ],
+        },
+        {
+          id: "he",
+          title: "Herkunft & Hintergrund",
+          icon: "map",
+          cols: 2,
+          fields: [
+            {
+              k: "herkunft",
+              l: "Herkunft / Heimat",
+              ph: "z. B. Festung Eisenhall",
+            },
+            {
+              k: "hintergrund",
+              l: "Hintergrund",
+              ph: "z. B. Gestrandeter Soldat",
+            },
+            { k: "familie", l: "Familie", area: 1, full: 1 },
+          ],
+        },
+        {
+          id: "we",
+          title: "Wesen",
+          icon: "heart",
+          cols: 2,
+          fields: [
+            { k: "persoenlichkeit", l: "Persönlichkeit", area: 1 },
+            { k: "ideale", l: "Ideale", area: 1 },
+            { k: "bindungen", l: "Bindungen", area: 1 },
+            { k: "makel", l: "Makel & Schwächen", area: 1 },
+          ],
+        },
+        {
+          id: "fa",
+          title: "Fähigkeiten & Ausrüstung",
+          icon: "backpack",
+          cols: 2,
+          fields: [
+            { k: "faehigkeiten", l: "Fähigkeiten & Zauber", area: 1 },
+            { k: "ausruestung", l: "Ausrüstung", area: 1 },
+          ],
+        },
+        {
+          id: "be",
+          title: "Beziehungen & Ziele",
+          icon: "users",
+          cols: 2,
+          fields: [
+            { k: "verbuendete", l: "Verbündete", area: 1 },
+            { k: "feinde", l: "Feinde", area: 1 },
+            { k: "ziele", l: "Ziele", area: 1 },
+            { k: "notizen", l: "Notizen", area: 1 },
+          ],
+        },
+      ];
+      const blank = () => ({
+        id: "c" + Date.now().toString(36),
+        crest: "sword",
+        portrait: "",
+        gallery: [],
+        diary: [],
+        lp: 20,
+        lpMax: 20,
+        mp: 10,
+        mpMax: 10,
+        stats: { st: 10, ge: 10, ko: 10, in: 10, we: 10, ch: 10 },
+        level: 1,
+        gesinnung: "Neutral",
+        art: "Mensch",
+        klasse: "Krieger",
+      });
+      const SEED = [
+        {
+          ...blank(),
+          id: "seed1",
+          name: "Aldric Sturmwacht",
+          titel: "Wächter des Nordpasses",
+          art: "Zwerg",
+          klasse: "Paladin",
+          level: 7,
+          gesinnung: "Rechtschaffen gut",
+          geschlecht: "Männlich",
+          alter: "112 Winter",
+          groesse: "1,38 m",
+          gewicht: "92 kg",
+          augen: "Stahlgrau",
+          haare: "Kupferrot, geflochten",
+          haut: "Wettergegerbt",
+          besonderheiten:
+            "Eine Narbe zieht sich von der linken Braue zum Kinn. Trägt stets den Wappenrock von Eisenhall.",
+          herkunft: "Festung Eisenhall",
+          hintergrund: "Gefallener Torwächter",
+          familie:
+            "Sohn des Schmieds Brogan. Die Schwester Hilde verschwand im Krieg.",
+          geschichte:
+            "Als der Winterkönig die Pässe stürmte, hielt Aldric drei Tage lang das Tor von Eisenhall – allein, nachdem alle anderen gefallen waren.\n\nSeither zieht er durch die Lande, um den Schwur zu erfüllen, den er an der Leiche seines Hauptmanns leistete.",
+          persoenlichkeit: "Wortkarg, aber zutiefst loyal.",
+          ideale: "Ehre vor Ruhm.",
+          bindungen: "Die Überlebenden von Eisenhall.",
+          makel: "Trauert zu lange – und trinkt zu viel Met.",
+          faehigkeiten:
+            "Heilende Hände, Göttlicher Zorn, Schildwall, Tore verteidigen",
+          ausruestung:
+            "Runenhammer „Morgenfall“\nTurmschild\nKettenpanzer\nHeiltränke ×3",
+          verbuendete: "Meisterin Sylva (Heilerin), Orden der Silbernen Flamme",
+          feinde: "Der Winterkönig, Graf Varn",
+          ziele: "Eisenhall zurückerobern. Hilde finden.",
+          notizen: "",
+          lp: 68,
+          lpMax: 84,
+          mp: 22,
+          mpMax: 30,
+          stats: { st: 17, ge: 9, ko: 16, in: 11, we: 14, ch: 13 },
+          crest: "shield",
+          diary: [
+            {
+              id: "d1",
+              date: "2026-10-02",
+              title: "Der Fall des Nordtors",
+              text: "Heute jährt sich die Schlacht. Ich stand wieder auf den Zinnen und sprach die Namen der Gefallenen.\n\nSylva sagt, Trauer sei Treibstoff. Ich hoffe, sie hat recht.",
+            },
+          ],
+        },
+      ];
+
+      /* ---------- 2. core/storage ---------- */
+      const Storage = {
+        key: "chronik.helden.v1",
+        _db() {
+          return new Promise((ok, no) => {
+            const r = indexedDB.open("chronik", 1);
+            r.onupgradeneeded = () => r.result.createObjectStore("kv");
+            r.onsuccess = () => ok(r.result);
+            r.onerror = () => no(r.error);
+          });
+        },
+        async load() {
+          if (window.desktop?.load) return window.desktop.load();
+          try {
+            const db = await this._db();
+            const v = await new Promise((ok, no) => {
+              const q = db.transaction("kv").objectStore("kv").get(this.key);
+              q.onsuccess = () => ok(q.result);
+              q.onerror = () => no(q.error);
+            });
+            if (v) return v;
+          } catch (e) {}
+          try {
+            return JSON.parse(localStorage.getItem(this.key));
+          } catch (e) {
+            return null;
+          }
+        },
+        async save(d) {
+          if (window.desktop?.save) return window.desktop.save(d);
+          try {
+            const db = await this._db();
+            await new Promise((ok, no) => {
+              const t = db.transaction("kv", "readwrite");
+              t.objectStore("kv").put(d, this.key);
+              t.oncomplete = ok;
+              t.onerror = () => no(t.error);
+            });
+          } catch (e) {
+            try {
+              localStorage.setItem(this.key, JSON.stringify(d));
+            } catch (e2) {
+              toast("Speichern nicht möglich – bitte Chronik exportieren.");
+            }
+          }
+        },
+      };
+
+      /* ---------- 3. core/store ---------- */
+      const S = {
+        chars: [],
+        view: "list",
+        id: null,
+        q: "",
+        draft: null,
+        tab: "sheet",
+        lb: null,
+        dEdit: null,
+        read: null,
+        sub: "aussehen",
+        sEdit: null,
+      };
+      const Store = {
+        async init() {
+          const d = await Storage.load();
+          S.chars = Array.isArray(d) ? d : SEED;
+        },
+        async persist() {
+          try {
+            await Storage.save(S.chars);
+          } catch (error) {
+            console.error("Chronik konnte nicht gespeichert werden.", error);
+            toast("Speichern fehlgeschlagen. Bitte Speicherplatz und Berechtigungen prüfen.");
+            throw error;
+          }
+        },
+        get(id) {
+          return S.chars.find((c) => c.id === id);
+        },
+        save(c) {
+          const i = S.chars.findIndex((x) => x.id === c.id);
+          i < 0 ? S.chars.unshift(c) : (S.chars[i] = c);
+          return this.persist();
+        },
+        remove(id) {
+          S.chars = S.chars.filter((c) => c.id !== id);
+          return this.persist();
+        },
+      };
+
+      /* ---------- 4. ui ---------- */
+      const $ = (s) => document.querySelector(s),
+        app = $("#app");
+      const esc = (s) =>
+        String(s ?? "").replace(
+          /[&<>"]/g,
+          (m) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[m],
+        );
+      const ICONS = {
+        swords:
+          '<path d="m13 19 6-6" /> <path d="M14.5 17.5 3.586 6.586A2 2 0 013 5.172V3h2.172a2 2 0 011.414.586L17.5 14.5" /> <path d="m14.828 6.172 2.586-2.586A2 2 0 0118.828 3H21v2.172a2 2 0 01-.586 1.414l-2.586 2.586" /> <path d="m16 16 4 4" /> <path d="m19 21 2-2" /> <path d="m5 14 4 4" /> <path d="m5 21-2-2" /> <path d="M7.5 16.5 4 20" />',
+        upload:
+          '<path d="M12 3v12" /> <path d="m17 8-5-5-5 5" /> <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />',
+        download:
+          '<path d="M12 15V3" /> <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /> <path d="m7 10 5 5 5-5" />',
+        plus: '<path d="M5 12h14" /> <path d="M12 5v14" />',
+        sword:
+          '<path d="m11 19-6-6" /> <path d="m5 21-2-2" /> <path d="m8 16-4 4" /> <path d="M9.5 17.5 20.414 6.586A2 2 0 0021 5.172V3h-2.172a2 2 0 00-1.414.586L6.5 14.5" />',
+        shield:
+          '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />',
+        "wand-sparkles":
+          '<path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72" /> <path d="m14 7 3 3" /> <path d="M5 6v4" /> <path d="M19 14v4" /> <path d="M10 2v2" /> <path d="M7 8H3" /> <path d="M21 16h-4" /> <path d="M11 3H9" />',
+        skull:
+          '<path d="m12.5 17-.5-1-.5 1h1z" /> <path d="M15 22a1 1 0 0 0 1-1v-1a2 2 0 0 0 1.56-3.25 8 8 0 1 0-11.12 0A2 2 0 0 0 8 20v1a1 1 0 0 0 1 1z" /> <circle cx="15" cy="12" r="1" /> <circle cx="9" cy="12" r="1" />',
+        crown:
+          '<path d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294z" /> <path d="M5 21h14" />',
+        flame:
+          '<path d="M12 3q1 4 4 6.5t3 5.5a1 1 0 0 1-14 0 5 5 0 0 1 1-3 1 1 0 0 0 5 0c0-2-1.5-3-1.5-5q0-2 2.5-4" />',
+        gem: '<path d="M10.5 3 8 9l4 13 4-13-2.5-6" /> <path d="M17 3a2 2 0 0 1 1.6.8l3 4a2 2 0 0 1 .013 2.382l-7.99 10.986a2 2 0 0 1-3.247 0l-7.99-10.986A2 2 0 0 1 2.4 7.8l2.998-3.997A2 2 0 0 1 7 3z" /> <path d="M2 9h20" />',
+        "scroll-text":
+          '<path d="M15 12h-5" /> <path d="M15 8h-5" /> <path d="M19 17V5a2 2 0 0 0-2-2H4" /> <path d="M8 21h12a2 2 0 0 0 2-2v-1a1 1 0 0 0-1-1H11a1 1 0 0 0-1 1v1a2 2 0 1 1-4 0V5a2 2 0 1 0-4 0v2a1 1 0 0 0 1 1h3" />',
+        user: '<path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" /> <circle cx="12" cy="7" r="4" />',
+        eye: '<path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0" /> <circle cx="12" cy="12" r="3" />',
+        map: '<path d="M14.106 5.553a2 2 0 0 0 1.788 0l3.659-1.83A1 1 0 0 1 21 4.619v12.764a1 1 0 0 1-.553.894l-4.553 2.277a2 2 0 0 1-1.788 0l-4.212-2.106a2 2 0 0 0-1.788 0l-3.659 1.83A1 1 0 0 1 3 19.381V6.618a1 1 0 0 1 .553-.894l4.553-2.277a2 2 0 0 1 1.788 0z" /> <path d="M15 5.764v15" /> <path d="M9 3.236v15" />',
+        heart:
+          '<path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5" />',
+        backpack:
+          '<path d="M4 10a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z" /> <path d="M8 10h8" /> <path d="M8 18h8" /> <path d="M8 22v-6a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v6" /> <path d="M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" />',
+        users:
+          '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /> <path d="M16 3.128a4 4 0 0 1 0 7.744" /> <path d="M22 21v-2a4 4 0 0 0-3-3.87" /> <circle cx="9" cy="7" r="4" />',
+        dumbbell:
+          '<path d="M17.596 12.768a2 2 0 1 0 2.829-2.829l-1.768-1.767a2 2 0 0 0 2.828-2.829l-2.828-2.828a2 2 0 0 0-2.829 2.828l-1.767-1.768a2 2 0 1 0-2.829 2.829z" /> <path d="m2.5 21.5 1.4-1.4" /> <path d="m20.1 3.9 1.4-1.4" /> <path d="M5.343 21.485a2 2 0 1 0 2.829-2.828l1.767 1.768a2 2 0 1 0 2.829-2.829l-6.364-6.364a2 2 0 1 0-2.829 2.829l1.768 1.767a2 2 0 0 0-2.828 2.829z" /> <path d="m9.6 14.4 4.8-4.8" />',
+        wind: '<path d="M12.8 19.6A2 2 0 1 0 14 16H2" /> <path d="M17.5 8a2.5 2.5 0 1 1 2 4H2" /> <path d="M9.8 4.4A2 2 0 1 1 11 8H2" />',
+        "book-open":
+          '<path d="M12 5v16" /> <path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z" />',
+        sparkles:
+          '<path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z" /> <path d="M20 2v4" /> <path d="M22 4h-4" /> <circle cx="4" cy="20" r="2" />',
+        search:
+          '<path d="m21 21-4.34-4.34" /> <circle cx="11" cy="11" r="8" />',
+        "arrow-left": '<path d="m12 19-7-7 7-7" /> <path d="M19 12H5" />',
+        pencil:
+          '<path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z" /> <path d="m15 5 4 4" />',
+        "trash-2":
+          '<path d="M10 11v6" /> <path d="M14 11v6" /> <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" /> <path d="M3 6h18" /> <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />',
+        save: '<path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" /> <path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7" /> <path d="M7 3v4a1 1 0 0 0 1 1h7" />',
+        "heart-pulse":
+          '<path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5" /> <path d="M3.22 13H9.5l.5-1 2 4.5 2-7 1.5 3.5h5.27" />',
+        image:
+          '<rect width="18" height="18" x="3" y="3" rx="2" ry="2" /> <circle cx="9" cy="9" r="2" /> <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />',
+        x: '<path d="M18 6 6 18" /> <path d="m6 6 12 12" />',
+        "chevron-left": '<path d="m15 18-6-6 6-6" />',
+        "chevron-right": '<path d="m9 18 6-6-6-6" />',
+        camera:
+          '<path d="M13.997 4a2 2 0 0 1 1.76 1.05l.486.9A2 2 0 0 0 18.003 7H20a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1.997a2 2 0 0 0 1.759-1.048l.489-.904A2 2 0 0 1 10.004 4z" /> <circle cx="12" cy="13" r="3" />',
+        calendar:
+          '<path d="M8 2v3" /> <path d="M16 2v3" /> <rect x="3" y="3" width="18" height="18" rx="2" /> <path d="M3 9h18" />',
+        "book-open-text":
+          '<path d="M12 5v16" /> <path d="M16 13h2" /> <path d="M16 9h2" /> <path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z" /> <path d="M6 13h2" /> <path d="M6 9h2" />',
+        images:
+          '<path d="m22 11-1.296-1.296a2.4 2.4 0 0 0-3.408 0L11 16" /> <path d="M4 8a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2" /> <circle cx="13" cy="7" r="1" fill="currentColor" /> <rect x="8" y="2" width="14" height="14" rx="2" />',
+        "heading-2":
+          '<path d="M4 12h8" /> <path d="M4 18V6" /> <path d="M12 18V6" /> <path d="M21 18h-4c0-4 4-3 4-6 0-1.5-2-2.5-4-1" />',
+        "heading-3":
+          '<path d="M4 12h8" /> <path d="M4 18V6" /> <path d="M12 18V6" /> <path d="M17.5 10.5c1.7-1 3.5 0 3.5 1.5a2 2 0 0 1-2 2" /> <path d="M17 17.5c2 1.5 4 .3 4-1.5a2 2 0 0 0-2-2" />',
+        bold: '<path d="M6 12h9a4 4 0 0 1 0 8H7a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h7a4 4 0 0 1 0 8" />',
+        italic:
+          '<line x1="19" x2="10" y1="4" y2="4" /> <line x1="14" x2="5" y1="20" y2="20" /> <line x1="15" x2="9" y1="4" y2="20" />',
+        underline:
+          '<path d="M6 4v6a6 6 0 0 0 12 0V4" /> <line x1="4" x2="20" y1="20" y2="20" />',
+        strikethrough:
+          '<path d="M16 4H9a3 3 0 0 0-2.83 4" /> <path d="M14 12a4 4 0 0 1 0 8H6" /> <line x1="4" x2="20" y1="12" y2="12" />',
+        list: '<path d="M3 5h.01" /> <path d="M3 12h.01" /> <path d="M3 19h.01" /> <path d="M8 5h13" /> <path d="M8 12h13" /> <path d="M8 19h13" />',
+        "list-ordered":
+          '<path d="M11 5h10" /> <path d="M11 12h10" /> <path d="M11 19h10" /> <path d="M4 4h1v5" /> <path d="M4 9h2" /> <path d="M6.5 20H3.4c0-1 2.6-1.925 2.6-3.5a1.5 1.5 0 0 0-2.6-1.02" />',
+        quote:
+          '<path d="M16 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z" /> <path d="M5 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z" />',
+        minus: '<path d="M5 12h14" />',
+        "undo-2":
+          '<path d="M9 14 4 9l5-5" /> <path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11" />',
+        "redo-2":
+          '<path d="m15 14 5-5-5-5" /> <path d="M20 9H9.5A5.5 5.5 0 0 0 4 14.5A5.5 5.5 0 0 0 9.5 20H13" />',
+        "remove-formatting":
+          '<path d="M4 7V4h16v3" /> <path d="M5 20h6" /> <path d="M13 4 8 20" /> <path d="m15 15 5 5" /> <path d="m20 15-5 5" />',
+        "wand-2":
+          '<path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72" /> <path d="m14 7 3 3" /> <path d="M5 6v4" /> <path d="M19 14v4" /> <path d="M10 2v2" /> <path d="M7 8H3" /> <path d="M21 16h-4" /> <path d="M11 3H9" />',
+      };
+      const ic = (n, c = "w-5 h-5") =>
+        `<svg class="${c}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[n] || ""}</svg>`;
+      const cur = () => Store.get(S.id);
+      const OK = new Set(
+          "P BR H2 H3 H4 B STRONG I EM U S STRIKE UL OL LI BLOCKQUOTE HR IMG DIV".split(
+            " ",
+          ),
+        ),
+        DROP = new Set([
+          "SCRIPT",
+          "STYLE",
+          "IFRAME",
+          "OBJECT",
+          "EMBED",
+          "LINK",
+          "META",
+        ]);
+      function clean(html) {
+        const d = new DOMParser().parseFromString(
+          "<body>" + (html || ""),
+          "text/html",
+        ).body;
+        (function w(n) {
+          [...n.childNodes].forEach((c) => {
+            if (c.nodeType === 3) return;
+            if (c.nodeType !== 1 || DROP.has(c.tagName)) {
+              c.remove();
+              return;
+            }
+            if (!OK.has(c.tagName)) {
+              w(c);
+              c.replaceWith(...c.childNodes);
+              return;
+            }
+            [...c.attributes].forEach((a) => {
+              if (
+                !(
+                  c.tagName === "IMG" &&
+                  (a.name === "alt" ||
+                    (a.name === "src" && /^data:image\//.test(a.value)))
+                )
+              )
+                c.removeAttribute(a.name);
+            });
+            if (c.tagName === "IMG" && !c.getAttribute("src")) c.remove();
+            else w(c);
+          });
+        })(d);
+        return d.innerHTML;
+      }
+      const entryHtml = (x) =>
+        x.html !== undefined && x.html !== ""
+          ? clean(x.html)
+          : esc(x.text || "")
+              .split(/\n\n+/)
+              .map((p) => `<p>${p.replace(/\n/g, "<br>")}</p>`)
+              .join("");
+      const plain = (x) =>
+        x.text ||
+        new DOMParser()
+          .parseFromString(x.html || "", "text/html")
+          .body.textContent.trim();
+      const diarySorted = (c) =>
+        [...(c.diary || [])].sort((a, b) =>
+          (b.date + b.id).localeCompare(a.date + a.id),
+        );
+      const E = () => S.dEdit || S.sEdit;
+      const storyHtml = (c) =>
+        entryHtml({ html: c.geschichteHtml, text: c.geschichte });
+      const editor = (
+        html,
+        ph,
+      ) => `<div class="tb" role="toolbar" aria-label="Textformatierung">${TB.map((t) => (t ? `<button type="button" data-cmd="${t[0]}" data-val="${t[1]}" title="${t[2]}" aria-label="${t[2]}">${ic(t[3], "w-4 h-4")}</button>` : "<i></i>")).join("")}</div>
+ <div id="ed" class="inp rich" contenteditable="true" role="textbox" aria-multiline="true" aria-label="Texteditor" data-ph="${ph}">${clean(html)}</div>`;
+      const TB = [
+        ["block", "h2", "Überschrift", "heading-2"],
+        ["block", "h3", "Zwischenüberschrift", "heading-3"],
+        0,
+        ["bold", "", "Fett (Strg+B)", "bold"],
+        ["italic", "", "Kursiv (Strg+I)", "italic"],
+        ["underline", "", "Unterstrichen", "underline"],
+        ["strikeThrough", "", "Durchgestrichen", "strikethrough"],
+        0,
+        ["insertUnorderedList", "", "Aufzählung", "list"],
+        ["insertOrderedList", "", "Nummerierte Liste", "list-ordered"],
+        ["block", "blockquote", "Zitat", "quote"],
+        ["insertHorizontalRule", "", "Trennlinie", "minus"],
+        0,
+        ["img", "", "Bild einfügen", "image"],
+        0,
+        ["undo", "", "Rückgängig", "undo-2"],
+        ["redo", "", "Wiederholen", "redo-2"],
+        ["removeFormat", "", "Formatierung entfernen", "remove-formatting"],
+      ];
+      const fmtD = (d) => {
+        try {
+          return new Date(d + "T12:00:00").toLocaleDateString("de-DE", {
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+          });
+        } catch (e) {
+          return d;
+        }
+      };
+      const shrink = (f, max, q = 0.8) =>
+        new Promise((ok, no) => {
+          const str = typeof f === "string",
+            u = str ? f : URL.createObjectURL(f),
+            i = new Image();
+          i.onload = () => {
+            const r = Math.min(1, max / Math.max(i.width, i.height)),
+              c = document.createElement("canvas"),
+              x = c.getContext("2d");
+            c.width = Math.round(i.width * r);
+            c.height = Math.round(i.height * r);
+            x.fillStyle = "#14090f";
+            x.fillRect(0, 0, c.width, c.height);
+            x.drawImage(i, 0, 0, c.width, c.height);
+            if (!str) URL.revokeObjectURL(u);
+            ok(c.toDataURL("image/jpeg", q));
+          };
+          i.onerror = no;
+          i.src = u;
+        });
+      const hexOf = (c, big) => {
+        const w = big ? 130 : 92,
+          h = big ? 146 : 104;
+        return `<div class="hex" style="width:${w}px;height:${h}px"><div style="width:${w - 8}px;height:${h - 8}px;${c.portrait ? `background:url('${c.portrait}') center/cover` : ""}">${c.portrait ? "" : ic(c.crest || "sword", "w-10 h-10")}</div></div>`;
+      };
+      const toast = (m) => {
+        const t = $("#toast");
+        t.textContent = m;
+        t.classList.remove("hidden");
+        clearTimeout(t._t);
+        t._t = setTimeout(() => t.classList.add("hidden"), 2200);
+      };
+      const updateStatus = (status) => {
+        const label = $("#update-status");
+        if (label) label.textContent = status.message;
+        const install = $("#install-update");
+        if (install) install.classList.toggle("hidden", status.event !== "downloaded");
+      };
+      const openSettings = async () => {
+        const dialog = $("#settings-dialog");
+        if (!dialog.open) dialog.showModal();
+        if (!window.desktop) {
+          $("#update-status").textContent = "Desktop-Einstellungen sind nur in der installierten App verfügbar.";
+          return;
+        }
+        try {
+          const settings = await window.desktop.getSettings();
+          $("#settings-autostart").checked = settings.launchAtStartup;
+          $("#settings-auto-check").checked = settings.autoCheckUpdates;
+          $("#app-version").textContent = `Version ${settings.version} · Daten: ${settings.dataDirectory}`;
+          updateStatus(settings.updateStatus);
+        } catch (error) {
+          console.error("Einstellungen konnten nicht geladen werden.", error);
+          toast("Einstellungen konnten nicht geladen werden.");
+        }
+      };
+      const go = (view, id = null) => {
+        S.view = view;
+        S.id = id;
+        S.tab = "sheet";
+        S.lb = null;
+        S.dEdit = null;
+        S.read = null;
+        S.sub = "aussehen";
+        S.sEdit = null;
+        S.draft =
+          view === "edit"
+            ? structuredClone(id ? Store.get(id) : blank())
+            : null;
+        render();
+        scrollTo(0, 0);
+      };
+
+      function render(q) {
+        app.innerHTML = `<div class="${q ? "" : "fade"}">${S.view === "list" ? vList() : S.view === "sheet" ? vSheet() : vEdit()}</div>${S.view === "sheet" ? vLightbox() : ""}`;
+      }
+
+      function vList() {
+        const q = S.q.toLowerCase(),
+          L = S.chars.filter((c) =>
+            [c.name, c.art, c.klasse, c.titel]
+              .join(" ")
+              .toLowerCase()
+              .includes(q),
+          );
+        return `<div class="flex flex-wrap items-end justify-between gap-4 mb-8">
+  <div><h1 class="text-3xl" style="color:var(--gold)">Deine Helden</h1><p style="color:var(--mute)">${S.chars.length} Charaktere in der Chronik</p></div>
+  <div class="relative w-full sm:w-72"><span class="absolute left-3 top-2.5" style="color:var(--gold2)">${ic("search", "w-4 h-4")}</span>
+  <input id="q" class="inp" style="padding-left:2.2rem" placeholder="Held suchen …" value="${esc(S.q)}"></div></div>
+ ${
+   L.length
+     ? `<div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">${L.map(
+         (c) => `
+  <article class="panel card" tabindex="0" data-open="${c.id}">
+   <div class="flex gap-4">${hexOf(c)}
+   <div class="min-w-0"><h2 class="text-xl truncate" style="color:#fff2c4">${esc(c.name) || "Namenlos"}</h2>
+   <p class="italic truncate" style="color:var(--mute)">${esc(c.titel)}</p>
+   <p class="mt-1">${esc(c.art)} ${esc(c.klasse)}</p>
+   <p class="cz text-sm" style="color:var(--gold)">Stufe ${esc(c.level)}</p></div></div>
+   <div class="bar mt-4"><i class="lp" style="width:${pct(c.lp, c.lpMax)}%"></i></div></article>`,
+       ).join("")}</div>`
+     : `<div class="panel text-center py-12"><p class="text-xl mb-4">Keine Helden gefunden. Erschaffe den ersten Namen für die Chronik.</p><button class="btn pri" data-act="new">${ic("plus", "w-4 h-4")}Neuer Held</button></div>`
+ }`;
+      }
+      const pct = (a, b) =>
+        Math.max(0, Math.min(100, b ? Math.round((a / b) * 100) : 0));
+
+      function vSheet() {
+        const c = cur();
+        if (!c) return vList();
+        if (
+          S.tab === "diary" &&
+          S.read &&
+          (c.diary || []).some((x) => x.id === S.read)
+        )
+          return vRead(c);
+        const T = [
+          ["sheet", "Charakterblatt", "scroll-text", 0],
+          ["gallery", "Galerie", "images", (c.gallery || []).length],
+          ["diary", "Tagebuch", "book-open-text", (c.diary || []).length],
+        ];
+        return `<div class="flex flex-wrap gap-2 mb-6 justify-between">
+  <button class="btn" data-act="back">${ic("arrow-left", "w-4 h-4")}Zurück</button>
+  <div class="flex gap-2"><button class="btn" data-edit="${c.id}">${ic("pencil", "w-4 h-4")}Bearbeiten</button>
+  <button class="btn dng" data-del="${c.id}">${ic("trash-2", "w-4 h-4")}Löschen</button></div></div>
+ <section class="panel mb-6" style="background:linear-gradient(160deg,#3a1f2c,#14090f 70%)">
+  <div class="flex flex-wrap items-center gap-6">${hexOf(c, true)}
+  <div class="flex-1 min-w-[16rem]"><h1 class="logo text-4xl sm:text-5xl leading-tight">${esc(c.name) || "Namenlos"}</h1>
+  <p class="text-xl italic" style="color:var(--mute)">${esc(c.titel)}</p>
+  <p class="cz mt-2" style="color:var(--gold)">${esc(c.art)} · ${esc(c.klasse)} · Stufe ${esc(c.level)}</p></div>
+  <div class="w-full sm:w-64 space-y-3">
+   <div><div class="flex justify-between cz text-sm"><span>${ic("heart-pulse", "w-4 h-4 inline")} Lebenspunkte</span><span>${c.lp}/${c.lpMax}</span></div><div class="bar"><i class="lp" style="width:${pct(c.lp, c.lpMax)}%"></i></div></div>
+   <div><div class="flex justify-between cz text-sm"><span>${ic("sparkles", "w-4 h-4 inline")} Mana</span><span>${c.mp}/${c.mpMax}</span></div><div class="bar"><i class="mp" style="width:${pct(c.mp, c.mpMax)}%"></i></div></div></div></div></section>
+ <nav class="flex flex-wrap gap-2 mb-6" aria-label="Bereiche">${T.map(([k, l, i, n]) => `<button class="btn ${S.tab === k ? "pri" : ""}" data-tab="${k}" aria-current="${S.tab === k}">${ic(i, "w-4 h-4")}${l}${n ? ` (${n})` : ""}</button>`).join("")}</nav>
+ ${S.tab === "gallery" ? tGallery(c) : S.tab === "diary" ? tDiary(c) : tSheet(c)}`;
+      }
+
+      const SUBS = [
+        ["aussehen", "Aussehen", "eye", ["id", "er"]],
+        ["ueber", "Über den Charakter", "users", ["he", "be"]],
+        ["geschichte", "Geschichte", "scroll-text", []],
+        ["faehigkeiten", "Fähigkeiten", "wand-2", ["fa"]],
+        ["attribute", "Attribute", "shield", []],
+        ["wesen", "Wesen", "heart", ["we"]],
+      ];
+      function tSheet(c) {
+        const sub = SUBS.find((x) => x[0] === S.sub) || SUBS[0];
+        return `<div class="grid gap-6 lg:grid-cols-[15rem_1fr] items-start">
+  <nav class="side panel" aria-label="Abschnitte des Charakterblatts">${SUBS.map(([k, l, i]) => `<button class="sub ${sub[0] === k ? "on" : ""}" data-sub="${k}" aria-current="${sub[0] === k}">${ic(i)}${l}</button>`).join("")}</nav>
+  <div class="space-y-6 fade">${sub[0] === "attribute" ? pAttr(c) : sub[0] === "geschichte" ? pStory(c) : pSecs(c, sub)}</div></div>`;
+      }
+      function pAttr(c) {
+        const mod = (v) => {
+          const m = Math.floor((v - 10) / 2);
+          return m >= 0 ? "+" + m : m;
+        };
+        return `<section class="panel"><h3 class="ph">${ic("shield")}Attribute</h3>
+  <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">${STATS.map(
+    ([k, l, i]) => `
+  <div class="stat"><span style="color:var(--gold)">${ic(i)}</span><span class="cz text-sm block">${l}</span><b>${c.stats[k]}</b><span style="color:var(--mute)">Modifikator ${mod(c.stats[k])}</span></div>`,
+  ).join("")}</div></section>
+ <section class="panel"><h3 class="ph">${ic("heart-pulse")}Lebenskraft</h3><div class="grid gap-4 sm:grid-cols-2">
+  <div><div class="flex justify-between cz text-sm mb-1"><span>Lebenspunkte</span><span>${c.lp}/${c.lpMax}</span></div><div class="bar" style="height:14px"><i class="lp" style="width:${pct(c.lp, c.lpMax)}%"></i></div></div>
+  <div><div class="flex justify-between cz text-sm mb-1"><span>Mana</span><span>${c.mp}/${c.mpMax}</span></div><div class="bar" style="height:14px"><i class="mp" style="width:${pct(c.mp, c.mpMax)}%"></i></div></div></div></section>`;
+      }
+      function pStory(c) {
+        const e = S.sEdit,
+          has =
+            (c.geschichteHtml || c.geschichte || "")
+              .replace(/<[^>]*>/g, "")
+              .trim() || /<img/.test(c.geschichteHtml || "");
+        if (e)
+          return `<section class="panel"><h3 class="ph">${ic("pencil")}Geschichte bearbeiten</h3>${editor(e.html, "Schreibe die Geschichte deines Helden …")}
+  <div class="flex gap-2 mt-4"><button class="btn pri" data-act="ssave">${ic("save", "w-4 h-4")}Geschichte speichern</button><button class="btn" data-act="scancel">Abbrechen</button></div></section>`;
+        return `<section class="panel"><div class="ph justify-between"><span class="flex items-center gap-2">${ic("scroll-text")}Geschichte</span>
+  <button class="btn" data-act="sedit">${ic("pencil", "w-4 h-4")}Bearbeiten</button></div>
+  ${has ? `<div class="rich read">${storyHtml(c)}</div>` : `<p class="py-8 text-center" style="color:var(--mute)">Die Geschichte von ${esc(c.name) || "deinem Helden"} ist noch nicht geschrieben.</p>`}</section>`;
+      }
+      function pSecs(c, sub) {
+        const skip = ["name", "titel", "art", "klasse", "level"];
+        const out = SECTIONS.filter((s) => sub[3].includes(s.id))
+          .map((s) => {
+            const rows = s.fields.filter((f) => c[f.k] && !skip.includes(f.k));
+            if (!rows.length) return "";
+            return `<section class="panel"><h3 class="ph">${ic(s.icon)}${s.title}</h3>
+   <dl class="grid gap-x-8 gap-y-4 ${s.cols === 2 ? "sm:grid-cols-2" : ""}">${rows
+     .map(
+       (f) => `
+   <div class="${f.full ? "sm:col-span-2" : ""}"><dt class="cz text-sm" style="color:var(--gold)">${f.l}</dt><dd class="pre">${esc(c[f.k])}</dd></div>`,
+     )
+     .join("")}</dl></section>`;
+          })
+          .join("");
+        return (
+          out ||
+          `<section class="panel text-center py-10"><p style="color:var(--mute)">Zu „${sub[1]}“ ist noch nichts eingetragen.</p><button class="btn mt-4" data-edit="${c.id}">${ic("pencil", "w-4 h-4")}Jetzt ergänzen</button></section>`
+        );
+      }
+
+      function tGallery(c) {
+        const g = c.gallery || [];
+        return `<section class="panel"><div class="ph justify-between"><span class="flex items-center gap-2">${ic("images")}Bildergalerie</span>
+  <button class="btn" data-act="gadd">${ic("camera", "w-4 h-4")}Bilder hinzufügen</button></div>
+  ${
+    g.length
+      ? `<div class="grid gap-3 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">${g.map((x, i) => `<button class="gimg" data-lb="${i}" aria-label="${esc(x.cap) || "Bild " + (i + 1)}"><img src="${x.src}" alt="${esc(x.cap)}"></button>`).join("")}</div>`
+      : `<p class="py-8 text-center" style="color:var(--mute)">Noch keine Bilder. Füge Konzeptzeichnungen, Szenen oder Referenzen hinzu.</p>`
+  }</section>`;
+      }
+
+      function vLightbox() {
+        const g = cur()?.gallery || [],
+          x = g[S.lb];
+        if (S.lb === null || !x) return "";
+        return `<div data-bd class="fixed inset-0 z-50 flex flex-col items-center justify-center gap-3 p-4" style="background:rgba(8,5,10,.93)" role="dialog" aria-modal="true">
+  <img src="${x.src}" alt="${esc(x.cap)}" class="max-w-full rounded" style="max-height:68vh;border:1px solid var(--gold2)">
+  <input class="inp max-w-xl text-center" data-cap placeholder="Bildunterschrift …" value="${esc(x.cap)}" aria-label="Bildunterschrift">
+  <div class="flex flex-wrap justify-center gap-2">
+   <button class="btn" data-act="lbp" aria-label="Vorheriges Bild">${ic("chevron-left", "w-4 h-4")}</button>
+   <span class="cz self-center">${S.lb + 1} / ${g.length}</span>
+   <button class="btn" data-act="lbn" aria-label="Nächstes Bild">${ic("chevron-right", "w-4 h-4")}</button>
+   <button class="btn" data-act="lbportrait">${ic("user", "w-4 h-4")}Als Porträt</button>
+   <button class="btn dng" data-act="lbdel">${ic("trash-2", "w-4 h-4")}Löschen</button>
+   <button class="btn" data-act="lbx">${ic("x", "w-4 h-4")}Schließen</button></div></div>`;
+      }
+
+      function tDiary(c) {
+        const e = S.dEdit,
+          L = diarySorted(c);
+        const form = e
+          ? `<div class="panel mb-6"><h3 class="ph">${ic("pencil")}${e.fresh ? "Neuer Eintrag" : "Eintrag bearbeiten"}</h3>
+  <div class="grid gap-4 sm:grid-cols-3"><div class="sm:col-span-2"><label class="l" for="d_t">Titel</label><input class="inp" id="d_t" data-de="title" value="${esc(e.title)}" placeholder="z. B. Die Nacht im Nebelwald"></div>
+  <div><label class="l" for="d_d">Datum</label><input class="inp" type="date" id="d_d" data-de="date" value="${esc(e.date)}"></div>
+  <div class="sm:col-span-3"><span class="l" id="ed_l">Eintrag</span>
+   ${editor(e.html, "Was ist heute geschehen? Schreibe hier deine Geschichte …")}</div></div>
+  <div class="flex gap-2 mt-4"><button class="btn pri" data-act="dsave">${ic("save", "w-4 h-4")}Eintrag speichern</button><button class="btn" data-act="dcancel">Abbrechen</button></div></div>`
+          : "";
+        return `${form}<section class="panel"><div class="ph justify-between"><span class="flex items-center gap-2">${ic("book-open-text")}Tagebuch</span>
+  <button class="btn" data-act="dnew">${ic("plus", "w-4 h-4")}Neuer Eintrag</button></div>
+  ${
+    L.length
+      ? `<div class="space-y-7">${L.map((x) => {
+          const th = (/<img[^>]+src="(data:image[^"]+)"/.exec(x.html || "") ||
+              [])[1],
+            pt = plain(x);
+          return `<article class="entry">
+   <div class="flex gap-4"><div class="flex-1 min-w-0"><div class="flex flex-wrap items-baseline justify-between gap-x-4"><h4 class="cz text-lg" style="color:#fff2c4">${esc(x.title) || "Ohne Titel"}</h4><span class="italic" style="color:var(--mute)">${fmtD(x.date)}</span></div>
+   <p class="line-clamp-3 mt-1" style="color:var(--mute)">${esc(pt) || "Bild-Eintrag"}</p></div>
+   ${th ? `<img src="${th}" alt="" class="w-20 h-20 object-cover rounded flex-none" style="border:1px solid var(--gold2)">` : ""}</div>
+   <div class="flex flex-wrap gap-2 mt-3"><button class="btn pri" data-rd="${x.id}">${ic("book-open", "w-4 h-4")}Anzeigen</button>
+   <button class="btn" data-dedit="${x.id}">${ic("pencil", "w-4 h-4")}Bearbeiten</button><button class="btn dng" data-ddel="${x.id}">${ic("trash-2", "w-4 h-4")}Löschen</button></div></article>`;
+        }).join("")}</div>`
+      : `<p class="py-8 text-center" style="color:var(--mute)">Das Tagebuch ist leer. Halte fest, was ${esc(c.name) || "dein Held"} erlebt.</p>`
+  }</section>`;
+      }
+
+      function vRead(c) {
+        const L = diarySorted(c),
+          i = L.findIndex((x) => x.id === S.read),
+          x = L[i],
+          older = L[i + 1],
+          newer = L[i - 1];
+        const nb = (o, ico, l) =>
+          o
+            ? `<button class="btn" data-rd="${o.id}" aria-label="${l}" title="${l}">${ic(ico, "w-4 h-4")}</button>`
+            : `<button class="btn" disabled style="opacity:.35" aria-label="${l}">${ic(ico, "w-4 h-4")}</button>`;
+        return `<div class="max-w-3xl mx-auto">
+  <div class="flex flex-wrap gap-2 justify-between mb-6"><button class="btn" data-act="rdx">${ic("arrow-left", "w-4 h-4")}Zum Tagebuch</button>
+   <div class="flex gap-2">${nb(older, "chevron-left", "Älterer Eintrag")}${nb(newer, "chevron-right", "Neuerer Eintrag")}<button class="btn" data-dedit="${x.id}">${ic("pencil", "w-4 h-4")}Bearbeiten</button></div></div>
+  <article class="panel" style="padding:2.4rem 1.6rem">
+   <p class="cz text-sm" style="color:var(--mute)">${esc(c.name)} · ${fmtD(x.date)}</p>
+   <h1 class="logo text-3xl sm:text-4xl my-3 leading-tight">${esc(x.title) || "Ohne Titel"}</h1>
+   <div class="rich read mt-6">${entryHtml(x)}</div></article></div>`;
+      }
+
+      function field(f, c) {
+        const v = esc(c[f.k]),
+          id = "f_" + f.k,
+          cls = f.full ? "sm:col-span-2" : "";
+        let el;
+        if (f.area)
+          el = `<textarea class="inp" id="${id}" data-f="${f.k}" rows="${f.rows || 3}" placeholder="${f.ph || ""}">${v}</textarea>`;
+        else if (f.opts)
+          el = `<select class="inp" id="${id}" data-f="${f.k}">${f.opts.map((o) => `<option ${o === c[f.k] ? "selected" : ""}>${o}</option>`).join("")}</select>`;
+        else
+          el = `<input class="inp" id="${id}" data-f="${f.k}" ${f.num ? 'type="number" min="1" max="99" data-n="1"' : ""} ${f.list ? `list="dl_${f.k}"` : ""} value="${v}" placeholder="${f.ph || ""}">${f.list ? `<datalist id="dl_${f.k}">${f.list.map((o) => `<option value="${o}">`).join("")}</datalist>` : ""}`;
+        return `<div class="${cls}"><label class="l" for="${id}">${f.l}</label>${el}</div>`;
+      }
+
+      function vEdit() {
+        const c = S.draft,
+          num = (k, l, sub) =>
+            `<div><label class="l" for="n_${k}">${l}</label><input class="inp" type="number" min="0" max="999" id="n_${k}" data-v="${k}" value="${c[k]}"></div>`;
+        return `<div class="flex flex-wrap gap-2 mb-6 justify-between">
+  <h1 class="text-3xl" style="color:var(--gold)">${S.id ? "Held bearbeiten" : "Neuen Helden erschaffen"}</h1>
+  <div class="flex gap-2"><button class="btn" data-act="cancel">${ic("arrow-left", "w-4 h-4")}Abbrechen</button>
+  <button class="btn pri" data-act="save">${ic("save", "w-4 h-4")}Speichern</button></div></div>
+ <div class="grid gap-6 lg:grid-cols-2">
+  <section class="panel lg:col-span-2"><h3 class="ph">${ic("camera")}Porträt & Wappen</h3>
+   <div class="flex flex-wrap items-center gap-6">${hexOf(c, true)}
+   <div class="space-y-3"><div class="flex flex-wrap gap-2"><button type="button" class="btn" data-act="portrait">${ic("upload", "w-4 h-4")}Porträt hochladen</button>
+   ${c.portrait ? `<button type="button" class="btn dng" data-act="portraitdel">${ic("trash-2", "w-4 h-4")}Entfernen</button>` : ""}</div>
+   <p class="text-sm" style="color:var(--mute)">Ohne Porträt zeigt das Medaillon das gewählte Wappen.</p>
+   <div class="flex flex-wrap gap-2">${CRESTS.map((n) => `<button type="button" class="crest" data-crest="${n}" aria-pressed="${c.crest === n}" aria-label="${n}">${ic(n, "w-7 h-7")}</button>`).join("")}</div></div></div></section>
+  ${SECTIONS.map(
+    (
+      s,
+    ) => `<section class="panel ${s.id === "he" ? "lg:col-span-2" : ""}"><h3 class="ph">${ic(s.icon)}${s.title}</h3>
+   <div class="grid gap-4 ${s.cols === 2 ? "sm:grid-cols-2" : ""}">${s.fields.map((f) => field(f, c)).join("")}</div></section>`,
+  ).join("")}
+  <section class="panel"><h3 class="ph">${ic("shield")}Attribute</h3>
+   <div class="grid grid-cols-2 gap-3">${STATS.map(
+     ([k, l]) => `<div><label class="l" for="s_${k}">${l}</label>
+   <div class="flex gap-1"><button type="button" class="btn" data-step="${k}" data-d="-1" aria-label="${l} senken">−</button>
+   <input class="inp text-center" type="number" min="1" max="30" id="s_${k}" data-s="${k}" value="${c.stats[k]}">
+   <button type="button" class="btn" data-step="${k}" data-d="1" aria-label="${l} erhöhen">+</button></div></div>`,
+   ).join("")}</div></section>
+  <section class="panel"><h3 class="ph">${ic("heart-pulse")}Lebenskraft</h3>
+   <div class="grid grid-cols-2 gap-4">${num("lp", "Lebenspunkte")}${num("lpMax", "Max. Lebenspunkte")}${num("mp", "Mana")}${num("mpMax", "Max. Mana")}</div></section>
+ </div>`;
+      }
+
+      /* ---------- Events (delegiert) ---------- */
+      document.addEventListener("click", async (e) => {
+        const t = e.target.closest("button,[data-open],[data-bd]");
+        if (!t) return;
+        const d = t.dataset;
+        if (t.id === "home" || d.act === "back") {
+          go("list");
+        } else if (d.open) go("sheet", d.open);
+        else if (d.tab) {
+          if (E() && !confirm("Ungespeicherte Änderungen verwerfen?")) return;
+          S.tab = d.tab;
+          S.lb = null;
+          S.dEdit = null;
+          S.sEdit = null;
+          S.read = null;
+          render(true);
+        } else if (d.sub) {
+          if (
+            S.sEdit &&
+            !confirm("Ungespeicherte Änderungen an der Geschichte verwerfen?")
+          )
+            return;
+          S.sEdit = null;
+          S.sub = d.sub;
+          render(true);
+        } else if (d.act === "sedit") {
+          S.sEdit = { html: storyHtml(cur()) };
+          render(true);
+        } else if (d.act === "scancel") {
+          S.sEdit = null;
+          render(true);
+        } else if (d.act === "ssave") {
+          const ed = $("#ed"),
+            c = cur();
+          c.geschichteHtml = clean(ed.innerHTML);
+          c.geschichte = ed.innerText.trim();
+          await Store.save(c);
+          S.sEdit = null;
+          toast("Geschichte gespeichert");
+          render(true);
+        } else if (d.rd) {
+          S.read = d.rd;
+          S.dEdit = null;
+          render(true);
+          scrollTo(0, 0);
+        } else if (d.act === "rdx") {
+          S.read = null;
+          render(true);
+        } else if (d.cmd) {
+          if (d.cmd === "img") {
+            $("#ifile").click();
+            return;
+          }
+          const ed = $("#ed");
+          if (!ed) return;
+          ed.focus();
+          if (d.cmd === "block") {
+            const v = (
+              document.queryCommandValue("formatBlock") || ""
+            ).toLowerCase();
+            document.execCommand(
+              "formatBlock",
+              false,
+              "<" + (v === d.val ? "p" : d.val) + ">",
+            );
+          } else document.execCommand(d.cmd, false, null);
+          E().html = ed.innerHTML;
+        } else if (d.lb !== undefined) {
+          S.lb = +d.lb;
+          render(true);
+        } else if (d.bd !== undefined) {
+          if (e.target === t) {
+            S.lb = null;
+            render(true);
+          }
+        } else if (d.act === "lbx") {
+          S.lb = null;
+          render(true);
+        } else if (d.act === "lbp" || d.act === "lbn") {
+          const n = cur().gallery.length;
+          S.lb = (S.lb + (d.act === "lbn" ? 1 : -1) + n) % n;
+          render(true);
+        } else if (d.act === "lbportrait") {
+          const c = cur();
+          c.portrait = c.gallery[S.lb].src;
+          S.lb = null;
+          await Store.save(c);
+          toast("Porträt gesetzt");
+          render(true);
+        } else if (d.act === "lbdel") {
+          if (confirm("Dieses Bild entfernen?")) {
+            const c = cur();
+            c.gallery.splice(S.lb, 1);
+            S.lb = null;
+            await Store.save(c);
+            render(true);
+          }
+        } else if (d.act === "gadd") $("#gfile").click();
+        else if (d.act === "portrait") $("#pfile").click();
+        else if (d.act === "portraitdel") {
+          S.draft.portrait = "";
+          render(true);
+        } else if (d.act === "dnew") {
+          S.dEdit = {
+            fresh: 1,
+            id: "d" + Date.now().toString(36),
+            date: new Date().toISOString().slice(0, 10),
+            title: "",
+            text: "",
+            html: "",
+          };
+          S.read = null;
+          render(true);
+        } else if (d.dedit) {
+          const x = cur().diary.find((y) => y.id === d.dedit);
+          S.dEdit = { ...x, html: entryHtml(x) };
+          S.read = null;
+          S.tab = "diary";
+          render(true);
+          scrollTo(0, 0);
+        } else if (d.act === "dcancel") {
+          S.dEdit = null;
+          render(true);
+        } else if (d.act === "dsave") {
+          const e2 = S.dEdit,
+            c = cur(),
+            ed = $("#ed");
+          e2.html = clean(ed.innerHTML);
+          e2.text = ed.innerText.trim();
+          if (!(e2.title || "").trim() && !e2.text && !/<img/.test(e2.html)) {
+            toast("Ein Eintrag braucht Titel oder Text.");
+            return;
+          }
+          delete e2.fresh;
+          c.diary = c.diary || [];
+          const i = c.diary.findIndex((x) => x.id === e2.id);
+          i < 0 ? c.diary.push(e2) : (c.diary[i] = e2);
+          await Store.save(c);
+          S.dEdit = null;
+          toast("Eintrag gespeichert");
+          render(true);
+        } else if (d.ddel) {
+          if (confirm("Diesen Tagebucheintrag löschen?")) {
+            const c = cur();
+            c.diary = c.diary.filter((x) => x.id !== d.ddel);
+            await Store.save(c);
+            render(true);
+          }
+        } else if (d.act === "new") go("edit");
+        else if (d.edit) go("edit", d.edit);
+        else if (d.act === "cancel") S.id ? go("sheet", S.id) : go("list");
+        else if (d.del) {
+          if (confirm("Diesen Helden endgültig aus der Chronik tilgen?")) {
+            await Store.remove(d.del);
+            toast("Held getilgt");
+            go("list");
+          }
+        } else if (d.crest) {
+          S.draft.crest = d.crest;
+          document
+            .querySelectorAll("[data-crest]")
+            .forEach((b) =>
+              b.setAttribute("aria-pressed", b.dataset.crest === d.crest),
+            );
+        } else if (d.step) {
+          const i = $(`#s_${d.step}`),
+            v = Math.max(1, Math.min(30, +i.value + +d.d));
+          i.value = v;
+          S.draft.stats[d.step] = v;
+        } else if (d.act === "save") {
+          if (!(S.draft.name || "").trim()) {
+            toast("Ein Held braucht einen Namen.");
+            $("#f_name").focus();
+            return;
+          }
+          await Store.save(S.draft);
+          toast("In die Chronik eingetragen");
+          go("sheet", S.draft.id);
+        } else if (d.act === "export") {
+          const a = document.createElement("a");
+          a.href = URL.createObjectURL(
+            new Blob([JSON.stringify(S.chars, null, 2)], {
+              type: "application/json",
+            }),
+          );
+          a.download = "chronik-der-helden.json";
+          a.click();
+          toast("Chronik exportiert");
+        } else if (d.act === "import") $("#file").click();
+        else if (d.act === "settings") await openSettings();
+        else if (d.act === "settings-close") $("#settings-dialog").close();
+        else if (d.act === "settings-save") {
+          if (!window.desktop) {
+            toast("Einstellungen sind nur in der installierten App verfügbar.");
+            return;
+          }
+          try {
+            await window.desktop.saveSettings({
+              autoCheckUpdates: $("#settings-auto-check").checked,
+              launchAtStartup: $("#settings-autostart").checked,
+            });
+            toast("Einstellungen gespeichert");
+            $("#settings-dialog").close();
+          } catch (error) {
+            console.error("Einstellungen konnten nicht gespeichert werden.", error);
+            toast("Einstellungen konnten nicht gespeichert werden.");
+          }
+        } else if (d.act === "check-updates") {
+          if (window.desktop) await window.desktop.checkForUpdates();
+          else updateStatus({ event: "unavailable", message: "Nur in der installierten App verfügbar." });
+        } else if (d.act === "install-update") {
+          if (window.desktop) await window.desktop.installUpdate();
+        } else if (d.act === "open-data-folder") {
+          if (window.desktop) {
+            try {
+              await window.desktop.openDataFolder();
+            } catch (error) {
+              console.error("Datenordner konnte nicht geöffnet werden.", error);
+              toast("Datenordner konnte nicht geöffnet werden.");
+            }
+          }
+        }
+      });
+      window.desktop?.onOpenSettings(() => openSettings());
+      window.desktop?.onUpdateStatus(updateStatus);
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" && e.target.dataset.open)
+          go("sheet", e.target.dataset.open);
+        if (S.lb !== null && S.view === "sheet") {
+          if (e.key === "Escape") {
+            S.lb = null;
+            render(true);
+          } else if (
+            e.target.tagName !== "INPUT" &&
+            (e.key === "ArrowLeft" || e.key === "ArrowRight")
+          )
+            $(`[data-act="${e.key === "ArrowRight" ? "lbn" : "lbp"}"]`).click();
+        }
+      });
+      document.addEventListener("change", (e) => {
+        if (e.target.dataset.cap !== undefined) Store.persist();
+      });
+      document.addEventListener("input", (e) => {
+        const t = e.target,
+          d = t.dataset;
+        if (t.id === "q") {
+          S.q = t.value;
+          const p = t.selectionStart;
+          render();
+          const q = $("#q");
+          q.focus();
+          q.setSelectionRange(p, p);
+        } else if (d.f) S.draft[d.f] = d.n ? +t.value : t.value;
+        else if (d.v) S.draft[d.v] = +t.value;
+        else if (d.s)
+          S.draft.stats[d.s] = Math.max(1, Math.min(30, +t.value || 1));
+        else if (t.id === "ed") E().html = t.innerHTML;
+        else if (d.de !== undefined) S.dEdit[d.de] = t.value;
+        else if (d.cap !== undefined) cur().gallery[S.lb].cap = t.value;
+      });
+      $("#file").addEventListener("change", async (e) => {
+        try {
+          const arr = JSON.parse(await e.target.files[0].text());
+          if (!Array.isArray(arr)) throw 0;
+          arr.forEach((c) => {
+            if (c && c.id && c.name) {
+              const i = S.chars.findIndex((x) => x.id === c.id);
+              i < 0 ? S.chars.push(c) : (S.chars[i] = c);
+            }
+          });
+          await Store.persist();
+          toast("Chronik importiert");
+          go("list");
+        } catch (err) {
+          toast("Datei ist keine gültige Chronik.");
+        }
+        e.target.value = "";
+      });
+
+      let rng = null;
+      document.addEventListener("selectionchange", () => {
+        const ed = $("#ed"),
+          sl = getSelection();
+        if (ed && sl.rangeCount && ed.contains(sl.anchorNode))
+          rng = sl.getRangeAt(0).cloneRange();
+      });
+      document.addEventListener("mousedown", (e) => {
+        if (e.target.closest(".tb")) e.preventDefault();
+      });
+      document.addEventListener("paste", (e) => {
+        if (e.target.id === "ed") {
+          e.preventDefault();
+          document.execCommand(
+            "insertText",
+            false,
+            e.clipboardData.getData("text/plain"),
+          );
+          E().html = e.target.innerHTML;
+        }
+      });
+      $("#ifile").addEventListener("change", async (e) => {
+        const f = e.target.files[0];
+        e.target.value = "";
+        const ed = $("#ed");
+        if (!f || !ed) return;
+        try {
+          const src = await shrink(f, 900, 0.8);
+          ed.focus();
+          const sl = getSelection();
+          if (rng) {
+            sl.removeAllRanges();
+            sl.addRange(rng);
+          }
+          document.execCommand("insertImage", false, src);
+          E().html = ed.innerHTML;
+        } catch (x) {
+          toast("Bild konnte nicht gelesen werden.");
+        }
+      });
+      $("#pfile").addEventListener("change", async (e) => {
+        const f = e.target.files[0];
+        e.target.value = "";
+        if (!f) return;
+        try {
+          S.draft.portrait = await shrink(f, 600, 0.85);
+          render(true);
+        } catch (x) {
+          toast("Bild konnte nicht gelesen werden.");
+        }
+      });
+      $("#gfile").addEventListener("change", async (e) => {
+        const fs = [...e.target.files];
+        e.target.value = "";
+        const c = cur();
+        if (!c) return;
+        try {
+          for (const f of fs)
+            (c.gallery = c.gallery || []).push({
+              id:
+                "g" +
+                Date.now().toString(36) +
+                Math.random().toString(36).slice(2, 5),
+              src: await shrink(f, 1200, 0.8),
+              cap: "",
+            });
+          await Store.save(c);
+          toast(fs.length + " Bild(er) hinzugefügt");
+          render(true);
+        } catch (x) {
+          toast("Bild konnte nicht gelesen werden.");
+        }
+      });
+
+      document.querySelectorAll("[data-ic]").forEach((el) => {
+        const st = el.getAttribute("style") || "";
+        el.outerHTML = ic(el.dataset.ic, el.dataset.c).replace(
+          "<svg",
+          `<svg style="${st}"`,
+        );
+      });
+      document.execCommand("defaultParagraphSeparator", false, "p");
+      Store.init()
+        .then(() => render())
+        .catch((error) => {
+          console.error("Chronik konnte nicht geladen werden.", error);
+          toast("Chronik konnte nicht geladen werden. Es werden Beispieldaten angezeigt.");
+          S.chars = SEED;
+          render();
+        });
+    </script>
+  </body>
+</html>

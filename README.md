@@ -8,11 +8,11 @@
 
 **Der Charakter-Editor für Roleplay-Helden – im Stil eines epischen Fantasy-MMORPGs.**
 
-Lege Charaktere an, schreibe ihre Geschichte, sammle Bilder und führe ein Tagebuch – alles als übersichtliches Charakterblatt, direkt im Browser und ohne Build-Schritt.
+Lege Charaktere an, schreibe ihre Geschichte, sammle Bilder und führe ein Tagebuch – als Windows-Desktop-App mit lokal gespeicherten Daten und automatischen Updates.
 
 ![Status](https://img.shields.io/badge/Status-aktiv-d8a64b?style=flat-square)
-![Build](https://img.shields.io/badge/Build-keiner_n%C3%B6tig-8c6425?style=flat-square)
-![Stack](https://img.shields.io/badge/Stack-HTML_%C2%B7_Tailwind_%C2%B7_Vanilla_JS-d5502f?style=flat-square)
+![Build](https://img.shields.io/badge/Build-Electron_%C2%B7_NSIS-8c6425?style=flat-square)
+![Stack](https://img.shields.io/badge/Stack-Electron_%C2%B7_Tailwind_%C2%B7_Vanilla_JS-d5502f?style=flat-square)
 ![Lizenz](https://img.shields.io/badge/Lizenz-MIT-1f3f7d?style=flat-square)
 
 </div>
@@ -54,6 +54,11 @@ Lege Charaktere an, schreibe ihre Geschichte, sammle Bilder und führe ein Tageb
 - Porträt-Upload sowie Bildergalerie pro Charakter mit Großansicht, Bildunterschriften und Tastaturnavigation
 - Bilder werden beim Hochladen automatisch verkleinert
 
+**Windows-App**
+- Lokale Chronik-Datei im Windows-Benutzerprofil und weiterhin JSON-Import/-Export
+- Einstellungsmenü mit Update-Prüfung, automatischer Suche und Windows-Autostart
+- Updates werden aus GitHub Releases geladen; Installation erfolgt nach Bestätigung mit Neustart
+
 **Design**
 - Mittelalterliches Fantasy-Design mit Goldrahmen, Wappenmedaillons und Glutakzenten
 - Schriften: *Cinzel Decorative*, *Cinzel* und *Cormorant Garamond*
@@ -61,22 +66,20 @@ Lege Charaktere an, schreibe ihre Geschichte, sammle Bilder und führe ein Tageb
 
 ## Schnellstart
 
-Die gesamte Anwendung steckt in **einer HTML-Datei**. Es gibt keinen Build-Schritt und keine Abhängigkeiten zum Installieren.
+Voraussetzung: Node.js 22 oder neuer.
 
-```bash
-git clone https://github.com/<dein-name>/chronik-der-helden.git
-cd chronik-der-helden
+```powershell
+npm ci
+npm start
 ```
 
-Öffne anschließend `index.html` per Doppelklick im Browser. Alternativ startest du einen lokalen Server:
+Den Windows-Installer baust du mit:
 
-```bash
-npx serve .
-# oder
-python -m http.server 8080
+```powershell
+npm run build:win
 ```
 
-> **Hinweis:** Tailwind und die Google Fonts werden beim ersten Laden per CDN bezogen. Für den komplett lokalen Betrieb siehe [Offline-Betrieb](#offline-betrieb).
+Der NSIS-Installer liegt anschließend unter `%TEMP%\rp-charview-build`.
 
 ## Bedienung
 
@@ -147,74 +150,40 @@ Der Code ist in vier Schichten getrennt, damit er später ohne Umbau in ein Desk
 └──────────────────────────────────────────────┘
 ```
 
-Bei der Migration in ein größeres Projekt wird jeder Abschnitt in eine eigene ES-Modul-Datei ausgelagert (`schema.js`, `storage.js`, `store.js`, `ui/…`). Die Schichten kennen sich nur über ihre Schnittstellen.
+Die HTML-Datei enthält Schema, Store und UI; `main.js` und `preload.js` ergänzen den Windows-Dateispeicher und die Update-Bridge. Die bestehende Browser-Speicherung bleibt als Fallback erhalten.
 
-**Technik:** HTML5 · [Tailwind CSS](https://tailwindcss.com) · Vanilla JavaScript · [Lucide](https://lucide.dev)-Icons (als Inline-SVG eingebettet) · Google Fonts
+**Technik:** HTML5 · [Tailwind CSS](https://tailwindcss.com) · Vanilla JavaScript · Electron · electron-updater · lokale [Fontsource](https://fontsource.org/)-Schriften · [Lucide](https://lucide.dev)-Icons (als Inline-SVG eingebettet)
 
 ## Als Windows-Desktop-App
 
-Die Anwendung erwartet optional eine Bridge `window.desktop` mit zwei Funktionen. Ist sie vorhanden, wird sie statt des Browser-Speichers verwendet:
+Die App verwendet Electron mit aktiviertem Context Isolation, deaktiviertem Node-Zugriff im Renderer und einer eingeschränkten Preload-Bridge. Charaktere liegen im Electron-Benutzerverzeichnis (`app.getPath("userData")`); der genaue Ort wird in den Einstellungen angezeigt.
 
-```ts
-window.desktop = {
-  load: () => Promise<Held[] | null>,
-  save: (daten: Held[]) => Promise<void>
-}
+### Entwicklung und Installer
+
+```powershell
+npm ci
+npm start
+npm run build:win
 ```
 
-### Electron
+### Updates veröffentlichen
 
-```js
-// preload.js
-const { contextBridge, ipcRenderer } = require('electron');
-contextBridge.exposeInMainWorld('desktop', {
-  load: () => ipcRenderer.invoke('chronik:load'),
-  save: (data) => ipcRenderer.invoke('chronik:save', data),
-});
+Ein Push eines Versions-Tags (`v*`) startet `.github/workflows/release-windows.yml`. GitHub Actions erstellt einen x64-NSIS-Installer und veröffentlicht die Update-Metadaten und Dateien als GitHub Release. Der Workflow nutzt dafür `GITHUB_TOKEN`; ein privater Deploy-Key wird nicht benötigt.
+
+```powershell
+npm version 1.0.1 --no-git-tag-version
+git add package.json package-lock.json
+git commit -m "Release v1.0.1"
+git tag v1.0.1
+git push origin main
+git push origin v1.0.1
 ```
 
-```js
-// main.js (Auszug)
-const { app, BrowserWindow, ipcMain } = require('electron');
-const fs = require('fs/promises');
-const path = require('path');
-const file = () => path.join(app.getPath('userData'), 'chronik.json');
-
-ipcMain.handle('chronik:load', async () => {
-  try { return JSON.parse(await fs.readFile(file(), 'utf8')); } catch { return null; }
-});
-ipcMain.handle('chronik:save', (_e, data) => fs.writeFile(file(), JSON.stringify(data)));
-
-app.whenReady().then(() => {
-  const win = new BrowserWindow({
-    width: 1280, height: 860,
-    webPreferences: { preload: path.join(__dirname, 'preload.js') },
-  });
-  win.loadFile('index.html');
-});
-```
-
-Zum Verpacken eignen sich z. B. `electron-builder` oder `electron-forge`.
-
-### Tauri
-
-Mit `withGlobalTauri` kannst du die Bridge im Frontend setzen und die Dateizugriffe in Rust-Commands ablegen:
-
-```js
-const { invoke } = window.__TAURI__.core;
-window.desktop = {
-  load: () => invoke('load_chronik'),
-  save: (data) => invoke('save_chronik', { data }),
-};
-```
+Die App sucht standardmäßig beim Start nach Updates, lädt sie automatisch herunter und fragt vor dem Neustart zur Installation. Update-Prüfung und Windows-Autostart sind im Einstellungsmenü konfigurierbar. Unsignierte Windows-Builds können beim ersten Start eine SmartScreen-Warnung anzeigen.
 
 ## Offline-Betrieb
 
-Für eine App ohne Internetzugriff:
-
-1. **Tailwind:** Das CDN-Skript durch ein gebautes Stylesheet ersetzen (`npx tailwindcss -i … -o styles.css`).
-2. **Schriften:** *Cinzel*, *Cinzel Decorative* und *Cormorant Garamond* herunterladen und per `@font-face` einbinden.
-3. Die Icons sind bereits eingebettet, hier ist nichts zu tun.
+Oberflächen-Styles und Schriften werden lokal mit der App ausgeliefert; für Charakterverwaltung, Galerie, Tagebuch und Import/Export ist keine Internetverbindung nötig. Nur die Update-Prüfung benötigt Internetzugriff.
 
 ## Roadmap
 
@@ -237,12 +206,12 @@ Beiträge sind gern gesehen.
 3. Änderungen committen: `git commit -m "Beschreibung"`
 4. Branch pushen und einen Pull Request öffnen
 
-Bitte halte dich an die vorhandene Schichtentrennung (Schema, Storage, Store, UI) und füge keine Abhängigkeiten hinzu, die einen Build-Schritt erzwingen.
+Bitte halte dich an die vorhandene Schichtentrennung (Schema, Storage, Store, UI). Halte Laufzeit-Abhängigkeiten auf das Nötigste beschränkt; Build-Werkzeuge gehören in `devDependencies`.
 
 ## Lizenz & Danksagung
 
 Veröffentlicht unter der [MIT-Lizenz](LICENSE).
 
 - Icons: [Lucide](https://lucide.dev) (ISC-Lizenz)
-- Schriften: Cinzel, Cinzel Decorative und Cormorant Garamond (SIL Open Font License) über Google Fonts
+- Schriften: Cinzel, Cinzel Decorative und Cormorant Garamond (SIL Open Font License) über Fontsource
 - Styling: [Tailwind CSS](https://tailwindcss.com) (MIT-Lizenz)

@@ -1,0 +1,66 @@
+{
+  "name": "rp-charview",
+  "version": "1.0.0",
+  "description": "Chronik der Helden – Charakter-Editor für Windows",
+  "main": "main.js",
+  "author": "Rakoonir",
+  "license": "MIT",
+  "scripts": {
+    "styles": "tailwindcss -i ./src/tailwind.css -o ./dist/styles.css --minify",
+    "start": "npm run styles && electron .",
+    "build:win": "npm run styles && electron-builder --win nsis --config.directories.output=\"%TEMP%\\rp-charview-build\"",
+    "release:win": "npm run styles && electron-builder --win nsis --publish always --config.directories.output=\"%TEMP%\\rp-charview-build\""
+  },
+  "dependencies": {
+    "@fontsource/cinzel": "^5.3.0",
+    "@fontsource/cinzel-decorative": "^5.3.0",
+    "@fontsource/cormorant-garamond": "^5.3.0",
+    "electron-updater": "6.8.9"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "4.3.0",
+    "electron": "45.0.0",
+    "electron-builder": "26.15.3",
+    "tailwindcss": "4.3.3"
+  },
+  "build": {
+    "appId": "de.rakoonir.rpcharview",
+    "productName": "Chronik der Helden",
+    "artifactName": "Chronik-der-Helden-${version}.${ext}",
+    "asar": true,
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "CharView.html",
+      "main.js",
+      "preload.js",
+      "dist/styles.css",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowElevation": false,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "deleteAppDataOnUninstall": false
+    },
+    "publish": {
+      "provider": "github",
+      "owner": "Rakoonir",
+      "repo": "rp-charview",
+      "releaseType": "release"
+    }
+  }
+}
