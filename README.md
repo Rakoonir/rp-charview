@@ -1,5 +1,8 @@
 <div align="center">
 
+<img width="1254" height="1254" alt="Goldener Fantasy-Wappen mit Federrolle" src="https://github.com/user-attachments/assets/a843b5a8-b243-4ea1-abb3-8ba7c9d81b16" />
+
+
 # ⚔️ Chronik der Helden
 
 **Der Charakter-Editor für Roleplay-Helden – im Stil eines epischen Fantasy-MMORPGs.**
