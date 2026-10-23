@@ -10,6 +10,11 @@ contextBridge.exposeInMainWorld("desktop", {
   getUpdateStatus: () => ipcRenderer.invoke("updates:status"),
   installUpdate: () => ipcRenderer.invoke("updates:install"),
   openDataFolder: () => ipcRenderer.invoke("app:open-data-folder"),
+  windowControls: {
+    minimize: () => ipcRenderer.invoke("window:control", "minimize"),
+    maximize: () => ipcRenderer.invoke("window:control", "maximize"),
+    close: () => ipcRenderer.invoke("window:control", "close"),
+  },
   openSettings: () => ipcRenderer.send("settings:open"),
   onOpenSettings: (callback) => {
     const listener = () => callback();

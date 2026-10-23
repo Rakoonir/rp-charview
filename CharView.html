@@ -44,6 +44,20 @@
         --gold2: #8c6425;
         --ember: #d5502f;
         --line: rgba(216, 166, 75, 0.35);
+        --glow: rgba(213, 80, 47, 0.45);
+        --glow-soft: rgba(142, 202, 230, 0.18);
+        --button-top: #3a2a2f;
+        --button-bottom: #1d1419;
+        --button-text: #f8f1dc;
+        --font-body: "Cormorant Garamond", Georgia, serif;
+        --font-heading: "Cinzel", "Times New Roman", serif;
+        --font-logo: "Cinzel Decorative", "Cinzel", serif;
+        --highlight: #fff2c4;
+        --panel-strong: #3a1f2c;
+        --portrait-glow: #4a2433;
+        --field-surface: rgba(255, 255, 255, 0.02);
+        --modal-backdrop: rgba(8, 5, 10, 0.93);
+        --card-glow: rgba(216, 166, 75, 0.06);
         box-sizing: border-box;
         padding-top: env(safe-area-inset-top, 0px);
         padding-bottom: env(safe-area-inset-bottom, 0px);
@@ -80,10 +94,11 @@
         inset: 0 0 auto;
         z-index: 20;
         height: 40px;
+        box-sizing: border-box;
         align-items: center;
         gap: 0.65rem;
-        padding: 0 1rem;
-        background: linear-gradient(180deg, #241720, #1a121d);
+        padding: 0 0.9rem;
+        background: linear-gradient(180deg, color-mix(in srgb, var(--panel) 96%, var(--bg2)), var(--bg2));
         border-bottom: 1px solid var(--line);
         color: var(--gold);
         font-family: "Cinzel", serif;
@@ -91,12 +106,77 @@
         font-weight: 700;
         letter-spacing: 0.1em;
         -webkit-app-region: drag;
+        pointer-events: none;
+        user-select: none;
       }
       .electron .window-titlebar {
         display: flex;
       }
       .electron body {
         padding-top: 40px;
+      }
+      .window-titlebar-label,
+      .window-titlebar-controls {
+        display: flex;
+        align-items: center;
+        pointer-events: auto;
+      }
+      .window-titlebar-label {
+        gap: 0.65rem;
+        -webkit-app-region: drag;
+      }
+      .window-titlebar-controls {
+        margin-left: auto;
+        gap: 0.5rem;
+        -webkit-app-region: no-drag;
+      }
+      .window-control-btn {
+        width: 22px;
+        height: 22px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        margin: 0;
+        border: 1px solid color-mix(in srgb, var(--gold) 58%, transparent);
+        border-radius: 6px;
+        background: color-mix(in srgb, var(--gold) 10%, transparent);
+        color: var(--gold);
+        font-size: 0;
+        line-height: 0;
+        letter-spacing: 0;
+        text-align: center;
+        vertical-align: middle;
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+        cursor: pointer;
+        transition: background 0.2s ease, transform 0.2s ease,
+          border-color 0.2s ease;
+        -webkit-app-region: no-drag;
+      }
+      .window-control-btn svg {
+        width: 10px;
+        height: 10px;
+        display: block;
+        stroke: currentColor;
+        stroke-width: 1.8;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        fill: none;
+      }
+      .window-control-btn:hover {
+        background: color-mix(in srgb, var(--gold) 18%, transparent);
+        border-color: color-mix(in srgb, var(--gold) 80%, transparent);
+      }
+      .window-control-btn:active {
+        transform: translateY(1px);
+      }
+      .window-control-btn.close {
+        border-color: color-mix(in srgb, var(--ember) 52%, transparent);
+        color: color-mix(in srgb, var(--ember) 70%, white);
+      }
+      .window-control-btn.close:hover {
+        background: color-mix(in srgb, var(--ember) 18%, transparent);
+        border-color: color-mix(in srgb, var(--ember) 90%, transparent);
       }
       .window-titlebar-mark {
         font-size: 1rem;
@@ -105,18 +185,18 @@
       body {
         background:
           radial-gradient(
-            1200px 600px at 50% -10%,
-            #3a1f2c 0%,
-            transparent 60%
+            1200px 600px at 50% -12%,
+            var(--glow) 0%,
+            transparent 58%
           ),
           radial-gradient(
-            800px 500px at 100% 100%,
-            #1d2a2e 0%,
-            transparent 60%
+            900px 500px at 100% 100%,
+            var(--glow-soft) 0%,
+            transparent 62%
           ),
-          var(--bg);
+          linear-gradient(180deg, var(--bg2), var(--bg));
         color: var(--ink);
-        font-family: "Cormorant Garamond", Georgia, serif;
+        font-family: var(--font-body);
         font-size: 1.15rem;
         line-height: 1.5;
         min-height: 100vh;
@@ -125,27 +205,29 @@
       h2,
       h3,
       .cz {
-        font-family: "Cinzel", "Times New Roman", serif;
+        font-family: var(--font-heading);
         letter-spacing: 0.04em;
       }
       .logo {
-        font-family: "Cinzel Decorative", "Cinzel", serif;
+        font-family: var(--font-logo);
         font-weight: 900;
-        background: linear-gradient(180deg, #fff2c4, #d8a64b 55%, #8c6425);
+        background: linear-gradient(180deg, var(--highlight), var(--gold) 55%, var(--gold2));
         -webkit-background-clip: text;
         background-clip: text;
         color: transparent;
-        filter: drop-shadow(0 2px 8px rgba(213, 80, 47, 0.45));
+        filter: drop-shadow(0 2px 8px var(--glow));
       }
       .panel {
         position: relative;
         background: linear-gradient(160deg, var(--panel), var(--bg2));
         border: 1px solid var(--line);
-        border-radius: 4px;
+        border-radius: 6px;
         box-shadow:
           inset 0 0 0 3px var(--bg),
           inset 0 0 0 4px var(--gold2),
-          0 10px 30px rgba(0, 0, 0, 0.5);
+          0 0 0 1px rgba(255, 255, 255, 0.02),
+          0 12px 36px rgba(0, 0, 0, 0.5),
+          0 0 24px rgba(216, 166, 75, 0.08);
         padding: 1.4rem;
       }
       .panel::before,
@@ -186,23 +268,30 @@
         font-size: 0.9rem;
         padding: 0.55rem 1rem;
         border: 1px solid var(--gold2);
-        color: var(--ink);
-        background: linear-gradient(180deg, #3a2a2f, #1d1419);
-        border-radius: 3px;
+        color: var(--button-text);
+        background: linear-gradient(180deg, var(--button-top), var(--button-bottom));
+        border-radius: 4px;
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.12),
+          0 8px 16px rgba(0, 0, 0, 0.24),
+          0 0 0 1px rgba(216, 166, 75, 0.12);
         cursor: pointer;
-        transition: 0.15s;
+        transition: 0.15s ease;
       }
       .btn.hidden {
         display: none;
       }
       .btn:hover {
         border-color: var(--gold);
-        box-shadow: 0 0 14px rgba(216, 166, 75, 0.4);
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.12),
+          0 0 18px rgba(216, 166, 75, 0.28),
+          0 12px 22px rgba(0, 0, 0, 0.25);
       }
       .btn.pri {
-        background: linear-gradient(180deg, #e0b258, #9a6b24);
-        color: #1a1008;
-        border-color: #f3d58a;
+        background: linear-gradient(180deg, var(--gold), var(--gold2));
+        color: color-mix(in srgb, var(--bg) 88%, black 12%);
+        border-color: color-mix(in srgb, var(--gold) 80%, white 20%);
       }
       .btn.dng:hover {
         border-color: var(--ember);
@@ -228,7 +317,7 @@
         max-height: calc(100dvh - 2rem);
       }
       dialog::backdrop {
-        background: rgba(0, 0, 0, 0.78);
+        background: var(--modal-backdrop);
         backdrop-filter: blur(4px);
       }
       .settings-check {
@@ -238,7 +327,7 @@
       }
       .inp {
         width: 100%;
-        background: #120d15;
+        background: color-mix(in srgb, var(--bg2) 80%, var(--bg));
         border: 1px solid var(--gold2);
         border-radius: 3px;
         color: var(--ink);
@@ -260,7 +349,7 @@
         width: 92px;
         height: 104px;
         clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
-        background: linear-gradient(160deg, #f3d58a, #8c6425);
+        background: linear-gradient(160deg, color-mix(in srgb, var(--gold) 82%, white 18%), var(--gold2));
         display: grid;
         place-items: center;
         flex: none;
@@ -269,7 +358,7 @@
         width: 84px;
         height: 96px;
         clip-path: inherit;
-        background: radial-gradient(circle at 50% 30%, #4a2433, #14090f);
+        background: radial-gradient(circle at 50% 30%, color-mix(in srgb, var(--gold2) 62%, var(--ember) 38%), color-mix(in srgb, var(--bg) 72%, var(--bg2) 28%));
         display: grid;
         place-items: center;
         color: var(--gold);
@@ -285,7 +374,7 @@
         border: 1px solid var(--gold2);
         border-radius: 3px;
         background:
-          radial-gradient(circle at 50% 35%, #4a2433, transparent 68%),
+          radial-gradient(circle at 50% 35%, color-mix(in srgb, var(--gold2) 60%, var(--ember) 40%), transparent 68%),
           linear-gradient(160deg, var(--panel), var(--bg));
         box-shadow: inset 0 0 0 3px var(--bg), 0 8px 20px rgba(0, 0, 0, 0.35);
       }
@@ -305,7 +394,7 @@
       }
       .bar {
         height: 8px;
-        background: #120d15;
+        background: color-mix(in srgb, var(--bg2) 70%, var(--bg));
         border: 1px solid var(--gold2);
         border-radius: 2px;
         overflow: hidden;
@@ -323,7 +412,7 @@
       .stat {
         text-align: center;
         border: 1px solid var(--line);
-        background: #150f18;
+        background: color-mix(in srgb, var(--panel) 92%, var(--bg2));
         padding: 0.7rem 0.4rem;
         border-radius: 3px;
       }
@@ -331,7 +420,7 @@
         display: block;
         font-family: "Cinzel", serif;
         font-size: 2rem;
-        color: #fff2c4;
+        color: var(--highlight);
         line-height: 1.1;
       }
       .pre {
@@ -339,7 +428,7 @@
       }
       .crest {
         border: 1px solid var(--gold2);
-        background: #150f18;
+        background: color-mix(in srgb, var(--panel) 80%, var(--bg2));
         color: var(--mute);
         padding: 0.5rem;
         border-radius: 3px;
@@ -373,7 +462,7 @@
         border: 1px solid var(--gold2);
         border-radius: 3px;
         padding: 0;
-        background: #120d15;
+        background: color-mix(in srgb, var(--bg2) 70%, var(--bg));
         cursor: pointer;
       }
       .gimg img {
@@ -424,7 +513,7 @@
       }
       .sub:hover {
         color: var(--ink);
-        background: #150f18;
+        background: color-mix(in srgb, var(--panel) 82%, var(--bg2));
       }
       .sub.on {
         color: var(--gold);
@@ -446,7 +535,7 @@
         padding: 0.4rem;
         border: 1px solid var(--gold2);
         border-bottom: 0;
-        background: #150f18;
+        background: color-mix(in srgb, var(--panel) 82%, var(--bg2));
         border-radius: 3px 3px 0 0;
         position: sticky;
         top: 0;
@@ -458,6 +547,7 @@
         color: var(--ink);
         border-radius: 2px;
         cursor: pointer;
+        background: transparent;
       }
       .tb button:hover {
         border-color: var(--gold);
@@ -493,7 +583,7 @@
       .rich h3 {
         font-family: "Cinzel", serif;
         font-size: 1.25rem;
-        color: #fff2c4;
+        color: var(--highlight);
         margin: 1em 0 0.3em;
       }
       .rich p {
@@ -501,7 +591,7 @@
       }
       .rich b,
       .rich strong {
-        color: #fff2c4;
+        color: var(--highlight);
       }
       .rich ul {
         list-style: disc;
@@ -517,7 +607,7 @@
         margin: 1em 0;
         font-style: italic;
         color: var(--mute);
-        background: rgba(216, 166, 75, 0.06);
+        background: var(--card-glow);
       }
       .rich hr {
         border: 0;
@@ -545,28 +635,147 @@
         padding: 0.08em 0.12em 0 0;
         color: var(--gold);
       }
+      .update-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.35rem 0.7rem;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.02);
+        color: var(--mute);
+        font-size: 0.72rem;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        white-space: nowrap;
+        transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+      }
+      .update-pill .update-dot {
+        width: 0.5rem;
+        height: 0.5rem;
+        border-radius: 50%;
+        background: var(--gold2);
+        box-shadow: 0 0 0 3px rgba(216, 166, 75, 0.14);
+        flex-shrink: 0;
+      }
+      .update-pill[data-state="checking"] {
+        border-color: rgba(216, 166, 75, 0.4);
+        color: #f3d69a;
+        background: rgba(216, 166, 75, 0.1);
+      }
+      .update-pill[data-state="checking"] .update-dot {
+        background: #f0c96f;
+        box-shadow: 0 0 0 3px rgba(240, 201, 111, 0.16);
+      }
+      .update-pill[data-state="current"] {
+        border-color: rgba(96, 196, 119, 0.45);
+        color: #c9f9d5;
+        background: rgba(23, 115, 58, 0.15);
+      }
+      .update-pill[data-state="current"] .update-dot {
+        background: #66d98a;
+        box-shadow: 0 0 0 3px rgba(102, 217, 138, 0.16);
+      }
+      .update-pill[data-state="available"],
+      .update-pill[data-state="downloaded"],
+      .update-pill[data-state="downloading"] {
+        border-color: rgba(213, 80, 47, 0.4);
+        color: #ffd3bf;
+        background: rgba(213, 80, 47, 0.12);
+      }
+      .update-pill[data-state="available"] .update-dot,
+      .update-pill[data-state="downloaded"] .update-dot,
+      .update-pill[data-state="downloading"] .update-dot {
+        background: #ff8b63;
+        box-shadow: 0 0 0 3px rgba(255, 139, 99, 0.18);
+      }
+      .update-pill[data-state="error"],
+      .update-pill[data-state="unavailable"] {
+        border-color: rgba(218, 96, 118, 0.45);
+        color: #ffcad4;
+        background: rgba(186, 49, 78, 0.12);
+      }
+      .update-pill[data-state="error"] .update-dot,
+      .update-pill[data-state="unavailable"] .update-dot {
+        background: #ff6b81;
+        box-shadow: 0 0 0 3px rgba(255, 107, 129, 0.18);
+      }
+      @media (max-width: 640px) {
+        .update-pill {
+          font-size: 0.68rem;
+          letter-spacing: 0.03em;
+        }
+      }
     </style>
   </head>
   <body>
-    <div class="window-titlebar" aria-hidden="true">
-      <span class="window-titlebar-mark">✦</span>
-      <span>CHRONIK DER HELDEN</span>
+    <div class="window-titlebar" role="presentation" aria-label="Fenstersteuerung">
+      <div class="window-titlebar-label">
+        <span class="window-titlebar-mark">✦</span>
+        <span>CHRONIK DER HELDEN</span>
+      </div>
+      <div class="window-titlebar-controls" aria-label="Fenstersteuerung">
+        <button
+          class="window-control-btn"
+          type="button"
+          data-window-control="minimize"
+          aria-label="Minimieren"
+        >
+          <svg viewBox="0 0 12 12" aria-hidden="true">
+            <line x1="2" y1="6" x2="10" y2="6"></line>
+          </svg>
+        </button>
+        <button
+          class="window-control-btn"
+          type="button"
+          data-window-control="maximize"
+          aria-label="Maximieren"
+        >
+          <svg viewBox="0 0 12 12" aria-hidden="true">
+            <rect x="2.2" y="2.2" width="7.6" height="7.6" rx="0.6"></rect>
+          </svg>
+        </button>
+        <button
+          class="window-control-btn close"
+          type="button"
+          data-window-control="close"
+          aria-label="Schließen"
+        >
+          <svg viewBox="0 0 12 12" aria-hidden="true">
+            <line x1="3" y1="3" x2="9" y2="9"></line>
+            <line x1="9" y1="3" x2="3" y2="9"></line>
+          </svg>
+        </button>
+      </div>
     </div>
     <header
       class="max-w-6xl mx-auto px-4 pt-6 flex flex-wrap items-center justify-between gap-4"
     >
-      <button
-        id="home"
-        class="flex items-center gap-3 text-left"
-        aria-label="Zur Heldenliste"
-      >
-        <span
-          data-ic="swords"
-          data-c="w-9 h-9"
-          style="color: var(--gold)"
-        ></span>
-        <span class="logo text-3xl sm:text-4xl">Chronik der Helden</span>
-      </button>
+      <div class="flex flex-col items-start gap-2">
+        <button
+          id="home"
+          class="flex items-center gap-3 text-left"
+          aria-label="Zur Heldenliste"
+        >
+          <img
+            src="./assets/icon.png"
+            alt="Chronik der Helden Logo"
+            class="h-24 w-24 rounded-md object-contain"
+            style="filter: drop-shadow(0 0 10px rgba(216, 166, 75, 0.5));"
+          />
+          <span class="logo text-3xl sm:text-4xl">Chronik der Helden</span>
+        </button>
+        <div
+          id="home-update-status"
+          class="update-pill"
+          data-state="idle"
+          role="status"
+          aria-live="polite"
+        >
+          <span class="update-dot" aria-hidden="true"></span>
+          <span class="update-label">Update-Status</span>
+        </div>
+      </div>
       <nav class="flex flex-wrap gap-2">
         <button class="btn" data-act="settings">
           <span aria-hidden="true">⚙</span>Einstellungen
@@ -638,6 +847,76 @@
               <button class="btn pri hidden" id="install-update" data-act="install-update">
                 Update installieren und neu starten
               </button>
+            </div>
+          </section>
+          <section>
+            <h3 class="ph">Design</h3>
+            <div class="space-y-4">
+              <label class="block">
+                <span class="mb-2 block text-sm" style="color: var(--mute)">Farbschema</span>
+                <select id="theme-preset" class="inp w-full">
+                  <option value="custom">Eigene Farbkombination</option>
+                  <option value="royal-dark">Königliches Dunkel</option>
+                  <option value="ember-night">Ember Nacht</option>
+                  <option value="moonlit">Moonlit</option>
+                  <option value="forest-veil">Forest Veil</option>
+                </select>
+              </label>
+              <label class="block">
+                <span class="mb-2 block text-sm" style="color: var(--mute)">Schriftart</span>
+                <select id="theme-font" class="inp w-full">
+                  <option value="classic">Klassisch</option>
+                  <option value="royal">Royal Serif</option>
+                  <option value="modern">Modern</option>
+                  <option value="editorial">Editorial</option>
+                </select>
+              </label>
+              <div class="grid gap-3 sm:grid-cols-2">
+                <label class="flex items-center justify-between gap-3 rounded border px-2 py-2" style="border-color: var(--line); background: var(--field-surface); color: var(--ink)">
+                  <span class="text-sm">Hintergrund</span>
+                  <input id="theme-background" type="color" data-theme-color="background" value="#0d0a11" />
+                </label>
+                <label class="flex items-center justify-between gap-3 rounded border px-2 py-2" style="border-color: var(--line); background: var(--field-surface); color: var(--ink)">
+                  <span class="text-sm">Hintergrund 2</span>
+                  <input id="theme-background2" type="color" data-theme-color="background2" value="#1a121d" />
+                </label>
+                <label class="flex items-center justify-between gap-3 rounded border px-2 py-2" style="border-color: var(--line); background: var(--field-surface); color: var(--ink)">
+                  <span class="text-sm">Panel</span>
+                  <input id="theme-panel" type="color" data-theme-color="panel" value="#211826" />
+                </label>
+                <label class="flex items-center justify-between gap-3 rounded border px-2 py-2" style="border-color: var(--line); background: var(--field-surface); color: var(--ink)">
+                  <span class="text-sm">Text</span>
+                  <input id="theme-ink" type="color" data-theme-color="ink" value="#ecdfc4" />
+                </label>
+                <label class="flex items-center justify-between gap-3 rounded border px-2 py-2" style="border-color: var(--line); background: var(--field-surface); color: var(--ink)">
+                  <span class="text-sm">Muted</span>
+                  <input id="theme-muted" type="color" data-theme-color="muted" value="#a89a82" />
+                </label>
+                <label class="flex items-center justify-between gap-3 rounded border px-2 py-2" style="border-color: var(--line); background: var(--field-surface); color: var(--ink)">
+                  <span class="text-sm">Akzent</span>
+                  <input id="theme-accent" type="color" data-theme-color="accent" value="#d8a64b" />
+                </label>
+                <label class="flex items-center justify-between gap-3 rounded border px-2 py-2" style="border-color: var(--line); background: var(--field-surface); color: var(--ink)">
+                  <span class="text-sm">Akzent 2</span>
+                  <input id="theme-accent2" type="color" data-theme-color="accent2" value="#8c6425" />
+                </label>
+                <label class="flex items-center justify-between gap-3 rounded border px-2 py-2" style="border-color: var(--line); background: var(--field-surface); color: var(--ink)">
+                  <span class="text-sm">Ember</span>
+                  <input id="theme-ember" type="color" data-theme-color="ember" value="#d5502f" />
+                </label>
+                <label class="flex items-center justify-between gap-3 rounded border px-2 py-2" style="border-color: var(--line); background: var(--field-surface); color: var(--ink)">
+                  <span class="text-sm">Button oben</span>
+                  <input id="theme-button-top" type="color" data-theme-color="buttonTop" value="#3a2a2f" />
+                </label>
+                <label class="flex items-center justify-between gap-3 rounded border px-2 py-2" style="border-color: var(--line); background: var(--field-surface); color: var(--ink)">
+                  <span class="text-sm">Button unten</span>
+                  <input id="theme-button-bottom" type="color" data-theme-color="buttonBottom" value="#1d1419" />
+                </label>
+                <label class="flex items-center justify-between gap-3 rounded border px-2 py-2" style="border-color: var(--line); background: var(--field-surface); color: var(--ink)">
+                  <span class="text-sm">Button Text</span>
+                  <input id="theme-button-text" type="color" data-theme-color="buttonText" value="#f8f1dc" />
+                </label>
+              </div>
             </div>
           </section>
           <section>
@@ -1189,10 +1468,11 @@
           i.onload = () => {
             const r = Math.min(1, max / Math.max(i.width, i.height)),
               c = document.createElement("canvas"),
-              x = c.getContext("2d");
+              x = c.getContext("2d"),
+              themeBg = getComputedStyle(document.documentElement).getPropertyValue("--bg").trim() || "#14090f";
             c.width = Math.round(i.width * r);
             c.height = Math.round(i.height * r);
-            x.fillStyle = "#14090f";
+            x.fillStyle = themeBg;
             x.fillRect(0, 0, c.width, c.height);
             x.drawImage(i, 0, 0, c.width, c.height);
             if (!str) URL.revokeObjectURL(u);
@@ -1213,12 +1493,222 @@
         clearTimeout(t._t);
         t._t = setTimeout(() => t.classList.add("hidden"), 2200);
       };
-      const updateStatus = (status) => {
+      const updateStatus = (status = {}) => {
+        const event = status.event || "idle";
+        const message = status.message || "Noch nicht nach Updates gesucht.";
+        const homeStatus = $("#home-update-status");
         const label = $("#update-status");
-        if (label) label.textContent = status.message;
+        const shortLabel = {
+          idle: "Update-Status",
+          checking: "Suche nach Updates…",
+          current: "Aktuell",
+          available: "Update verfügbar",
+          downloading: "Download läuft",
+          downloaded: "Update bereit",
+          error: "Update-Problem",
+          unavailable: "Nur in App",
+        }[event] || "Update-Status";
+
+        if (label) label.textContent = message;
+        if (homeStatus) {
+          homeStatus.dataset.state = event;
+          const homeLabel = homeStatus.querySelector(".update-label");
+          if (homeLabel) homeLabel.textContent = shortLabel;
+        }
         const install = $("#install-update");
         if (install) install.classList.toggle("hidden", status.event !== "downloaded");
       };
+      const THEME_PRESETS = {
+        "royal-dark": {
+          preset: "royal-dark",
+          background: "#0d0a11",
+          background2: "#1a121d",
+          panel: "#211826",
+          ink: "#ecdfc4",
+          muted: "#a89a82",
+          accent: "#d8a64b",
+          accent2: "#8c6425",
+          ember: "#d5502f",
+          line: "rgba(216, 166, 75, 0.35)",
+          glow: "rgba(213, 80, 47, 0.45)",
+          glowSoft: "rgba(142, 202, 230, 0.18)",
+          buttonTop: "#3a2a2f",
+          buttonBottom: "#1d1419",
+          buttonText: "#f8f1dc",
+          highlight: "#fff2c4",
+          panelStrong: "#3a1f2c",
+          portraitGlow: "#4a2433",
+          fieldSurface: "rgba(255, 255, 255, 0.02)",
+          modalBackdrop: "rgba(8, 5, 10, 0.93)",
+          cardGlow: "rgba(216, 166, 75, 0.06)",
+        },
+        "ember-night": {
+          preset: "ember-night",
+          background: "#120911",
+          background2: "#2a1518",
+          panel: "#2c1c1d",
+          ink: "#f8e8d9",
+          muted: "#c59a8b",
+          accent: "#e78b5a",
+          accent2: "#9d4d38",
+          ember: "#ff7a59",
+          line: "rgba(231, 139, 90, 0.35)",
+          glow: "rgba(255, 122, 89, 0.35)",
+          glowSoft: "rgba(231, 139, 90, 0.12)",
+          buttonTop: "#4a2929",
+          buttonBottom: "#2a1818",
+          buttonText: "#fff0e8",
+          highlight: "#ffd7bf",
+          panelStrong: "#4a1f1d",
+          portraitGlow: "#5a2a2b",
+          fieldSurface: "rgba(255, 255, 255, 0.03)",
+          modalBackdrop: "rgba(18, 9, 17, 0.9)",
+          cardGlow: "rgba(255, 122, 89, 0.08)",
+        },
+        "moonlit": {
+          preset: "moonlit",
+          background: "#0b1220",
+          background2: "#101d2d",
+          panel: "#152536",
+          ink: "#edf3ff",
+          muted: "#96a7c2",
+          accent: "#8ecae6",
+          accent2: "#5b8db2",
+          ember: "#ffb703",
+          line: "rgba(142, 202, 230, 0.35)",
+          glow: "rgba(142, 202, 230, 0.28)",
+          glowSoft: "rgba(255, 183, 3, 0.12)",
+          buttonTop: "#1d2a3a",
+          buttonBottom: "#111b29",
+          buttonText: "#edf3ff",
+          highlight: "#dfeaff",
+          panelStrong: "#1f2f46",
+          portraitGlow: "#2d425d",
+          fieldSurface: "rgba(255, 255, 255, 0.03)",
+          modalBackdrop: "rgba(6, 10, 17, 0.92)",
+          cardGlow: "rgba(142, 202, 230, 0.08)",
+        },
+        "forest-veil": {
+          preset: "forest-veil",
+          background: "#0d1713",
+          background2: "#16251d",
+          panel: "#1d3128",
+          ink: "#ecf8ea",
+          muted: "#9baea1",
+          accent: "#a1d39a",
+          accent2: "#5d8c66",
+          ember: "#e6b93a",
+          line: "rgba(161, 211, 154, 0.35)",
+          glow: "rgba(161, 211, 154, 0.26)",
+          glowSoft: "rgba(230, 185, 58, 0.12)",
+          buttonTop: "#1d352a",
+          buttonBottom: "#132117",
+          buttonText: "#f1fff3",
+          highlight: "#eefee5",
+          panelStrong: "#1d3b2c",
+          portraitGlow: "#2e4f39",
+          fieldSurface: "rgba(255, 255, 255, 0.025)",
+          modalBackdrop: "rgba(8, 17, 12, 0.88)",
+          cardGlow: "rgba(161, 211, 154, 0.08)",
+        },
+      };
+      const DEFAULT_THEME = THEME_PRESETS["royal-dark"];
+
+      const normalizeTheme = (theme = {}) => {
+        const preset = THEME_PRESETS[theme.preset] || DEFAULT_THEME;
+        return {
+          ...preset,
+          ...theme,
+          preset: theme.preset || preset.preset,
+        };
+      };
+
+      const applyTheme = (theme = DEFAULT_THEME) => {
+        const current = normalizeTheme(theme);
+        const root = document.documentElement;
+        const fontStyles = {
+          classic: {
+            body: '"Cormorant Garamond", Georgia, serif',
+            heading: '"Cinzel", "Times New Roman", serif',
+            logo: '"Cinzel Decorative", "Cinzel", serif',
+          },
+          royal: {
+            body: '"Georgia", serif',
+            heading: '"Cinzel Decorative", "Cinzel", serif',
+            logo: '"Cinzel Decorative", "Cinzel", serif',
+          },
+          modern: {
+            body: '"Segoe UI", "Trebuchet MS", sans-serif',
+            heading: '"Segoe UI", "Trebuchet MS", sans-serif',
+            logo: '"Segoe UI", sans-serif',
+          },
+          editorial: {
+            body: '"Times New Roman", serif',
+            heading: '"Georgia", serif',
+            logo: '"Georgia", serif',
+          },
+        };
+        const fontChoice = fontStyles[current.fontTheme] || fontStyles.classic;
+
+        root.style.setProperty("--bg", current.background);
+        root.style.setProperty("--bg2", current.background2);
+        root.style.setProperty("--panel", current.panel);
+        root.style.setProperty("--ink", current.ink);
+        root.style.setProperty("--mute", current.muted);
+        root.style.setProperty("--gold", current.accent);
+        root.style.setProperty("--gold2", current.accent2);
+        root.style.setProperty("--ember", current.ember);
+        root.style.setProperty("--line", current.line);
+        root.style.setProperty("--glow", current.glow || "rgba(213, 80, 47, 0.45)");
+        root.style.setProperty("--glow-soft", current.glowSoft || "rgba(142, 202, 230, 0.18)");
+        root.style.setProperty("--button-top", current.buttonTop || "#3a2a2f");
+        root.style.setProperty("--button-bottom", current.buttonBottom || "#1d1419");
+        root.style.setProperty("--button-text", current.buttonText || "#f8f1dc");
+        root.style.setProperty("--font-body", fontChoice.body);
+        root.style.setProperty("--font-heading", fontChoice.heading);
+        root.style.setProperty("--font-logo", fontChoice.logo);
+        root.style.setProperty("--highlight", current.highlight || "#fff2c4");
+        root.style.setProperty("--panel-strong", current.panelStrong || "#3a1f2c");
+        root.style.setProperty("--portrait-glow", current.portraitGlow || "#4a2433");
+        root.style.setProperty("--field-surface", current.fieldSurface || "rgba(255, 255, 255, 0.02)");
+        root.style.setProperty("--modal-backdrop", current.modalBackdrop || "rgba(8, 5, 10, 0.93)");
+        root.style.setProperty("--card-glow", current.cardGlow || "rgba(216, 166, 75, 0.06)");
+        root.dataset.theme = current.preset || "custom";
+      };
+
+      const fillThemeControls = (theme) => {
+        const current = normalizeTheme(theme);
+        const preset = $("#theme-preset");
+        const font = $("#theme-font");
+        const colorFields = [
+          ["#theme-background", "background"],
+          ["#theme-background2", "background2"],
+          ["#theme-panel", "panel"],
+          ["#theme-ink", "ink"],
+          ["#theme-muted", "muted"],
+          ["#theme-accent", "accent"],
+          ["#theme-accent2", "accent2"],
+          ["#theme-ember", "ember"],
+          ["#theme-button-top", "buttonTop"],
+          ["#theme-button-bottom", "buttonBottom"],
+          ["#theme-button-text", "buttonText"],
+        ];
+
+        if (preset) {
+          const selected = Object.keys(THEME_PRESETS).includes(current.preset)
+            ? current.preset
+            : "custom";
+          preset.value = selected;
+        }
+
+        if (font) font.value = current.fontTheme || "classic";
+
+        colorFields.forEach(([selector, key]) => {
+          const input = $(selector);
+          if (input) input.value = current[key];
+        });
+      };
+
       const openSettings = async () => {
         const dialog = $("#settings-dialog");
         if (!dialog.open) dialog.showModal();
@@ -1228,10 +1718,13 @@
         }
         try {
           const settings = await window.desktop.getSettings();
+          const theme = normalizeTheme(settings.theme || DEFAULT_THEME);
           $("#settings-autostart").checked = settings.launchAtStartup;
           $("#settings-auto-check").checked = settings.autoCheckUpdates;
           $("#data-directory").textContent = settings.dataDirectory;
           $("#app-version").textContent = `Version ${settings.version} · Daten: ${settings.dataDirectory}`;
+          fillThemeControls(theme);
+          applyTheme(theme);
           updateStatus(settings.updateStatus);
         } catch (error) {
           console.error("Einstellungen konnten nicht geladen werden.", error);
@@ -1277,7 +1770,7 @@
          (c) => `
   <article class="panel card" tabindex="0" data-open="${c.id}">
    <div class="flex gap-4">${hexOf(c)}
-   <div class="min-w-0"><h2 class="text-xl truncate" style="color:#fff2c4">${esc(c.name) || "Namenlos"}</h2>
+   <div class="min-w-0"><h2 class="text-xl truncate" style="color:var(--highlight)">${esc(c.name) || "Namenlos"}</h2>
    <p class="italic truncate" style="color:var(--mute)">${esc(c.titel)}</p>
    <p class="mt-1">${esc(c.art)} ${esc(c.klasse)}</p>
    <p class="cz text-sm" style="color:var(--gold)">Stufe ${esc(c.level)}</p></div></div>
@@ -1319,7 +1812,7 @@
   <button class="btn" data-act="back">${ic("arrow-left", "w-4 h-4")}Zurück</button>
   <div class="flex gap-2"><button class="btn" data-edit="${c.id}">${ic("pencil", "w-4 h-4")}Bearbeiten</button>
   <button class="btn dng" data-del="${c.id}">${ic("trash-2", "w-4 h-4")}Löschen</button></div></div>
- <section class="panel mb-6" style="background:linear-gradient(160deg,#3a1f2c,#14090f 70%)">
+ <section class="panel mb-6" style="background:linear-gradient(160deg, var(--panel-strong), var(--bg) 70%)">
   <div class="flex flex-wrap items-center gap-6">${hexOf(c, true)}
   <div class="flex-1 min-w-[16rem]"><h1 class="logo text-4xl sm:text-5xl leading-tight">${esc(c.name) || "Namenlos"}</h1>
   <p class="text-xl italic" style="color:var(--mute)">${esc(c.titel)}</p>
@@ -1432,7 +1925,7 @@
         const g = cur()?.gallery || [],
           x = g[S.lb];
         if (S.lb === null || !x) return "";
-        return `<div data-bd class="fixed inset-0 z-50 flex flex-col items-center justify-center gap-3 p-4" style="background:rgba(8,5,10,.93)" role="dialog" aria-modal="true">
+        return `<div data-bd class="fixed inset-0 z-50 flex flex-col items-center justify-center gap-3 p-4" style="background:var(--modal-backdrop)" role="dialog" aria-modal="true">
   <img src="${x.src}" alt="${esc(x.cap)}" class="max-w-full rounded" style="max-height:68vh;border:1px solid var(--gold2)">
   <input class="inp max-w-xl text-center" data-cap placeholder="Bildunterschrift …" value="${esc(x.cap)}" aria-label="Bildunterschrift">
   <div class="flex flex-wrap justify-center gap-2">
@@ -1464,7 +1957,7 @@
               [])[1],
             pt = plain(x);
           return `<article class="entry">
-   <div class="flex gap-4"><div class="flex-1 min-w-0"><div class="flex flex-wrap items-baseline justify-between gap-x-4"><h4 class="cz text-lg" style="color:#fff2c4">${esc(x.title) || "Ohne Titel"}</h4><span class="italic" style="color:var(--mute)">${fmtD(x.date)}</span></div>
+   <div class="flex gap-4"><div class="flex-1 min-w-0"><div class="flex flex-wrap items-baseline justify-between gap-x-4"><h4 class="cz text-lg" style="color:var(--highlight)">${esc(x.title) || "Ohne Titel"}</h4><span class="italic" style="color:var(--mute)">${fmtD(x.date)}</span></div>
    <p class="line-clamp-3 mt-1" style="color:var(--mute)">${esc(pt) || "Bild-Eintrag"}</p></div>
    ${th ? `<img src="${th}" alt="" class="w-20 h-20 object-cover rounded flex-none" style="border:1px solid var(--gold2)">` : ""}</div>
    <div class="flex flex-wrap gap-2 mt-3"><button class="btn pri" data-rd="${x.id}">${ic("book-open", "w-4 h-4")}Anzeigen</button>
@@ -1751,7 +2244,11 @@
           a.click();
           toast("Chronik exportiert");
         } else if (d.act === "import") $("#file").click();
-        else if (d.act === "settings") await openSettings();
+        else if (d.windowControl) {
+          if (window.desktop?.windowControls?.[d.windowControl]) {
+            await window.desktop.windowControls[d.windowControl]();
+          }
+        } else if (d.act === "settings") await openSettings();
         else if (d.act === "settings-close") $("#settings-dialog").close();
         else if (d.act === "settings-save") {
           if (!window.desktop) {
@@ -1759,9 +2256,26 @@
             return;
           }
           try {
+            const nextTheme = {
+              preset: $("#theme-preset").value,
+              background: $("#theme-background").value,
+              background2: $("#theme-background2").value,
+              panel: $("#theme-panel").value,
+              ink: $("#theme-ink").value,
+              muted: $("#theme-muted").value,
+              accent: $("#theme-accent").value,
+              accent2: $("#theme-accent2").value,
+              ember: $("#theme-ember").value,
+              buttonTop: $("#theme-button-top").value,
+              buttonBottom: $("#theme-button-bottom").value,
+              buttonText: $("#theme-button-text").value,
+              fontTheme: $("#theme-font").value,
+            };
+            applyTheme(nextTheme);
             await window.desktop.saveSettings({
               autoCheckUpdates: $("#settings-auto-check").checked,
               launchAtStartup: $("#settings-autostart").checked,
+              theme: nextTheme,
             });
             toast("Einstellungen gespeichert");
             $("#settings-dialog").close();
@@ -1799,6 +2313,59 @@
       });
       window.desktop?.onOpenSettings(() => openSettings());
       window.desktop?.onUpdateStatus(updateStatus);
+      document.addEventListener("input", (e) => {
+        const target = e.target;
+        if (!(target instanceof HTMLInputElement)) return;
+        if (target.dataset.themeColor) {
+          const nextTheme = normalizeTheme({
+            preset: $("#theme-preset").value,
+            background: $("#theme-background").value,
+            background2: $("#theme-background2").value,
+            panel: $("#theme-panel").value,
+            ink: $("#theme-ink").value,
+            muted: $("#theme-muted").value,
+            accent: $("#theme-accent").value,
+            accent2: $("#theme-accent2").value,
+            ember: $("#theme-ember").value,
+            buttonTop: $("#theme-button-top").value,
+            buttonBottom: $("#theme-button-bottom").value,
+            buttonText: $("#theme-button-text").value,
+            fontTheme: $("#theme-font").value,
+          });
+          applyTheme(nextTheme);
+        }
+      });
+      $("#theme-font")?.addEventListener("change", () => {
+        const nextTheme = normalizeTheme({
+          preset: $("#theme-preset").value,
+          background: $("#theme-background").value,
+          background2: $("#theme-background2").value,
+          panel: $("#theme-panel").value,
+          ink: $("#theme-ink").value,
+          muted: $("#theme-muted").value,
+          accent: $("#theme-accent").value,
+          accent2: $("#theme-accent2").value,
+          ember: $("#theme-ember").value,
+          buttonTop: $("#theme-button-top").value,
+          buttonBottom: $("#theme-button-bottom").value,
+          buttonText: $("#theme-button-text").value,
+          fontTheme: $("#theme-font").value,
+        });
+        applyTheme(nextTheme);
+      });
+      $("#theme-preset")?.addEventListener("change", (event) => {
+        const preset = THEME_PRESETS[event.target.value];
+        if (!preset) return;
+        fillThemeControls(preset);
+        applyTheme(preset);
+      });
+      if (window.desktop) {
+        window.desktop.getSettings().then((settings) => {
+          const theme = normalizeTheme(settings.theme || DEFAULT_THEME);
+          applyTheme(theme);
+          fillThemeControls(theme);
+        }).catch(() => undefined);
+      }
       document.addEventListener("keydown", (e) => {
         if (e.key === "Enter" && e.target.dataset.open)
           go("sheet", e.target.dataset.open);

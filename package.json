@@ -1,6 +1,6 @@
 {
   "name": "rp-charview",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Chronik der Helden – Charakter-Editor für Windows",
   "main": "main.js",
   "author": "Rakoonir",
@@ -8,7 +8,7 @@
   "scripts": {
     "styles": "tailwindcss -i ./src/tailwind.css -o ./dist/styles.css --minify",
     "start": "npm run styles && electron .",
-    "build:win": "npm run styles && electron-builder --win --publish never --config.directories.output=\"%TEMP%\\rp-charview-build\""
+    "build:win": "npm run styles && electron-builder --win --publish always --config.directories.output=\"%TEMP%\\rp-charview-build\""
   },
   "dependencies": {
     "@fontsource/cinzel": "^5.3.0",
@@ -25,7 +25,7 @@
   "build": {
     "appId": "de.rakoonir.rpcharview",
     "productName": "Chronik der Helden",
-    "artifactName": "Chronik-der-Helden-${version}.${ext}",
+    "artifactName": "chronik-der-helden.${ext}",
     "asar": true,
     "directories": {
       "output": "release"

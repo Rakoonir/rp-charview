@@ -5,7 +5,35 @@ const path = require("node:path");
 const { pathToFileURL } = require("node:url");
 
 const APP_URL = pathToFileURL(path.join(__dirname, "CharView.html")).href;
-const defaults = { autoCheckUpdates: true, launchAtStartup: false };
+const defaultTheme = {
+  preset: "royal-dark",
+  background: "#0d0a11",
+  background2: "#1a121d",
+  panel: "#211826",
+  ink: "#ecdfc4",
+  muted: "#a89a82",
+  accent: "#d8a64b",
+  accent2: "#8c6425",
+  ember: "#d5502f",
+  line: "rgba(216, 166, 75, 0.35)",
+  glow: "rgba(213, 80, 47, 0.45)",
+  glowSoft: "rgba(142, 202, 230, 0.18)",
+  buttonTop: "#3a2a2f",
+  buttonBottom: "#1d1419",
+  buttonText: "#f8f1dc",
+  fontTheme: "classic",
+  highlight: "#fff2c4",
+  panelStrong: "#3a1f2c",
+  portraitGlow: "#4a2433",
+  fieldSurface: "rgba(255, 255, 255, 0.02)",
+  modalBackdrop: "rgba(8, 5, 10, 0.93)",
+  cardGlow: "rgba(216, 166, 75, 0.06)",
+};
+const defaults = {
+  autoCheckUpdates: true,
+  launchAtStartup: false,
+  theme: { ...defaultTheme },
+};
 let mainWindow;
 let updateStatus = { event: "idle", message: "Noch nicht nach Updates gesucht." };
 
@@ -13,31 +41,98 @@ app.setAppUserModelId("de.rakoonir.rpcharview");
 autoUpdater.autoDownload = true;
 autoUpdater.autoInstallOnAppQuit = true;
 
-async function dataPath() {
-  const settings = await readSettings();
-  return path.join(settings.dataDirectory, "characters.json");
+function settingsDirectoryFor(directory = app.getPath("userData")) {
+  return path.join(directory, "settings");
 }
 
-function settingsPath() {
+function settingsPath(directory = app.getPath("userData")) {
+  return path.join(settingsDirectoryFor(directory), "settings.json");
+}
+
+function legacySettingsPath() {
   return path.join(app.getPath("userData"), "settings.json");
 }
 
-async function readSettings() {
+async function dataPath() {
+  const settings = await readSettings();
+  const targetedPath = path.join(settingsDirectoryFor(settings.dataDirectory), "characters.json");
+  const legacyPath = path.join(settings.dataDirectory, "characters.json");
+
   try {
-    const saved = JSON.parse(await fs.readFile(settingsPath(), "utf8"));
-    return {
-      autoCheckUpdates: saved.autoCheckUpdates !== false,
-      launchAtStartup: saved.launchAtStartup === true,
-      dataDirectory:
-        typeof saved.dataDirectory === "string" &&
-        path.isAbsolute(saved.dataDirectory)
-          ? saved.dataDirectory
-          : app.getPath("userData"),
-    };
+    await fs.access(targetedPath);
+    return targetedPath;
   } catch (error) {
     if (error.code !== "ENOENT") throw error;
-    return { ...defaults, dataDirectory: app.getPath("userData") };
   }
+
+  try {
+    await fs.access(legacyPath);
+    return legacyPath;
+  } catch (error) {
+    if (error.code !== "ENOENT") throw error;
+  }
+
+  return targetedPath;
+}
+
+function normalizeTheme(theme) {
+  const base = { ...defaultTheme };
+  if (!theme || typeof theme !== "object") return base;
+  return {
+    ...base,
+    ...Object.fromEntries(
+      Object.entries(base).map(([key]) => [key, typeof theme[key] === "string" ? theme[key] : base[key]]),
+    ),
+  };
+}
+
+async function readSettings() {
+  const defaultDataDirectory = app.getPath("userData");
+  const legacyPath = legacySettingsPath();
+  const primaryPath = settingsPath(defaultDataDirectory);
+  const fallbackPaths = [primaryPath, legacyPath];
+
+  let saved = null;
+  let sourcePath = null;
+
+  for (const candidate of fallbackPaths) {
+    try {
+      saved = JSON.parse(await fs.readFile(candidate, "utf8"));
+      sourcePath = candidate;
+      break;
+    } catch (error) {
+      if (error.code !== "ENOENT") throw error;
+    }
+  }
+
+  if (!saved) {
+    return {
+      ...defaults,
+      dataDirectory: defaultDataDirectory,
+      theme: { ...defaultTheme },
+    };
+  }
+
+  const dataDirectory =
+    typeof saved.dataDirectory === "string" && path.isAbsolute(saved.dataDirectory)
+      ? saved.dataDirectory
+      : defaultDataDirectory;
+  const targetPath = settingsPath(dataDirectory);
+  await fs.mkdir(path.dirname(targetPath), { recursive: true });
+
+  if (sourcePath !== targetPath) {
+    await writeJsonAtomically(targetPath, saved);
+    if (sourcePath === legacyPath) {
+      await fs.rm(legacyPath, { force: true });
+    }
+  }
+
+  return {
+    autoCheckUpdates: saved.autoCheckUpdates !== false,
+    launchAtStartup: saved.launchAtStartup === true,
+    dataDirectory,
+    theme: normalizeTheme(saved.theme),
+  };
 }
 
 async function readChronicle(filePath) {
@@ -87,13 +182,8 @@ function createWindow() {
     height: 900,
     minWidth: 960,
     minHeight: 680,
+    frame: false,
     backgroundColor: "#0d0a11",
-    titleBarStyle: "hidden",
-    titleBarOverlay: {
-      color: "#1a121d",
-      symbolColor: "#d8a64b",
-      height: 40,
-    },
     autoHideMenuBar: true,
     show: false,
     webPreferences: {
@@ -207,7 +297,14 @@ ipcMain.handle("data:load", async () => {
 
 ipcMain.handle("data:save", async (_event, data) => {
   if (!Array.isArray(data)) throw new TypeError("Die Chronik muss eine Liste sein.");
-  await writeJsonAtomically(await dataPath(), data);
+  const settings = await readSettings();
+  const targetPath = path.join(settingsDirectoryFor(settings.dataDirectory), "characters.json");
+  const legacyPath = path.join(settings.dataDirectory, "characters.json");
+  await fs.mkdir(path.dirname(targetPath), { recursive: true });
+  await writeJsonAtomically(targetPath, data);
+  if (legacyPath !== targetPath) {
+    await fs.rm(legacyPath, { force: true });
+  }
 });
 
 ipcMain.handle("settings:get", async () => {
@@ -228,12 +325,14 @@ ipcMain.handle("settings:save", async (_event, settings) => {
     throw new TypeError("Ungültige Einstellungen.");
   }
   const currentSettings = await readSettings();
+  const theme = normalizeTheme(settings.theme);
   const saved = {
     autoCheckUpdates: settings.autoCheckUpdates,
     launchAtStartup: settings.launchAtStartup,
     dataDirectory: currentSettings.dataDirectory,
+    theme,
   };
-  await writeJsonAtomically(settingsPath(), saved);
+  await writeJsonAtomically(settingsPath(currentSettings.dataDirectory), saved);
   setLaunchAtStartup(saved.launchAtStartup);
   return saved;
 });
@@ -262,8 +361,8 @@ ipcMain.handle("data:choose-directory", async () => {
   }
 
   await fs.mkdir(destinationDirectory, { recursive: true });
-  const currentFile = path.join(currentDirectory, "characters.json");
-  const destinationFile = path.join(destinationDirectory, "characters.json");
+  const currentFile = path.join(settingsDirectoryFor(currentDirectory), "characters.json");
+  const destinationFile = path.join(settingsDirectoryFor(destinationDirectory), "characters.json");
   const [currentChronicle, destinationChronicle] = await Promise.all([
     readChronicle(currentFile),
     readChronicle(destinationFile),
@@ -302,10 +401,11 @@ ipcMain.handle("data:choose-directory", async () => {
     await writeJsonAtomically(destinationFile, currentChronicle);
   }
 
-  await writeJsonAtomically(settingsPath(), {
+  const updatedSettings = {
     ...settings,
     dataDirectory: destinationDirectory,
-  });
+  };
+  await writeJsonAtomically(settingsPath(destinationDirectory), updatedSettings);
   return {
     canceled: false,
     changed: true,
@@ -318,11 +418,31 @@ ipcMain.handle("updates:status", () => updateStatus);
 ipcMain.handle("updates:install", () => autoUpdater.quitAndInstall());
 ipcMain.handle("app:open-data-folder", async () => {
   const settings = await readSettings();
-  const error = await shell.openPath(settings.dataDirectory);
+  const folder = settingsDirectoryFor(settings.dataDirectory);
+  await fs.mkdir(folder, { recursive: true });
+  const error = await shell.openPath(folder);
   if (error) throw new Error(error);
 });
 
 ipcMain.on("settings:open", () => sendToRenderer("settings:open"));
+ipcMain.handle("window:control", (_event, action) => {
+  if (!mainWindow || mainWindow.isDestroyed()) return;
+
+  switch (action) {
+    case "minimize":
+      mainWindow.minimize();
+      break;
+    case "maximize":
+      if (mainWindow.isMaximized()) mainWindow.restore();
+      else mainWindow.maximize();
+      break;
+    case "close":
+      mainWindow.close();
+      break;
+    default:
+      break;
+  }
+});
 
 app.whenReady().then(async () => {
   Menu.setApplicationMenu(null);
