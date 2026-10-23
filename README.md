@@ -156,7 +156,7 @@ Die HTML-Datei enthält Schema, Store und UI; `main.js` und `preload.js` ergänz
 
 ## Als Windows-Desktop-App
 
-Die App verwendet Electron mit aktiviertem Context Isolation, deaktiviertem Node-Zugriff im Renderer und einer eingeschränkten Preload-Bridge. Charaktere liegen im Electron-Benutzerverzeichnis (`app.getPath("userData")`); der genaue Ort wird in den Einstellungen angezeigt.
+Die App verwendet Electron mit aktiviertem Context Isolation, deaktiviertem Node-Zugriff im Renderer und einer eingeschränkten Preload-Bridge. Charaktere und eingebettete Bilder werden gemeinsam in `characters.json` gespeichert. In den Einstellungen lässt sich der Datenordner auswählen; beim Wechsel wird die aktuelle Chronik übernommen, und die bisherige Datei bleibt als lokale Sicherung erhalten. Enthält der Zielordner bereits eine Chronik, kannst du zwischen dieser und den aktuellen Daten wählen. Beim Ersetzen wird die vorhandene Zieldatei vorher als Sicherung kopiert.
 
 ### Entwicklung und Installer
 

@@ -610,9 +610,13 @@
           <section>
             <h3 class="ph">Daten</h3>
             <p class="text-sm" style="color: var(--mute)">
-              Charaktere werden nur auf diesem Computer gespeichert.
+              Charaktere und hochgeladene Bilder werden gemeinsam in einer Chronik-Datei im gewählten Ordner gespeichert. Beim Wechsel bleibt die bisherige Datei als Sicherung erhalten.
             </p>
-            <button class="btn mt-3" data-act="open-data-folder">Datenordner öffnen</button>
+            <p id="data-directory" class="mt-3 break-all text-sm" style="color: var(--gold)"></p>
+            <div class="mt-3 flex flex-wrap gap-2">
+              <button class="btn" data-act="choose-data-directory">Ordner auswählen</button>
+              <button class="btn" data-act="open-data-folder">Datenordner öffnen</button>
+            </div>
           </section>
         </div>
         <div class="flex flex-wrap items-center justify-between gap-3 mt-7">
@@ -699,8 +703,8 @@
           fields: [
             { k: "name", l: "Name", ph: "z. B. Aldric Sturmwacht" },
             { k: "titel", l: "Titel", ph: "z. B. Wächter des Nordpasses" },
-            { k: "art", l: "Art / Volk", list: ARTEN },
-            { k: "klasse", l: "Klasse / Beruf", list: KLASSEN },
+            { k: "art", l: "Art / Volk", opts: ARTEN },
+            { k: "klasse", l: "Klasse / Beruf", opts: KLASSEN },
             { k: "gesinnung", l: "Gesinnung", opts: GESINNUNG },
             { k: "geschlecht", l: "Geschlecht" },
             { k: "alter", l: "Alter", ph: "z. B. 34 Winter" },
@@ -1191,6 +1195,7 @@
           const settings = await window.desktop.getSettings();
           $("#settings-autostart").checked = settings.launchAtStartup;
           $("#settings-auto-check").checked = settings.autoCheckUpdates;
+          $("#data-directory").textContent = settings.dataDirectory;
           $("#app-version").textContent = `Version ${settings.version} · Daten: ${settings.dataDirectory}`;
           updateStatus(settings.updateStatus);
         } catch (error) {
@@ -1424,8 +1429,12 @@
         let el;
         if (f.area)
           el = `<textarea class="inp" id="${id}" data-f="${f.k}" rows="${f.rows || 3}" placeholder="${f.ph || ""}">${v}</textarea>`;
-        else if (f.opts)
-          el = `<select class="inp" id="${id}" data-f="${f.k}">${f.opts.map((o) => `<option ${o === c[f.k] ? "selected" : ""}>${o}</option>`).join("")}</select>`;
+        else if (f.opts) {
+          const options = f.opts.includes(c[f.k])
+            ? f.opts
+            : [...f.opts, ...(c[f.k] ? [c[f.k]] : [])];
+          el = `<select class="inp" id="${id}" data-f="${f.k}"><option value="" disabled ${c[f.k] ? "" : "selected"}>Bitte auswählen …</option>${options.map((o) => `<option value="${esc(o)}" ${o === c[f.k] ? "selected" : ""}>${esc(o)}</option>`).join("")}</select>`;
+        }
         else
           el = `<input class="inp" id="${id}" data-f="${f.k}" ${f.num ? 'type="number" min="1" max="99" data-n="1"' : ""} ${f.list ? `list="dl_${f.k}"` : ""} value="${v}" placeholder="${f.ph || ""}">${f.list ? `<datalist id="dl_${f.k}">${f.list.map((o) => `<option value="${o}">`).join("")}</datalist>` : ""}`;
         return `<div class="${cls}"><label class="l" for="${id}">${f.l}</label>${el}</div>`;
@@ -1676,6 +1685,18 @@
           else updateStatus({ event: "unavailable", message: "Nur in der installierten App verfügbar." });
         } else if (d.act === "install-update") {
           if (window.desktop) await window.desktop.installUpdate();
+        } else if (d.act === "choose-data-directory") {
+          if (!window.desktop) {
+            toast("Die Ordnerauswahl ist nur in der installierten App verfügbar.");
+            return;
+          }
+          try {
+            const result = await window.desktop.chooseDataDirectory();
+            if (!result.canceled && result.changed) window.location.reload();
+          } catch (error) {
+            console.error("Datenordner konnte nicht geändert werden.", error);
+            toast("Datenordner konnte nicht geändert werden.");
+          }
         } else if (d.act === "open-data-folder") {
           if (window.desktop) {
             try {

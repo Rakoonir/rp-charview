@@ -13,8 +13,9 @@ app.setAppUserModelId("de.rakoonir.rpcharview");
 autoUpdater.autoDownload = true;
 autoUpdater.autoInstallOnAppQuit = true;
 
-function dataPath() {
-  return path.join(app.getPath("userData"), "characters.json");
+async function dataPath() {
+  const settings = await readSettings();
+  return path.join(settings.dataDirectory, "characters.json");
 }
 
 function settingsPath() {
@@ -27,10 +28,28 @@ async function readSettings() {
     return {
       autoCheckUpdates: saved.autoCheckUpdates !== false,
       launchAtStartup: saved.launchAtStartup === true,
+      dataDirectory:
+        typeof saved.dataDirectory === "string" &&
+        path.isAbsolute(saved.dataDirectory)
+          ? saved.dataDirectory
+          : app.getPath("userData"),
     };
   } catch (error) {
     if (error.code !== "ENOENT") throw error;
-    return { ...defaults };
+    return { ...defaults, dataDirectory: app.getPath("userData") };
+  }
+}
+
+async function readChronicle(filePath) {
+  try {
+    const data = JSON.parse(await fs.readFile(filePath, "utf8"));
+    if (!Array.isArray(data)) {
+      throw new TypeError(`Die Chronik-Datei ist ungültig: ${filePath}`);
+    }
+    return data;
+  } catch (error) {
+    if (error.code === "ENOENT") return null;
+    throw error;
   }
 }
 
@@ -183,17 +202,12 @@ autoUpdater.on("error", (error) =>
 );
 
 ipcMain.handle("data:load", async () => {
-  try {
-    return JSON.parse(await fs.readFile(dataPath(), "utf8"));
-  } catch (error) {
-    if (error.code === "ENOENT") return null;
-    throw error;
-  }
+  return readChronicle(await dataPath());
 });
 
 ipcMain.handle("data:save", async (_event, data) => {
   if (!Array.isArray(data)) throw new TypeError("Die Chronik muss eine Liste sein.");
-  await writeJsonAtomically(dataPath(), data);
+  await writeJsonAtomically(await dataPath(), data);
 });
 
 ipcMain.handle("settings:get", async () => {
@@ -201,7 +215,6 @@ ipcMain.handle("settings:get", async () => {
   return {
     ...settings,
     version: app.getVersion(),
-    dataDirectory: app.getPath("userData"),
     updateStatus,
   };
 });
@@ -214,20 +227,98 @@ ipcMain.handle("settings:save", async (_event, settings) => {
   ) {
     throw new TypeError("Ungültige Einstellungen.");
   }
+  const currentSettings = await readSettings();
   const saved = {
     autoCheckUpdates: settings.autoCheckUpdates,
     launchAtStartup: settings.launchAtStartup,
+    dataDirectory: currentSettings.dataDirectory,
   };
   await writeJsonAtomically(settingsPath(), saved);
   setLaunchAtStartup(saved.launchAtStartup);
   return saved;
 });
 
+ipcMain.handle("data:choose-directory", async () => {
+  const { canceled, filePaths } = await dialog.showOpenDialog(mainWindow, {
+    title: "Ordner für die Chronik auswählen",
+    buttonLabel: "Diesen Ordner verwenden",
+    properties: ["openDirectory", "createDirectory"],
+  });
+  if (canceled || !filePaths[0]) return { canceled: true };
+
+  const destinationDirectory = path.resolve(filePaths[0]);
+  const settings = await readSettings();
+  const currentDirectory = path.resolve(settings.dataDirectory);
+  if (
+    process.platform === "win32"
+      ? destinationDirectory.toLowerCase() === currentDirectory.toLowerCase()
+      : destinationDirectory === currentDirectory
+  ) {
+    return {
+      canceled: false,
+      changed: false,
+      directory: destinationDirectory,
+    };
+  }
+
+  await fs.mkdir(destinationDirectory, { recursive: true });
+  const currentFile = path.join(currentDirectory, "characters.json");
+  const destinationFile = path.join(destinationDirectory, "characters.json");
+  const [currentChronicle, destinationChronicle] = await Promise.all([
+    readChronicle(currentFile),
+    readChronicle(destinationFile),
+  ]);
+  let useDestinationChronicle = false;
+
+  if (destinationChronicle !== null) {
+    const hasCurrentChronicle = currentChronicle !== null;
+    const { response } = await dialog.showMessageBox(mainWindow, {
+      type: "question",
+      title: "Chronik im Zielordner gefunden",
+      message: hasCurrentChronicle
+        ? "Der ausgewählte Ordner enthält bereits eine Chronik. Welche Daten möchtest du verwenden?"
+        : "Der ausgewählte Ordner enthält bereits eine Chronik. Möchtest du diese verwenden?",
+      detail: hasCurrentChronicle
+        ? "Beim Übernehmen der aktuellen Chronik wird die vorhandene Datei zuvor als Sicherung im Zielordner gespeichert."
+        : "Die Chronik im bisherigen Ordner bleibt unverändert.",
+      buttons: hasCurrentChronicle
+        ? ["Abbrechen", "Vorhandene Chronik verwenden", "Aktuelle Chronik übernehmen"]
+        : ["Abbrechen", "Vorhandene Chronik verwenden"],
+      defaultId: 0,
+      cancelId: 0,
+    });
+    if (response === 0) return { canceled: true };
+    useDestinationChronicle = response === 1;
+  }
+
+  if (!useDestinationChronicle && currentChronicle !== null) {
+    if (destinationChronicle !== null) {
+      const backupPath = path.join(
+        destinationDirectory,
+        `characters.backup-${new Date().toISOString().replace(/[:.]/g, "-")}.json`,
+      );
+      await fs.copyFile(destinationFile, backupPath);
+    }
+    await writeJsonAtomically(destinationFile, currentChronicle);
+  }
+
+  await writeJsonAtomically(settingsPath(), {
+    ...settings,
+    dataDirectory: destinationDirectory,
+  });
+  return {
+    canceled: false,
+    changed: true,
+    directory: destinationDirectory,
+  };
+});
+
 ipcMain.handle("updates:check", () => checkForUpdates(true));
 ipcMain.handle("updates:status", () => updateStatus);
 ipcMain.handle("updates:install", () => autoUpdater.quitAndInstall());
 ipcMain.handle("app:open-data-folder", async () => {
-  const error = await shell.openPath(app.getPath("userData"));
+  const settings = await readSettings();
+  const error = await shell.openPath(settings.dataDirectory);
   if (error) throw new Error(error);
 });
 

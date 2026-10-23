@@ -3,6 +3,7 @@ const { contextBridge, ipcRenderer } = require("electron");
 contextBridge.exposeInMainWorld("desktop", {
   load: () => ipcRenderer.invoke("data:load"),
   save: (data) => ipcRenderer.invoke("data:save", data),
+  chooseDataDirectory: () => ipcRenderer.invoke("data:choose-directory"),
   getSettings: () => ipcRenderer.invoke("settings:get"),
   saveSettings: (settings) => ipcRenderer.invoke("settings:save", settings),
   checkForUpdates: () => ipcRenderer.invoke("updates:check"),
