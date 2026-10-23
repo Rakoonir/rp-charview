@@ -62,35 +62,6 @@ function setLaunchAtStartup(enabled) {
   });
 }
 
-function createMenu() {
-  Menu.setApplicationMenu(
-    Menu.buildFromTemplate([
-      {
-        label: "Chronik",
-        submenu: [
-          { label: "Einstellungen…", click: () => sendToRenderer("settings:open") },
-          {
-            label: "Nach Updates suchen…",
-            click: () => checkForUpdates(true),
-          },
-          { type: "separator" },
-          { role: "quit", label: "Beenden" },
-        ],
-      },
-      { role: "editMenu" },
-      {
-        label: "Hilfe",
-        submenu: [
-          {
-            label: "Projekt auf GitHub öffnen",
-            click: () => shell.openExternal("https://github.com/Rakoonir/rp-charview"),
-          },
-        ],
-      },
-    ]),
-  );
-}
-
 function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1280,
@@ -98,6 +69,13 @@ function createWindow() {
     minWidth: 960,
     minHeight: 680,
     backgroundColor: "#0d0a11",
+    titleBarStyle: "hidden",
+    titleBarOverlay: {
+      color: "#1a121d",
+      symbolColor: "#d8a64b",
+      height: 40,
+    },
+    autoHideMenuBar: true,
     show: false,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
@@ -107,6 +85,7 @@ function createWindow() {
     },
   });
 
+  mainWindow.setMenuBarVisibility(false);
   mainWindow.once("ready-to-show", () => mainWindow.show());
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
     if (url.startsWith("https://github.com/")) shell.openExternal(url);
@@ -255,7 +234,7 @@ ipcMain.handle("app:open-data-folder", async () => {
 ipcMain.on("settings:open", () => sendToRenderer("settings:open"));
 
 app.whenReady().then(async () => {
-  createMenu();
+  Menu.setApplicationMenu(null);
   createWindow();
   let settings;
   try {

@@ -7,6 +7,9 @@
       content="width=device-width, initial-scale=1, viewport-fit=cover"
     />
     <title>Chronik der Helden – Charakter-Editor</title>
+    <script>
+      if (window.desktop) document.documentElement.classList.add("electron");
+    </script>
     <link rel="stylesheet" href="./dist/styles.css" />
     <link rel="stylesheet" href="./node_modules/@fontsource/cinzel/500.css" />
     <link rel="stylesheet" href="./node_modules/@fontsource/cinzel/700.css" />
@@ -53,6 +56,34 @@
       }
       html {
         scroll-padding-top: env(safe-area-inset-top, 0px);
+      }
+      .window-titlebar {
+        display: none;
+        position: fixed;
+        inset: 0 0 auto;
+        z-index: 20;
+        height: 40px;
+        align-items: center;
+        gap: 0.65rem;
+        padding: 0 1rem;
+        background: linear-gradient(180deg, #241720, #1a121d);
+        border-bottom: 1px solid var(--line);
+        color: var(--gold);
+        font-family: "Cinzel", serif;
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        -webkit-app-region: drag;
+      }
+      .electron .window-titlebar {
+        display: flex;
+      }
+      .electron body {
+        padding-top: 40px;
+      }
+      .window-titlebar-mark {
+        font-size: 1rem;
+        text-shadow: 0 0 8px rgba(213, 80, 47, 0.65);
       }
       body {
         background:
@@ -164,13 +195,17 @@
         outline-offset: 2px;
       }
       dialog {
+        position: fixed;
+        inset: 0;
+        margin: auto;
         color: var(--ink);
         background: transparent;
         border: 0;
         padding: 1rem;
-        width: min(100%, 46rem);
+        width: min(calc(100% - 2rem), 46rem);
         max-width: none;
-        max-height: 100%;
+        max-height: calc(100vh - 2rem);
+        max-height: calc(100dvh - 2rem);
       }
       dialog::backdrop {
         background: rgba(0, 0, 0, 0.78);
@@ -477,6 +512,10 @@
     </style>
   </head>
   <body>
+    <div class="window-titlebar" aria-hidden="true">
+      <span class="window-titlebar-mark">✦</span>
+      <span>CHRONIK DER HELDEN</span>
+    </div>
     <header
       class="max-w-6xl mx-auto px-4 pt-6 flex flex-wrap items-center justify-between gap-4"
     >
