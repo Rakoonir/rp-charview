@@ -35,6 +35,7 @@
       "main.js",
       "preload.js",
       "dist/styles.css",
+      "assets/**/*",
       "package.json"
     ],
     "win": {
