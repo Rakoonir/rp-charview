@@ -4,7 +4,6 @@ on:
   push:
     tags:
       - "v*"
-  workflow_dispatch:
 
 permissions:
   contents: write
@@ -25,7 +24,42 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build and publish installer
-        run: npm run release:win
+      - name: Build installer
+        run: npm run build:win
+
+      - name: Publish installer and updater metadata
+        shell: pwsh
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          $version = (node -p "require('./package.json').version").Trim()
+          $tagVersion = $env:GITHUB_REF_NAME -replace '^v', ''
+          if ($tagVersion -ne $version) {
+            throw "Tag version $tagVersion does not match package version $version."
+          }
+
+          $output = Join-Path $env:TEMP 'rp-charview-build'
+          $assets = @(
+            (Join-Path $output "Chronik-der-Helden-$version.exe"),
+            (Join-Path $output "Chronik-der-Helden-$version.exe.blockmap"),
+            (Join-Path $output 'latest.yml')
+          )
+          foreach ($asset in $assets) {
+            if (-not (Test-Path -LiteralPath $asset)) {
+              throw "Build asset not found: $asset"
+            }
+          }
+
+          gh release view $env:GITHUB_REF_NAME --repo $env:GITHUB_REPOSITORY 2>$null
+          if ($LASTEXITCODE -ne 0) {
+            gh release create $env:GITHUB_REF_NAME `
+              --title "Chronik der Helden $version" `
+              --notes "Windows Desktop Release $version." `
+              --repo $env:GITHUB_REPOSITORY
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          }
+
+          gh release upload $env:GITHUB_REF_NAME @assets `
+            --repo $env:GITHUB_REPOSITORY `
+            --clobber
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }

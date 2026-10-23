@@ -168,15 +168,15 @@ npm run build:win
 
 ### Updates veröffentlichen
 
-Ein Push eines Versions-Tags (`v*`) startet `.github/workflows/release-windows.yml`. GitHub Actions erstellt einen x64-NSIS-Installer und veröffentlicht die Update-Metadaten und Dateien als GitHub Release. Der Workflow nutzt dafür `GITHUB_TOKEN`; ein privater Deploy-Key wird nicht benötigt.
+Ein Push eines Versions-Tags (`v*`) startet `.github/workflows/release-windows.yml`. GitHub Actions erstellt einen x64-NSIS-Installer und lädt Installer, Blockmap und `latest.yml` explizit als GitHub-Release-Assets hoch. Der Workflow prüft die Version und bricht ab, wenn Dateien fehlen. Er nutzt dafür `GITHUB_TOKEN`; ein privater Deploy-Key wird nicht benötigt.
 
 ```powershell
-npm version 1.0.1 --no-git-tag-version
+npm version 1.0.2 --no-git-tag-version
 git add package.json package-lock.json
-git commit -m "Release v1.0.1"
-git tag v1.0.1
+git commit -m "Release v1.0.2"
+git tag v1.0.2
 git push origin main
-git push origin v1.0.1
+git push origin v1.0.2
 ```
 
 Die App sucht standardmäßig beim Start nach Updates, lädt sie automatisch herunter und fragt vor dem Neustart zur Installation. Update-Prüfung und Windows-Autostart sind im Einstellungsmenü konfigurierbar. Unsignierte Windows-Builds können beim ersten Start eine SmartScreen-Warnung anzeigen.
