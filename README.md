@@ -1,6 +1,7 @@
 <div align="center">
 
-<img width="1254" height="1254" alt="Goldener Fantasy-Wappen mit Federrolle" src="https://github.com/user-attachments/assets/a843b5a8-b243-4ea1-abb3-8ba7c9d81b16" />
+<img width="256" height="256" alt="Goldene Schriftrollen-Quillenkreuzung am Wappen" src="https://github.com/user-attachments/assets/223ef293-5670-4d2e-bd49-ee48e93c8f5f" />
+
 
 
 # ⚔️ Chronik der Helden
