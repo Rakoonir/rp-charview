@@ -42,6 +42,7 @@ jobs:
           $assets = @(
             (Join-Path $output "Chronik-der-Helden-$version.exe"),
             (Join-Path $output "Chronik-der-Helden-$version.exe.blockmap"),
+            (Join-Path $output "Chronik-der-Helden-$version.msi"),
             (Join-Path $output 'latest.yml')
           )
           foreach ($asset in $assets) {

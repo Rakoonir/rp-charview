@@ -11,7 +11,7 @@
 Lege Charaktere an, schreibe ihre Geschichte, sammle Bilder und führe ein Tagebuch – als Windows-Desktop-App mit lokal gespeicherten Daten und automatischen Updates.
 
 ![Status](https://img.shields.io/badge/Status-aktiv-d8a64b?style=flat-square)
-![Build](https://img.shields.io/badge/Build-Electron_%C2%B7_NSIS-8c6425?style=flat-square)
+![Build](https://img.shields.io/badge/Build-Electron_%C2%B7_NSIS_%C2%B7_MSI-8c6425?style=flat-square)
 ![Stack](https://img.shields.io/badge/Stack-Electron_%C2%B7_Tailwind_%C2%B7_Vanilla_JS-d5502f?style=flat-square)
 ![Lizenz](https://img.shields.io/badge/Lizenz-MIT-1f3f7d?style=flat-square)
 
@@ -73,13 +73,13 @@ npm ci
 npm start
 ```
 
-Den Windows-Installer baust du mit:
+Den Windows-Installer (NSIS-`.exe` und `.msi`) baust du mit:
 
 ```powershell
 npm run build:win
 ```
 
-Der NSIS-Installer liegt anschließend unter `%TEMP%\rp-charview-build`.
+Beide Installer und das Update-Manifest liegen anschließend unter `%TEMP%\rp-charview-build`.
 
 ## Bedienung
 
@@ -168,15 +168,15 @@ npm run build:win
 
 ### Updates veröffentlichen
 
-Ein Push eines Versions-Tags (`v*`) startet `.github/workflows/release-windows.yml`. GitHub Actions erstellt einen x64-NSIS-Installer und lädt Installer, Blockmap und `latest.yml` explizit als GitHub-Release-Assets hoch. Der Workflow prüft die Version und bricht ab, wenn Dateien fehlen. Er nutzt dafür `GITHUB_TOKEN`; ein privater Deploy-Key wird nicht benötigt.
+Ein Push eines Versions-Tags (`v*`) startet `.github/workflows/release-windows.yml`. GitHub Actions erstellt x64-NSIS- und MSI-Installer und lädt beide Installer, die NSIS-Blockmap und `latest.yml` explizit als GitHub-Release-Assets hoch. Der Workflow prüft die Version und bricht ab, wenn Dateien fehlen. Er nutzt dafür `GITHUB_TOKEN`; ein privater Deploy-Key wird nicht benötigt.
 
 ```powershell
-npm version 1.0.2 --no-git-tag-version
+npm version 1.0.3 --no-git-tag-version
 git add package.json package-lock.json
-git commit -m "Release v1.0.2"
-git tag v1.0.2
+git commit -m "Release v1.0.3"
+git tag v1.0.3
 git push origin main
-git push origin v1.0.2
+git push origin v1.0.3
 ```
 
 Die App sucht standardmäßig beim Start nach Updates, lädt sie automatisch herunter und fragt vor dem Neustart zur Installation. Update-Prüfung und Windows-Autostart sind im Einstellungsmenü konfigurierbar. Unsignierte Windows-Builds können beim ersten Start eine SmartScreen-Warnung anzeigen.
