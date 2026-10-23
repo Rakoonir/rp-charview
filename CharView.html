@@ -1709,6 +1709,39 @@
         });
       };
 
+      const getThemeFromControls = () => {
+        const root = document.documentElement;
+        const computed = getComputedStyle(root);
+        const presetValue = $("#theme-preset")?.value || "custom";
+        const baseTheme = THEME_PRESETS[presetValue] || normalizeTheme({ preset: presetValue });
+
+        return {
+          ...baseTheme,
+          preset: presetValue,
+          background: $("#theme-background")?.value || baseTheme.background,
+          background2: $("#theme-background2")?.value || baseTheme.background2,
+          panel: $("#theme-panel")?.value || baseTheme.panel,
+          ink: $("#theme-ink")?.value || baseTheme.ink,
+          muted: $("#theme-muted")?.value || baseTheme.muted,
+          accent: $("#theme-accent")?.value || baseTheme.accent,
+          accent2: $("#theme-accent2")?.value || baseTheme.accent2,
+          ember: $("#theme-ember")?.value || baseTheme.ember,
+          line: computed.getPropertyValue("--line").trim() || baseTheme.line,
+          glow: computed.getPropertyValue("--glow").trim() || baseTheme.glow,
+          glowSoft: computed.getPropertyValue("--glow-soft").trim() || baseTheme.glowSoft,
+          buttonTop: $("#theme-button-top")?.value || baseTheme.buttonTop,
+          buttonBottom: $("#theme-button-bottom")?.value || baseTheme.buttonBottom,
+          buttonText: $("#theme-button-text")?.value || baseTheme.buttonText,
+          highlight: computed.getPropertyValue("--highlight").trim() || baseTheme.highlight,
+          panelStrong: computed.getPropertyValue("--panel-strong").trim() || baseTheme.panelStrong,
+          portraitGlow: computed.getPropertyValue("--portrait-glow").trim() || baseTheme.portraitGlow,
+          fieldSurface: computed.getPropertyValue("--field-surface").trim() || baseTheme.fieldSurface,
+          modalBackdrop: computed.getPropertyValue("--modal-backdrop").trim() || baseTheme.modalBackdrop,
+          cardGlow: computed.getPropertyValue("--card-glow").trim() || baseTheme.cardGlow,
+          fontTheme: $("#theme-font")?.value || baseTheme.fontTheme || "classic",
+        };
+      };
+
       const openSettings = async () => {
         const dialog = $("#settings-dialog");
         if (!dialog.open) dialog.showModal();
@@ -2256,21 +2289,7 @@
             return;
           }
           try {
-            const nextTheme = {
-              preset: $("#theme-preset").value,
-              background: $("#theme-background").value,
-              background2: $("#theme-background2").value,
-              panel: $("#theme-panel").value,
-              ink: $("#theme-ink").value,
-              muted: $("#theme-muted").value,
-              accent: $("#theme-accent").value,
-              accent2: $("#theme-accent2").value,
-              ember: $("#theme-ember").value,
-              buttonTop: $("#theme-button-top").value,
-              buttonBottom: $("#theme-button-bottom").value,
-              buttonText: $("#theme-button-text").value,
-              fontTheme: $("#theme-font").value,
-            };
+            const nextTheme = getThemeFromControls();
             applyTheme(nextTheme);
             await window.desktop.saveSettings({
               autoCheckUpdates: $("#settings-auto-check").checked,
@@ -2317,21 +2336,7 @@
         const target = e.target;
         if (!(target instanceof HTMLInputElement)) return;
         if (target.dataset.themeColor) {
-          const nextTheme = normalizeTheme({
-            preset: $("#theme-preset").value,
-            background: $("#theme-background").value,
-            background2: $("#theme-background2").value,
-            panel: $("#theme-panel").value,
-            ink: $("#theme-ink").value,
-            muted: $("#theme-muted").value,
-            accent: $("#theme-accent").value,
-            accent2: $("#theme-accent2").value,
-            ember: $("#theme-ember").value,
-            buttonTop: $("#theme-button-top").value,
-            buttonBottom: $("#theme-button-bottom").value,
-            buttonText: $("#theme-button-text").value,
-            fontTheme: $("#theme-font").value,
-          });
+          const nextTheme = getThemeFromControls();
           applyTheme(nextTheme);
         }
       });
