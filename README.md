@@ -247,7 +247,7 @@ Der Worker begrenzt Einsendungen pro IP-Adresse auf fünf pro Stunde. Für Rück
 - [ ] Fertigkeitslisten mit Übungsboni
 - [ ] Vollbild-Leseansicht auch für die Geschichte
 - [x] Beziehungsnetz zwischen Helden, Begleitern und Kontakten
-- [x] Stammbaum mit Profilen und eigenständigen Familienmitgliedern
+- [x] Benannte Stammbäume mit Profilen und eigenständigen Familienmitgliedern; Namen, Ausgangspersonen, Familienverbindungen und Notizen profilfreier Personen lassen sich nachträglich bearbeiten
 - [ ] Druck- und PDF-Ansicht des Charakterblatts
 - [ ] Mehrere Chroniken (Kampagnen)
 - [ ] Aufteilung in ES-Module und Vite-Build
