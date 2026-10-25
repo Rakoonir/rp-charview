@@ -36,18 +36,24 @@ export default {
       !Object.hasOwn(CATEGORY_LABELS, submission.category) ||
       typeof submission.title !== "string" ||
       typeof submission.message !== "string" ||
-      typeof submission.contact !== "string"
+      (submission.email !== undefined && typeof submission.email !== "string") ||
+      (submission.discordName !== undefined && typeof submission.discordName !== "string") ||
+      (submission.contact !== undefined && typeof submission.contact !== "string")
     ) {
       return Response.json({ error: "Ungültige Support-Nachricht." }, { status: 400 });
     }
     const title = submission.title.trim();
     const message = submission.message.trim();
-    const contact = submission.contact.trim();
+    const email = submission.email?.trim() || "";
+    const discordName = submission.discordName?.trim() || "";
+    const contact = submission.contact?.trim() || "";
     if (
       title.length < 1 ||
       title.length > 120 ||
       message.length < 1 ||
       message.length > 3000 ||
+      email.length > 200 ||
+      discordName.length > 100 ||
       contact.length > 200
     ) {
       return Response.json({ error: "Bitte prüfe Betreff, Nachricht und Kontaktangabe." }, { status: 400 });
@@ -67,7 +73,11 @@ export default {
         embeds: [{
           title: `${CATEGORY_LABELS[submission.category]}: ${title}`,
           description: message,
-          fields: contact ? [{ name: "Kontakt für Rückfragen", value: contact }] : [],
+          fields: [
+            ...(email ? [{ name: "E-Mail für Rückfragen", value: email }] : []),
+            ...(discordName ? [{ name: "Discord-Name", value: discordName }] : []),
+            ...(contact ? [{ name: "Kontakt für Rückfragen", value: contact }] : []),
+          ],
           color: submission.category === "wish" ? 0xd8a64b : 0xd5502f,
           timestamp: new Date().toISOString(),
         }],

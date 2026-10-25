@@ -165,7 +165,10 @@ async function readChronicleStore(storeDirectory, legacyDirectory = null) {
   }
 
   const sourceEntries = characters || [];
-  const heroes = sourceEntries.filter((entry) => entry?.type !== "companion");
+  const heroes = sourceEntries.filter((entry) =>
+    entry?.type !== "companion" && entry?.type !== "chronicle-network",
+  );
+  const network = sourceEntries.find((entry) => entry?.type === "chronicle-network");
   const legacyCompanions = sourceEntries.filter((entry) => entry?.type === "companion");
   const companions = mergeById(legacyCompanions, savedCompanions || []).map((companion) => {
     const legacyCompanion = legacyCompanions.find((entry) => String(entry.id) === String(companion.id));
@@ -228,7 +231,7 @@ async function readChronicleStore(storeDirectory, legacyDirectory = null) {
   }
 
   return {
-    data: [...heroes, ...companions],
+    data: [...heroes, ...companions, ...(network ? [network] : [])],
     hasData: true,
     needsMigration:
       legacySource ||
@@ -242,13 +245,19 @@ async function readChronicleStore(storeDirectory, legacyDirectory = null) {
 
 async function saveChronicleStore(storeDirectory, data) {
   if (!Array.isArray(data)) throw new TypeError("Die Chronik muss eine Liste sein.");
-  const heroes = data.filter((entry) => entry?.type !== "companion");
+  const heroes = data.filter((entry) =>
+    entry?.type !== "companion" && entry?.type !== "chronicle-network",
+  );
   const companions = data.filter((entry) => entry?.type === "companion");
+  const network = data.filter((entry) => entry?.type === "chronicle-network");
   const files = new Map();
-  files.set(path.join(storeDirectory, "characters.json"), heroes.map((hero) => {
-    recordId(hero, "characters");
-    return cloneWithout(hero, ["gallery", "diary", "contacts"]);
-  }));
+  files.set(path.join(storeDirectory, "characters.json"), [
+    ...heroes.map((hero) => {
+      recordId(hero, "characters");
+      return cloneWithout(hero, ["gallery", "diary", "contacts"]);
+    }),
+    ...network,
+  ]);
   files.set(path.join(storeDirectory, "companions.json"), companions.map((companion) => {
     recordId(companion, "companions");
     return cloneWithout(companion, ["diary"]);
@@ -540,6 +549,8 @@ ipcMain.handle("data:save", async (_event, data) => {
   }
 });
 
+const PROFILE_OPTION_KEYS = ["arten", "klassen", "gesinnungen", "geschlechter"];
+
 ipcMain.handle("profile-options:load", async () => {
   const filePath = path.join(settingsDirectoryFor(), "profile-options.json");
   try {
@@ -551,15 +562,22 @@ ipcMain.handle("profile-options:load", async () => {
       ? options.standard
       : {};
     return {
-      arten: Array.isArray(options.arten) ? options.arten.filter((value) => typeof value === "string") : [],
-      klassen: Array.isArray(options.klassen) ? options.klassen.filter((value) => typeof value === "string") : [],
-      standard: {
-        arten: standard.arten && typeof standard.arten === "object" && !Array.isArray(standard.arten) ? standard.arten : {},
-        klassen: standard.klassen && typeof standard.klassen === "object" && !Array.isArray(standard.klassen) ? standard.klassen : {},
-      },
+      ...Object.fromEntries(PROFILE_OPTION_KEYS.map((key) => [
+        key,
+        Array.isArray(options[key]) ? options[key].filter((value) => typeof value === "string") : [],
+      ])),
+      standard: Object.fromEntries(PROFILE_OPTION_KEYS.map((key) => [
+        key,
+        standard[key] && typeof standard[key] === "object" && !Array.isArray(standard[key]) ? standard[key] : {},
+      ])),
     };
   } catch (error) {
-    if (error.code === "ENOENT") return { arten: [], klassen: [] };
+    if (error.code === "ENOENT") {
+      return {
+        ...Object.fromEntries(PROFILE_OPTION_KEYS.map((key) => [key, []])),
+        standard: Object.fromEntries(PROFILE_OPTION_KEYS.map((key) => [key, {}])),
+      };
+    }
     throw error;
   }
 });
@@ -567,17 +585,16 @@ ipcMain.handle("profile-options:load", async () => {
 ipcMain.handle("profile-options:save", async (_event, options) => {
   if (
     !options ||
-    !Array.isArray(options.arten) ||
-    !Array.isArray(options.klassen) ||
-    [...options.arten, ...options.klassen].some((value) => typeof value !== "string")
+    PROFILE_OPTION_KEYS.some((key) => !Array.isArray(options[key])) ||
+    PROFILE_OPTION_KEYS.flatMap((key) => options[key]).some((value) => typeof value !== "string")
   ) {
-    throw new TypeError("Ungültige Arten- oder Klassenoptionen.");
+    throw new TypeError("Ungültige Profiloptionen.");
   }
   const standard = options.standard ?? {};
   if (!standard || typeof standard !== "object" || Array.isArray(standard)) {
     throw new TypeError("Ungültige Standardvorgaben.");
   }
-  for (const key of ["arten", "klassen"]) {
+  for (const key of PROFILE_OPTION_KEYS) {
     const overrides = standard[key] ?? {};
     if (!overrides || typeof overrides !== "object" || Array.isArray(overrides)) {
       throw new TypeError("Ungültige Standardvorgaben.");
@@ -594,14 +611,16 @@ ipcMain.handle("profile-options:save", async (_event, options) => {
       }
     }
   }
-  await writeJsonAtomically(path.join(settingsDirectoryFor(), "profile-options.json"), {
-    arten: [...new Set(options.arten.map((value) => value.trim()).filter(Boolean))],
-    klassen: [...new Set(options.klassen.map((value) => value.trim()).filter(Boolean))],
-    standard: {
-      arten: standard.arten ?? {},
-      klassen: standard.klassen ?? {},
+  await writeJsonAtomically(
+    path.join(settingsDirectoryFor(), "profile-options.json"),
+    {
+      ...Object.fromEntries(PROFILE_OPTION_KEYS.map((key) => [
+        key,
+        [...new Set(options[key].map((value) => value.trim()).filter(Boolean))],
+      ])),
+      standard: Object.fromEntries(PROFILE_OPTION_KEYS.map((key) => [key, standard[key] ?? {}])),
     },
-  });
+  );
 });
 
 ipcMain.handle("settings:get", async () => {
@@ -654,6 +673,8 @@ ipcMain.handle("support:submit", async (event, submission) => {
     !categories.has(submission.category) ||
     typeof submission.title !== "string" ||
     typeof submission.message !== "string" ||
+    (submission.email !== undefined && typeof submission.email !== "string") ||
+    (submission.discordName !== undefined && typeof submission.discordName !== "string") ||
     (submission.contact !== undefined && typeof submission.contact !== "string")
   ) {
     throw new TypeError("Ungültige Support-Nachricht.");
@@ -662,6 +683,8 @@ ipcMain.handle("support:submit", async (event, submission) => {
     category: submission.category,
     title: submission.title.trim(),
     message: submission.message.trim(),
+    email: submission.email?.trim() || "",
+    discordName: submission.discordName?.trim() || "",
     contact: submission.contact?.trim() || "",
   };
   if (
@@ -669,6 +692,8 @@ ipcMain.handle("support:submit", async (event, submission) => {
     payload.title.length > 120 ||
     payload.message.length < 1 ||
     payload.message.length > 3000 ||
+    payload.email.length > 200 ||
+    payload.discordName.length > 100 ||
     payload.contact.length > 200
   ) {
     throw new TypeError("Bitte prüfe Betreff, Nachricht und Kontaktangabe.");

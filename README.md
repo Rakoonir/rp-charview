@@ -39,7 +39,9 @@ Lege Charaktere an, schreibe ihre Geschichte, sammle Bilder und führe ein Tageb
 - Charaktere anlegen, bearbeiten, ansehen und löschen
 - Heldenliste mit Porträt, Volk, Klasse, Stufe und Lebensbalken sowie Suche
 - Begleiter unabhängig verwalten und beliebig vielen Helden zuordnen
+- Begleiter direkt im Heldenprofil aus einer Liste vorhandener Begleiter zuordnen
 - Kontaktprofile pro Held mit persönlichen Informationen und einzelnen RP-Notizen führen; zentrale Übersicht aller Kontakte
+- Zentrales Beziehungsnetz zwischen Helden, Begleitern und Kontakten, direkt in Profilen verwaltbar; jeder Held hat zusätzlich einen verzweigten Stammbaum mit eigenständigen Personen ohne vollständiges Profil
 - Export und Import der gesamten Chronik als JSON-Datei
 
 **Charakterblatt**
@@ -47,11 +49,14 @@ Lege Charaktere an, schreibe ihre Geschichte, sammle Bilder und führe ein Tageb
 - Charakter-Porträt direkt im Bereich **Aussehen** anzeigen, hinzufügen, ändern und entfernen
 - Lebenspunkte und Mana pro Charakter optional ein-/ausblenden; deaktivierte Werte bleiben gespeichert
 - Obere Reiter: **Charakterblatt**, **Galerie**, **Tagebuch**
-- Weitere Charakterblatt-Reiter: **Begleiter** zum Zuordnen und **Kontakte** zum Verwalten heldbezogener Personenprofile
-- Seitenleiste im Charakterblatt: **Aussehen**, **Über den Charakter**, **Geschichte**, **Fähigkeiten**, **Attribute**, **Wesen**
+- Weitere Charakterblatt-Reiter: **Begleiter**, **Kontakte**, **Beziehungen** zum direkten Verwalten des gemeinsamen Netzes und **Stammbaum** mit generationenweiser Familienansicht
+- Begleiter- und Kontaktprofile bieten ebenfalls einen eigenen **Beziehungen**-Bereich; Änderungen sind direkt im gemeinsamen Netzwerk sichtbar
+- Seitenleiste im Charakterblatt mit gemeinsamer **Charakterübersicht** für Identität, Aussehen, Hintergrund und Beziehungen sowie **Geschichte**, **Fähigkeiten**, **Attribute** und **Wesen**
 - Sechs Standardattribute mit Modifikatoren sowie eigene numerische Attribute mit Modifikator
-- Profilfelder je Held individuell ergänzen; Standardfelder umbenennen oder ausblenden
-- Eigene Arten/Rassen und Klassen/Berufe werden als wiederverwendbare Auswahloptionen gespeichert
+- Standardattribute und Stufe je Held individuell ein- oder ausblenden; Werte bleiben erhalten
+- Charakterblatt-Bereiche und Profilabschnitte je Held neu anordnen
+- Eigene Profilfelder direkt in **Identität**, **Aussehen**, **Hintergrund**, **Wesen**, **Fähigkeiten** und **Beziehungen** ergänzen, bearbeiten und löschen; Standardfelder im jeweiligen Bereich umbenennen oder ausblenden
+- Arten/Rassen, Klassen/Berufe, Gesinnungen und Geschlechter bieten verwaltbare Standard- und eigene Auswahlvorgaben
 
 **Geschichte & Tagebuch**
 - Rich-Text-Editor mit Überschriften, **fett**, *kursiv*, unterstrichen, durchgestrichen, Listen, Zitaten, Trennlinien und eingebetteten Bildern
@@ -98,10 +103,10 @@ Beide Installer und das Update-Manifest liegen anschließend unter `%TEMP%\rp-ch
 | Neuen Helden erschaffen | **Neuer Held** oben rechts |
 | Held ansehen | Karte in der Heldenliste anklicken |
 | Held bearbeiten | **Bearbeiten** im Charakterblatt |
-| Profilfelder eines Helden ergänzen | Held bearbeiten → **Profilfeld hinzufügen** |
-| Standard-Profilfelder anpassen | Held bearbeiten → **Felder umbenennen / ausblenden** |
+| Profilfelder eines Helden ergänzen | Held bearbeiten → Bereich wählen → **Feld hinzufügen** |
+| Standard-Profilfelder anpassen | Held bearbeiten → Bereich wählen → **Anpassen** |
 | Eigenes Attribut anlegen | Held bearbeiten → **Eigenes Attribut** |
-| Eigene Art oder Klasse speichern | Beim Bearbeiten in **Art / Volk** bzw. **Klasse / Beruf** eintragen; danach wiederverwendbar |
+| Eigene Art, Klasse, Gesinnung oder Geschlecht speichern | Beim Bearbeiten unter **Mehr → Vorgaben** als eigene Auswahlvorgabe hinzufügen |
 | Begleiter verwalten | **Begleiter** in der Navigation → **Neuer Begleiter** oder Karte anklicken |
 | Begleiter einem Helden zuordnen | Held öffnen → Reiter **Begleiter**; alternativ im Begleiter-Editor mehrere Helden auswählen |
 | Begleiter-Profilfelder ergänzen | Begleiter bearbeiten → **Profilfeld hinzufügen** |
@@ -112,7 +117,7 @@ Beide Installer und das Update-Manifest liegen anschließend unter `%TEMP%\rp-ch
 | RP-Notiz zu einer Person speichern | Kontaktprofil → **Notiz hinzufügen** |
 | Chronik importieren/exportieren | Kopfzeile → **Mehr** → **Importieren** / **Exportieren** |
 | Einstellungen öffnen | Kopfzeile → **Mehr** → **Einstellungen** |
-| Eigene Arten/Rassen und Klassen/Berufe verwalten | Kopfzeile → **Mehr** → **Vorgaben** |
+| Auswahlvorgaben für Art, Klasse, Gesinnung und Geschlecht verwalten | Kopfzeile → **Mehr** → **Vorgaben** |
 | Geschichte schreiben | Seitenleiste → **Geschichte** → **Bearbeiten** |
 | Tagebucheintrag lesen | Reiter **Tagebuch** → **Anzeigen** |
 | Bilder hinzufügen | Reiter **Galerie** → **Bilder hinzufügen** |
@@ -167,7 +172,7 @@ Die Chronik ist ein JSON-Array aus Helden und optionalen Begleiter-Einträgen. K
 
 Ein Begleiter-Eintrag verwendet `"type": "companion"` und enthält unter anderem `name`, `species`, `description`, `notes`, `portrait`, `heroIds`, `customFields`, `geschichteHtml` und `diary`. Eigene Profilfelder und Attribute werden je Profil gespeichert; umbenannte und ausgeblendete Standardfelder gelten ebenfalls nur für das jeweilige Profil.
 
-In der installierten Windows-App wird dieses Exportformat im `settings/`-Ordner des gewählten Datenverzeichnisses aufgeteilt: `characters.json` enthält die Heldenprofile, `companions.json` die Begleiter. Galeriebilder, Tagebucheinträge und Kontaktprofile liegen einzeln als JSON-Dateien in den Unterordnern `gallery/`, `diaries/` und `contacts/`; Begleiter-Tagebucheinträge liegen in `companion-diaries/` und einzelne Kontakt-RP-Notizen unter `notes/`. Eigene Arten und Klassen/Berufe sowie Umbenennungen und ausgeblendete Standardvorgaben werden über **Mehr → Vorgaben** verwaltet und im App-Einstellungsordner in `profile-options.json` gespeichert. Änderungen an Vorgaben gelten für neue Vorschläge; bereits gespeicherte Figurenwerte bleiben unverändert. Import und Export bleiben ein vollständiges gemeinsames JSON-Array. Der Browser-Fallback speichert weiterhin in IndexedDB beziehungsweise localStorage.
+In der installierten Windows-App wird dieses Exportformat im `settings/`-Ordner des gewählten Datenverzeichnisses aufgeteilt: `characters.json` enthält die Heldenprofile, `companions.json` die Begleiter. Galeriebilder, Tagebucheinträge und Kontaktprofile liegen einzeln als JSON-Dateien in den Unterordnern `gallery/`, `diaries/` und `contacts/`; Begleiter-Tagebucheinträge liegen in `companion-diaries/` und einzelne Kontakt-RP-Notizen unter `notes/`. Eigene Arten, Klassen/Berufe, Gesinnungen und Geschlechter sowie Umbenennungen und ausgeblendete Standardvorgaben werden über **Mehr → Vorgaben** verwaltet und im App-Einstellungsordner in `profile-options.json` gespeichert. Änderungen an Vorgaben gelten für neue Vorschläge; bereits gespeicherte Figurenwerte bleiben unverändert. Import und Export bleiben ein vollständiges gemeinsames JSON-Array. Der Browser-Fallback speichert weiterhin in IndexedDB beziehungsweise localStorage.
 
 Die eingebauten Heldenfelder werden aus der deklarativen Konstante `SECTIONS` erzeugt. Zusätzliche Profilfelder, Umbenennungen und ausgeblendete Felder werden je Held oder Begleiter gespeichert und benötigen keine Codeänderung.
 
@@ -234,14 +239,15 @@ Der Support-Dialog kann Feedback, Fehlerberichte und Feature-Wünsche über eine
 3. Mit `npx wrangler deploy` den Worker veröffentlichen.
 4. Die Worker-URL als Wert von `SUPPORT_API_URL` in `main.js` eintragen und die App neu bauen.
 
-Der Worker begrenzt Einsendungen pro IP-Adresse auf fünf pro Stunde. Für die Kontaktaufnahme ist die Angabe einer E-Mail optional. Der Discord-Server-Einladungslink kann später im Support-Dialog ergänzt werden.
+Der Worker begrenzt Einsendungen pro IP-Adresse auf fünf pro Stunde. Für Rückfragen können Nutzer optional eine E-Mail-Adresse, einen Discord-Namen oder beides angeben.
 
 ## Roadmap
 
 - [ ] Würfler mit Attributs-Modifikatoren
 - [ ] Fertigkeitslisten mit Übungsboni
 - [ ] Vollbild-Leseansicht auch für die Geschichte
-- [ ] Beziehungen zwischen Charakteren
+- [x] Beziehungsnetz zwischen Helden, Begleitern und Kontakten
+- [x] Stammbaum mit Profilen und eigenständigen Familienmitgliedern
 - [ ] Druck- und PDF-Ansicht des Charakterblatts
 - [ ] Mehrere Chroniken (Kampagnen)
 - [ ] Aufteilung in ES-Module und Vite-Build

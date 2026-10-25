@@ -519,24 +519,6 @@
         min-width: 0;
         overflow-wrap: anywhere;
       }
-      .custom-profile-card {
-        min-width: 0;
-        padding: 1rem;
-        border: 1px solid var(--line);
-        border-radius: 6px;
-        background: linear-gradient(145deg, color-mix(in srgb, var(--gold) 5%, var(--panel)), var(--bg2));
-        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035);
-      }
-      .custom-profile-value {
-        min-height: 3rem;
-        padding: 0.75rem 0.85rem;
-        border-left: 2px solid var(--gold2);
-        border-radius: 0 4px 4px 0;
-        background: color-mix(in srgb, var(--bg) 58%, transparent);
-        color: var(--ink);
-        white-space: pre-wrap;
-        overflow-wrap: anywhere;
-      }
       .custom-profile-editor {
         position: relative;
         padding: 1rem;
@@ -577,6 +559,27 @@
       .inp:focus {
         border-color: var(--gold);
         box-shadow: 0 0 10px rgba(216, 166, 75, 0.3);
+      }
+      select.inp {
+        appearance: none;
+        padding-right: 2.5rem;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23d8a64b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 0.75rem center;
+      }
+      select.inp option,
+      select.inp optgroup {
+        background: var(--bg2);
+        color: var(--ink);
+      }
+      select.inp option:checked {
+        background: var(--gold2);
+        color: var(--bg);
+      }
+      .profile-field-value {
+        color: var(--ink);
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
       }
       label.l {
         display: block;
@@ -662,6 +665,210 @@
         font-size: 2rem;
         color: var(--highlight);
         line-height: 1.1;
+      }
+      .hero-profile-banner {
+        overflow: hidden;
+        position: relative;
+        padding: clamp(1rem, 3vw, 2rem);
+        background:
+          radial-gradient(ellipse at 10% 0, color-mix(in srgb, var(--gold) 18%, transparent), transparent 42%),
+          radial-gradient(ellipse at 95% 100%, color-mix(in srgb, var(--ember) 12%, transparent), transparent 36%),
+          linear-gradient(145deg, var(--panel-strong), var(--panel) 56%, var(--bg));
+      }
+      .hero-profile-banner::after {
+        content: "✦";
+        position: absolute;
+        right: 1.2rem;
+        top: 0.3rem;
+        color: color-mix(in srgb, var(--gold) 14%, transparent);
+        font-size: clamp(5rem, 12vw, 9rem);
+        line-height: 1;
+        pointer-events: none;
+      }
+      .hero-profile-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+      .hero-profile-chip {
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 0.25rem 0.7rem;
+        background: color-mix(in srgb, var(--bg) 48%, transparent);
+        color: var(--ink);
+        font-size: 0.88rem;
+      }
+      .hero-edit-tabs {
+        display: flex;
+        gap: 0.45rem;
+        overflow-x: auto;
+        padding: 0.35rem;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: color-mix(in srgb, var(--panel) 86%, var(--bg));
+        scrollbar-width: thin;
+      }
+      .hero-edit-tab {
+        flex: 1 0 auto;
+        justify-content: center;
+        min-height: 2.75rem;
+        border-color: transparent;
+        background: transparent;
+        color: var(--mute);
+      }
+      .hero-edit-tab[aria-current="step"] {
+        border-color: var(--gold2);
+        background: linear-gradient(135deg, color-mix(in srgb, var(--gold) 20%, var(--panel)), var(--panel));
+        color: var(--highlight);
+        box-shadow: 0 0 18px color-mix(in srgb, var(--gold) 12%, transparent);
+      }
+      .hero-edit-tab:focus-visible,
+      .hero-edit-action:focus-visible {
+        outline: 2px solid var(--gold);
+        outline-offset: 2px;
+      }
+      .hero-edit-card {
+        background:
+          radial-gradient(ellipse at 100% 0, color-mix(in srgb, var(--gold) 6%, transparent), transparent 36%),
+          linear-gradient(160deg, var(--panel), var(--bg2));
+      }
+      .hero-edit-summary {
+        border: 1px solid var(--line);
+        border-radius: 5px;
+        background: color-mix(in srgb, var(--bg) 42%, transparent);
+      }
+      .hero-profile-actions {
+        position: relative;
+        z-index: 1;
+      }
+      .network-link-card {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 1rem;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: linear-gradient(145deg, var(--panel), var(--bg2));
+      }
+      .network-member-card {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem 1rem;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: linear-gradient(145deg, var(--panel), var(--bg2));
+      }
+      .family-tree {
+        display: grid;
+        gap: 1.25rem;
+      }
+      .family-tree-generation {
+        position: relative;
+        padding-top: 0.9rem;
+      }
+      .family-tree-generation:not(.first)::before {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        width: 1px;
+        height: 0.9rem;
+        background: var(--gold2);
+        content: "";
+      }
+      .family-tree-label {
+        margin-bottom: 0.65rem;
+        color: var(--gold);
+        text-align: center;
+        font-family: var(--font-heading);
+        font-size: 0.8rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      .family-tree-nodes {
+        position: relative;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.75rem;
+      }
+      .family-tree-generation:not(.first) .family-tree-nodes::before {
+        position: absolute;
+        top: 0;
+        right: 12%;
+        left: 12%;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, var(--gold2), transparent);
+        content: "";
+      }
+      .family-tree-node {
+        position: relative;
+        min-width: min(100%, 14rem);
+        max-width: 21rem;
+        flex: 1 1 14rem;
+        padding-top: 0.5rem;
+      }
+      .family-tree-node::before {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        width: 1px;
+        height: 0.5rem;
+        background: var(--gold2);
+        content: "";
+      }
+      .network-entity {
+        display: flex;
+        min-width: 0;
+        align-items: center;
+        gap: 0.65rem;
+        text-align: left;
+      }
+      .network-entity img,
+      .network-entity-icon {
+        width: 2.75rem;
+        height: 2.75rem;
+        flex: none;
+        border: 1px solid var(--gold2);
+        border-radius: 50%;
+        object-fit: cover;
+      }
+      .network-entity-icon {
+        display: grid;
+        place-items: center;
+        color: var(--gold);
+        background: var(--bg);
+      }
+      .network-connector {
+        min-width: 5.5rem;
+        color: var(--gold);
+        text-align: center;
+        font-size: 0.85rem;
+      }
+      .network-connector::before,
+      .network-connector::after {
+        content: "";
+        display: block;
+        height: 1px;
+        margin: 0.25rem 0;
+        background: linear-gradient(90deg, transparent, var(--gold2), transparent);
+      }
+      @media (max-width: 560px) {
+        .network-link-card {
+          grid-template-columns: minmax(0, 1fr);
+        }
+        .network-connector {
+          display: flex;
+          align-items: center;
+          gap: 0.6rem;
+          justify-content: center;
+        }
+        .network-connector::before,
+        .network-connector::after {
+          width: 2rem;
+        }
       }
       .pre {
         white-space: pre-line;
@@ -1029,6 +1236,7 @@
         <button class="btn main-nav-link" data-act="heroes"><span data-ic="shield" data-c="w-4 h-4"></span>Helden</button>
         <button class="btn main-nav-link" data-act="companions"><span data-ic="paw-print" data-c="w-4 h-4"></span>Begleiter</button>
         <button class="btn main-nav-link" data-act="contacts"><span data-ic="users" data-c="w-4 h-4"></span>Kontakte</button>
+        <button class="btn main-nav-link" data-act="network"><span data-ic="share-2" data-c="w-4 h-4"></span>Netzwerk</button>
         <button class="btn main-nav-link" data-act="support-open"><span data-ic="life-buoy" data-c="w-4 h-4"></span>Support</button>
       </nav>
       <input type="file" id="ifile" accept="image/*" class="hidden" /><input
@@ -1095,10 +1303,16 @@
               <textarea id="support-message" class="inp w-full" rows="6" maxlength="3000" required placeholder="Schreib uns, was du mitteilen möchtest."></textarea>
               <span class="mt-1 block text-right text-xs" style="color:var(--mute)"><span id="support-message-count">0</span>/3000</span>
             </label>
-            <label class="block">
-              <span class="mb-2 block text-sm" style="color: var(--mute)">E-Mail/Discordname für Rückfragen (optional)</span>
-              <input id="support-contact" class="inp w-full" type="email" maxlength="200" placeholder="name@beispiel.de" />
-            </label>
+            <div class="grid gap-4 sm:grid-cols-2">
+              <label class="block">
+                <span class="mb-2 block text-sm" style="color: var(--mute)">E-Mail für Rückfragen (optional)</span>
+                <input id="support-email" class="inp w-full" type="email" maxlength="200" placeholder="name@beispiel.de" />
+              </label>
+              <label class="block">
+                <span class="mb-2 block text-sm" style="color: var(--mute)">Discord-Name (optional)</span>
+                <input id="support-discord" class="inp w-full" maxlength="100" placeholder="z. B. Rakoonir" />
+              </label>
+            </div>
             <div class="support-card space-y-2 p-4">
               <p class="text-sm" style="color: var(--mute)">Deine Nachricht wird an den Discord-Support weitergeleitet. Bitte keine Passwörter oder vertraulichen Daten senden.</p>
               <p id="support-setup-notice" class="text-sm" role="status" style="color: var(--ember)">Der Feedbackversand wird nach Einrichtung des Cloudflare-Workers verfügbar.</p>
@@ -1352,35 +1566,6 @@
         "Nekromant",
         "Assassine",
       ];
-      const PROFILE_STANDARDS = { arten: ARTEN, klassen: KLASSEN };
-      const normalizeProfileOptions = (options) => {
-        const normalized = {
-          arten: Array.isArray(options?.arten) ? [...new Set(options.arten.filter((value) => typeof value === "string").map((value) => value.trim()).filter(Boolean))] : [],
-          klassen: Array.isArray(options?.klassen) ? [...new Set(options.klassen.filter((value) => typeof value === "string").map((value) => value.trim()).filter(Boolean))] : [],
-          standard: { arten: {}, klassen: {} },
-        };
-        for (const key of ["arten", "klassen"]) {
-          const overrides = options?.standard?.[key];
-          if (!overrides || typeof overrides !== "object" || Array.isArray(overrides)) continue;
-          for (const [id, override] of Object.entries(overrides)) {
-            if (!PROFILE_STANDARDS[key].includes(id) || !override || typeof override !== "object" || Array.isArray(override)) continue;
-            const label = typeof override.label === "string" ? override.label.trim() : "";
-            const hidden = override.hidden === true;
-            if (label && label !== id) normalized.standard[key][id] = { label, ...(hidden ? { hidden: true } : {}) };
-            else if (hidden) normalized.standard[key][id] = { hidden: true };
-          }
-        }
-        for (const key of ["arten", "klassen"]) {
-          const standardNames = new Set(
-            [
-              ...PROFILE_STANDARDS[key],
-              ...Object.entries(normalized.standard[key]).map(([id, override]) => override.label || id),
-            ].map((value) => value.toLocaleLowerCase("de")),
-          );
-          normalized[key] = normalized[key].filter((value) => !standardNames.has(value.toLocaleLowerCase("de")));
-        }
-        return normalized;
-      };
       const GESINNUNG = [
         "Rechtschaffen gut",
         "Neutral gut",
@@ -1392,6 +1577,53 @@
         "Neutral böse",
         "Chaotisch böse",
       ];
+      const GESCHLECHTER = ["Männlich", "Weiblich", "Nicht-binär", "Divers", "Agender", "Genderfluid"];
+      const PROFILE_STANDARDS = {
+        arten: ARTEN,
+        klassen: KLASSEN,
+        gesinnungen: GESINNUNG,
+        geschlechter: GESCHLECHTER,
+      };
+      const PROFILE_OPTION_FIELDS = {
+        art: "arten",
+        klasse: "klassen",
+        gesinnung: "gesinnungen",
+        geschlecht: "geschlechter",
+      };
+      const PROFILE_OPTION_SECTIONS = [
+        { key: "arten", title: "Arten / Rassen", icon: "users", placeholder: "z. B. Fee, Golem, Echsenmensch" },
+        { key: "klassen", title: "Klassen / Berufe", icon: "backpack", placeholder: "z. B. Runenschmied, Orakel" },
+        { key: "gesinnungen", title: "Gesinnungen", icon: "heart", placeholder: "z. B. Wahrhaft neutral" },
+        { key: "geschlechter", title: "Geschlechter", icon: "users", placeholder: "z. B. Eigenständige Bezeichnung" },
+      ];
+      const normalizeProfileOptions = (options) => {
+        const keys = Object.keys(PROFILE_STANDARDS);
+        const normalized = { standard: Object.fromEntries(keys.map((key) => [key, {}])) };
+        for (const key of keys) {
+          normalized[key] = Array.isArray(options?.[key])
+            ? [...new Set(options[key].filter((value) => typeof value === "string").map((value) => value.trim()).filter(Boolean))]
+            : [];
+          const overrides = options?.standard?.[key];
+          if (!overrides || typeof overrides !== "object" || Array.isArray(overrides)) continue;
+          for (const [id, override] of Object.entries(overrides)) {
+            if (!PROFILE_STANDARDS[key].includes(id) || !override || typeof override !== "object" || Array.isArray(override)) continue;
+            const label = typeof override.label === "string" ? override.label.trim() : "";
+            const hidden = override.hidden === true;
+            if (label && label !== id) normalized.standard[key][id] = { label, ...(hidden ? { hidden: true } : {}) };
+            else if (hidden) normalized.standard[key][id] = { hidden: true };
+          }
+        }
+        for (const key of keys) {
+          const standardNames = new Set(
+            [
+              ...PROFILE_STANDARDS[key],
+              ...Object.entries(normalized.standard[key]).map(([id, override]) => override.label || id),
+            ].map((value) => value.toLocaleLowerCase("de")),
+          );
+          normalized[key] = normalized[key].filter((value) => !standardNames.has(value.toLocaleLowerCase("de")));
+        }
+        return normalized;
+      };
       const STATS = [
         ["st", "Stärke", "dumbbell"],
         ["ge", "Geschick", "wind"],
@@ -1514,6 +1746,8 @@
         customFields: [],
         fieldLabels: {},
         hiddenFields: [],
+        hiddenStats: [],
+        sectionOrder: SECTIONS.map((section) => section.id),
         level: 1,
         gesinnung: "Neutral",
         art: "Mensch",
@@ -1646,20 +1880,26 @@
         id: null,
         q: "",
         draft: null,
+        editTab: "identity",
         tab: "sheet",
         lb: null,
         dEdit: null,
         read: null,
-        sub: "aussehen",
+        sub: "profil",
         sEdit: null,
         companionDraft: null,
         companionTab: "profile",
         companionStoryEdit: null,
         fieldManagerOpen: false,
+        fieldSectionsOpen: {},
+        network: { type: "chronicle-network", id: "chronicle-network", relationships: [], familyLinks: [], familyMembers: [] },
+        networkTab: "relationships",
+        familyAddOpen: false,
         customOptions: normalizeProfileOptions(),
         contactEdit: null,
         contactHeroId: null,
         contactId: null,
+        contactTab: "profile",
         contactNoteEdit: null,
         contactSourceHeroId: null,
         contactReturnView: "contacts",
@@ -1668,8 +1908,16 @@
       const Store = {
         async init() {
           const d = await Storage.load();
-          S.chars = Array.isArray(d) ? d.filter((x) => x?.type !== "companion") : SEED;
+          S.chars = Array.isArray(d) ? d.filter((x) => x?.type !== "companion" && x?.type !== "chronicle-network") : SEED;
           S.companions = Array.isArray(d) ? d.filter((x) => x?.type === "companion") : [];
+          const network = Array.isArray(d) ? d.find((x) => x?.type === "chronicle-network") : null;
+          S.network = {
+            type: "chronicle-network",
+            id: "chronicle-network",
+            relationships: Array.isArray(network?.relationships) ? network.relationships : [],
+            familyLinks: Array.isArray(network?.familyLinks) ? network.familyLinks : [],
+            familyMembers: Array.isArray(network?.familyMembers) ? network.familyMembers : [],
+          };
           S.customOptions = await this.loadProfileOptions();
         },
         async loadProfileOptions() {
@@ -1688,7 +1936,7 @@
         },
         async persist() {
           try {
-            await Storage.save([...S.chars, ...S.companions]);
+            await Storage.save([...S.chars, ...S.companions, S.network]);
           } catch (error) {
             console.error("Chronik konnte nicht gespeichert werden.", error);
             toast("Speichern fehlgeschlagen. Bitte Speicherplatz und Berechtigungen prüfen.");
@@ -1705,6 +1953,7 @@
         },
         remove(id) {
           S.chars = S.chars.filter((c) => c.id !== id);
+          removeNetworkNode(`hero:${id}`);
           S.companions.forEach((companion) => {
             companion.heroIds = (companion.heroIds || []).filter((heroId) => heroId !== id);
           });
@@ -1717,9 +1966,50 @@
         },
         removeCompanion(id) {
           S.companions = S.companions.filter((x) => x.id !== id);
+          removeNetworkNode(`companion:${id}`);
           return this.persist();
         },
       };
+      function removeNetworkNode(key) {
+        S.network.relationships = (S.network.relationships || []).filter(
+          (edge) => edge.from !== key && edge.to !== key,
+        );
+        S.network.familyLinks = (S.network.familyLinks || []).filter(
+          (edge) => edge.from !== key && edge.to !== key,
+        );
+      }
+      async function persistNetworkMutation(mutate) {
+        const previous = JSON.stringify(S.network);
+        mutate();
+        try {
+          await Store.persist();
+          return true;
+        } catch (error) {
+          S.network = JSON.parse(previous);
+          render(true);
+          return false;
+        }
+      }
+      const networkEntities = () => [
+        ...S.chars.map((hero) => ({
+          key: `hero:${hero.id}`, type: "hero", id: hero.id, name: hero.name || "Namenloser Held",
+          detail: [hero.art, hero.klasse].filter(Boolean).join(" · "), portrait: hero.portrait,
+        })),
+        ...S.companions.map((companion) => ({
+          key: `companion:${companion.id}`, type: "companion", id: companion.id, name: companion.name || "Namenloser Begleiter",
+          detail: companion.species || "Begleiter", portrait: companion.portrait,
+        })),
+        ...allContacts().map(({ hero, contact }) => ({
+          key: `contact:${hero.id}:${contact.id}`, type: "contact", id: contact.id, ownerId: hero.id,
+          name: contact.name || "Unbenannter Kontakt", detail: contact.relation || contact.role || `Kontakt von ${hero.name}`,
+          portrait: contact.portrait,
+        })),
+        ...(S.network.familyMembers || []).map((member) => ({
+          key: `family:${member.id}`, type: "family", id: member.id, name: member.name || "Unbenannte Person",
+          detail: member.notes || "Stammbaum-Person", portrait: "",
+        })),
+      ];
+      const networkNode = (key) => networkEntities().find((entity) => entity.key === key);
 
       /* ---------- 4. ui ---------- */
       const $ = (s) => document.querySelector(s),
@@ -1840,6 +2130,14 @@
           '<rect x="3" y="3" width="8" height="8" rx="2" /> <rect x="13" y="13" width="8" height="8" rx="2" /> <path d="M7 7h.01" /> <path d="M17 17h.01" /> <path d="M17 14h.01" /> <path d="M14 17h.01" /> <path d="M20 17h.01" /> <path d="M17 20h.01" />',
         "list-checks":
           '<path d="m3 6 2 2 4-4" /> <path d="M13 6h8" /> <path d="m3 16 2 2 4-4" /> <path d="M13 16h8" />',
+        "share-2":
+          '<circle cx="18" cy="5" r="3" /> <circle cx="6" cy="12" r="3" /> <circle cx="18" cy="19" r="3" /> <path d="m8.6 10.7 6.8-4.4" /> <path d="m8.6 13.3 6.8 4.4" />',
+        "git-branch":
+          '<circle cx="6" cy="3" r="2" /> <circle cx="6" cy="21" r="2" /> <circle cx="18" cy="6" r="2" /> <path d="M6 5v14" /> <path d="M18 8a10 10 0 0 1-10 10" />',
+        "user-plus":
+          '<path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /> <circle cx="10" cy="7" r="4" /> <path d="M19 8v6" /> <path d="M22 11h-6" />',
+        "user-round":
+          '<circle cx="12" cy="8" r="5" /> <path d="M20 21a8 8 0 0 0-16 0" />',
         layers:
           '<path d="m12 2 8 4-8 4-8-4 8-4Z" /> <path d="m4 12 8 4 8-4" /> <path d="m4 16 8 4 8-4" />',
         blocks:
@@ -1920,11 +2218,43 @@
         S.view === "companion-sheet" ? S.companions.find((x) => x.id === S.id) : cur();
       const profileFieldLabel = (record, field) => record.fieldLabels?.[field.k] || field.l;
       const profileFieldVisible = (record, field) => !(record.hiddenFields || []).includes(field.k);
+      const profileStatVisible = (record, key) => !(record.hiddenStats || []).includes(key);
+      const orderedHeroSections = (record) => {
+        const validIds = new Set(SECTIONS.map((section) => section.id));
+        const savedOrder = Array.isArray(record.sectionOrder) ? record.sectionOrder : [];
+        const orderedIds = [...new Set(savedOrder.filter((id) => validIds.has(id)))];
+        return [
+          ...orderedIds.map((id) => SECTIONS.find((section) => section.id === id)),
+          ...SECTIONS.filter((section) => !orderedIds.includes(section.id)),
+        ];
+      };
+      const orderedSheetSections = (record) => {
+        const validIds = new Set(SUBS.map(([id]) => id));
+        const savedOrder = Array.isArray(record.sheetOrder) ? record.sheetOrder : [];
+        const orderedIds = [...new Set(savedOrder
+          .map((id) => id === "aussehen" || id === "ueber" ? "profil" : id)
+          .filter((id) => validIds.has(id)))];
+        return [
+          ...orderedIds.map((id) => SUBS.find(([sectionId]) => sectionId === id)),
+          ...SUBS.filter(([id]) => !orderedIds.includes(id)),
+        ];
+      };
+      const customFieldsForSection = (record, sectionId) =>
+        (record.customFields || [])
+          .map((field, index) => ({ field, index }))
+          .filter(({ field }) => (field.sectionId || "id") === sectionId);
       const customFieldInput = (field, index, companion = false) => {
         const prefix = companion ? "companion" : "hero";
+        if (!companion) {
+          return `<div class="grid items-end gap-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)_auto]">
+            <label><span class="l">Bezeichnung</span><input class="inp" data-custom-label="${index}" data-custom-owner="${prefix}" value="${esc(field.label)}" placeholder="z. B. Zugehörigkeit"></label>
+            <label><span class="l">Information</span><textarea class="inp" data-custom-value="${index}" data-custom-owner="${prefix}" rows="1" placeholder="Information zu diesem Feld">${esc(field.value)}</textarea></label>
+            <button class="btn dng" type="button" data-custom-field-delete="${index}" aria-label="${esc(field.label || "Profilfeld")} entfernen" title="Feld entfernen">${ic("trash-2", "w-4 h-4")}</button>
+          </div>`;
+        }
         return `<article class="custom-profile-editor">
           <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
-            <span class="flex items-center gap-2 cz text-sm" style="color:var(--gold)">${ic("list", "w-4 h-4")}Profilfeld ${index + 1}</span>
+            <span class="flex items-center gap-2 cz text-sm" style="color:var(--gold)">${ic("sparkles", "w-4 h-4")}${esc(field.label || `Eigenes Feld ${index + 1}`)}</span>
             <button class="btn dng" type="button" data-custom-field-delete="${index}" aria-label="${esc(field.label || "Profilfeld")} entfernen">${ic("trash-2", "w-4 h-4")}Entfernen</button>
           </div>
           <div class="grid gap-3 sm:grid-cols-[minmax(10rem,0.7fr)_1.3fr]">
@@ -1936,7 +2266,7 @@
       const customProfileDisplay = (fields) => {
         const visible = (fields || []).filter((field) => (field.label || "").trim() || (field.value || "").trim());
         return visible.length
-          ? `<dl class="grid gap-3 sm:grid-cols-2">${visible.map((field) => `<div class="custom-profile-card"><dt class="mb-2 flex items-center gap-2 cz text-sm" style="color:var(--gold)">${ic("sparkles", "w-4 h-4")}${esc(field.label) || "Unbenanntes Feld"}</dt><dd class="custom-profile-value">${esc(field.value) || `<span style="color:var(--mute)">Noch keine Angabe</span>`}</dd></div>`).join("")}</dl>`
+          ? `<dl class="grid gap-x-8 gap-y-4 sm:grid-cols-2">${visible.map((field) => `<div><dt class="cz text-sm" style="color:var(--gold)">${esc(field.label) || "Unbenanntes Feld"}</dt><dd class="profile-field-value">${esc(field.value) || `<span style="color:var(--mute)">Noch keine Angabe</span>`}</dd></div>`).join("")}</dl>`
           : "";
       };
       const storyHtml = (c) =>
@@ -2372,7 +2702,8 @@
             category: $("#support-category").value,
             title: $("#support-title-input").value.trim(),
             message: $("#support-message").value.trim(),
-            contact: $("#support-contact").value.trim(),
+            email: $("#support-email").value.trim(),
+            discordName: $("#support-discord").value.trim(),
           });
           form.reset();
           $("#support-dialog").close();
@@ -2389,11 +2720,13 @@
           const override = S.customOptions.standard?.[key]?.[id] || {};
           return { id, label: override.label || id, hidden: override.hidden === true };
         });
-      const profileOptionsForField = (key, currentValue) => [
-        ...standardProfileOptions(key).filter((option) => !option.hidden).map((option) => option.label),
-        ...(S.customOptions[key] || []),
-        ...(currentValue ? [currentValue] : []),
-      ];
+      const profileOptionGroups = (key, currentValue) => {
+        const standards = standardProfileOptions(key).filter((option) => !option.hidden);
+        const custom = S.customOptions[key] || [];
+        const choices = new Set([...standards.map((option) => option.label), ...custom]);
+        const legacy = currentValue && !choices.has(currentValue) ? [currentValue] : [];
+        return `${standards.length ? `<optgroup label="Standard">${standards.map(({ label }) => `<option value="${esc(label)}" ${label === currentValue ? "selected" : ""}>${esc(label)}</option>`).join("")}</optgroup>` : ""}${custom.length ? `<optgroup label="Eigene Vorgaben">${custom.map((label) => `<option value="${esc(label)}" ${label === currentValue ? "selected" : ""}>${esc(label)}</option>`).join("")}</optgroup>` : ""}${legacy.map((label) => `<optgroup label="Bisheriger Wert"><option value="${esc(label)}" selected>${esc(label)}</option></optgroup>`).join("")}`;
+      };
       const persistProfileOptions = async (options, successMessage, failureMessage) => {
         try {
           const normalized = normalizeProfileOptions(options);
@@ -2409,18 +2742,14 @@
         }
       };
       const renderDefaults = () => {
-        const sections = [
-          { key: "arten", title: "Arten / Rassen", standard: ARTEN, placeholder: "z. B. Fee, Golem, Echsenmensch" },
-          { key: "klassen", title: "Klassen / Berufe", standard: KLASSEN, placeholder: "z. B. Runenschmied, Orakel" },
-        ];
-        $("#defaults-content").innerHTML = sections.map(({ key, title, standard, placeholder }) => {
+        $("#defaults-content").innerHTML = PROFILE_OPTION_SECTIONS.map(({ key, title, icon, placeholder }) => {
           const custom = S.customOptions[key] || [];
           const standardOptions = standardProfileOptions(key);
           const visibleStandards = standardOptions.filter((option) => !option.hidden);
           const hiddenStandards = standardOptions.filter((option) => option.hidden);
           return `<section class="defaults-card">
             <header class="defaults-card-header">
-              <span class="defaults-card-icon">${ic(key === "arten" ? "users" : "backpack", "w-5 h-5")}</span>
+              <span class="defaults-card-icon">${ic(icon, "w-5 h-5")}</span>
               <div class="min-w-0 flex-1"><h3 class="text-lg">${title}</h3><p class="text-sm" style="color:var(--mute)">${visibleStandards.length} Standard · ${custom.length} eigene</p></div>
             </header>
             <div class="defaults-card-body">
@@ -2452,11 +2781,13 @@
         S.lb = null;
         S.dEdit = null;
         S.read = null;
-        S.sub = "aussehen";
+        S.sub = "profil";
         S.sEdit = null;
         S.companionStoryEdit = null;
         S.companionTab = "profile";
         S.fieldManagerOpen = false;
+        S.fieldSectionsOpen = {};
+        S.editTab = "identity";
         S.contactEdit = null;
         S.companionDraft = null;
         S.contactNoteEdit = null;
@@ -2482,6 +2813,7 @@
       function render(q) {
         const content = S.view === "list" ? vList()
           : S.view === "sheet" ? vSheet()
+          : S.view === "network" ? vNetwork()
           : S.view === "companions" ? vCompanions()
           : S.view === "companion-edit" ? vCompanionEdit()
           : S.view === "companion-sheet" ? vCompanionSheet()
@@ -2491,8 +2823,10 @@
           : vEdit();
         app.innerHTML = `<div class="${q ? "" : "fade"}">${content}</div>${S.view === "sheet" ? vLightbox() : ""}`;
         const activeNavigation =
-          S.view === "contacts" || S.view.startsWith("contact-") || (S.view === "sheet" && S.tab === "contacts")
-            ? "contacts"
+          S.view === "network"
+            ? "network"
+            : S.view === "contacts" || S.view.startsWith("contact-") || (S.view === "sheet" && S.tab === "contacts")
+              ? "contacts"
             : S.view === "companions" || S.view.startsWith("companion-") || (S.view === "sheet" && S.tab === "companions")
               ? "companions"
               : "heroes";
@@ -2549,6 +2883,8 @@
           ["diary", "Tagebuch", "book-open-text", (c.diary || []).length],
           ["companions", "Begleiter", "paw-print", S.companions.filter((x) => (x.heroIds || []).includes(c.id)).length],
           ["contacts", "Kontakte", "users", (c.contacts || []).length],
+          ["network", "Beziehungen", "share-2", S.network.relationships.filter((edge) => edge.from === `hero:${c.id}` || edge.to === `hero:${c.id}`).length],
+          ["family", "Stammbaum", "git-branch", S.network.familyLinks.filter((edge) => edge.from === `hero:${c.id}` || edge.to === `hero:${c.id}`).length],
         ];
         const resources = [
           showLp(c)
@@ -2560,23 +2896,35 @@
         ]
           .filter(Boolean)
           .join("");
-        return `<div class="flex flex-wrap gap-2 mb-6 justify-between">
-  <button class="btn" data-act="back">${ic("arrow-left", "w-4 h-4")}Zurück</button>
-  <div class="flex gap-2"><button class="btn" data-edit="${c.id}">${ic("pencil", "w-4 h-4")}Bearbeiten</button>
-  <button class="btn dng" data-del="${c.id}">${ic("trash-2", "w-4 h-4")}Löschen</button></div></div>
- <section class="panel mb-6" style="background:linear-gradient(160deg, var(--panel-strong), var(--bg) 70%)">
-  <div class="flex flex-wrap items-center gap-6">${hexOf(c, true)}
-  <div class="flex-1 min-w-[16rem]"><h1 class="logo text-4xl sm:text-5xl leading-tight">${esc(c.name) || "Namenlos"}</h1>
-  <p class="text-xl italic" style="color:var(--mute)">${esc(c.titel)}</p>
-  <p class="cz mt-2" style="color:var(--gold)">${[profileFieldVisible(c, { k: "art" }) ? esc(c.art) : "", profileFieldVisible(c, { k: "klasse" }) ? esc(c.klasse) : "", profileFieldVisible(c, { k: "level" }) ? `${esc(profileFieldLabel(c, { k: "level", l: "Stufe" }))} ${esc(c.level)}` : ""].filter(Boolean).join(" · ")}</p></div>
-  ${resources ? `<div class="w-full sm:w-64 space-y-3">${resources}</div>` : ""}</div></section>
- <nav class="flex flex-wrap gap-2 mb-6" aria-label="Bereiche">${T.map(([k, l, i, n]) => `<button class="btn ${S.tab === k ? "pri" : ""}" data-tab="${k}" aria-current="${S.tab === k}">${ic(i, "w-4 h-4")}${l}${n ? ` (${n})` : ""}</button>`).join("")}</nav>
- ${S.tab === "gallery" ? tGallery(c) : S.tab === "diary" ? tDiary(c) : S.tab === "contacts" ? tContacts(c) : S.tab === "companions" ? tHeroCompanions(c) : tSheet(c)}`;
+        const meta = [
+          profileFieldVisible(c, { k: "art" }) ? c.art : "",
+          profileFieldVisible(c, { k: "klasse" }) ? c.klasse : "",
+          profileFieldVisible(c, { k: "level" }) ? `${profileFieldLabel(c, { k: "level", l: "Stufe" })} ${c.level}` : "",
+        ].filter(Boolean);
+        return `<div class="hero-profile-actions flex flex-wrap gap-2 mb-5 justify-between">
+  <button class="btn" data-act="back">${ic("arrow-left", "w-4 h-4")}Zurück zur Chronik</button>
+  <div class="flex gap-2"><button class="btn" data-edit="${c.id}">${ic("pencil", "w-4 h-4")}Profil bearbeiten</button>
+  <button class="btn dng" data-del="${c.id}" aria-label="Held löschen">${ic("trash-2", "w-4 h-4")}Löschen</button></div></div>
+ <section class="hero-profile-banner panel mb-6">
+  <div class="relative z-[1] flex flex-wrap items-center gap-6">${hexOf(c, true)}
+  <div class="min-w-[16rem] flex-1"><p class="cz mb-1 text-xs uppercase tracking-[.22em]" style="color:var(--gold)">Chronik der Helden</p>
+  <h1 class="logo text-4xl sm:text-5xl leading-tight">${esc(c.name) || "Namenlos"}</h1>
+  ${c.titel ? `<p class="mt-1 text-xl italic" style="color:var(--mute)">${esc(c.titel)}</p>` : ""}
+  ${meta.length ? `<div class="hero-profile-meta mt-4">${meta.map((item) => `<span class="hero-profile-chip">${esc(item)}</span>`).join("")}</div>` : ""}</div>
+  ${resources ? `<div class="w-full max-w-sm space-y-3 rounded border p-4 backdrop-blur-sm sm:w-64" style="border-color:var(--line);background:color-mix(in srgb, var(--bg) 65%, transparent)">${resources}</div>` : ""}</div></section>
+ <nav class="flex flex-wrap gap-2 mb-6" aria-label="Bereiche">${T.map(([k, l, i, n]) => `<button class="btn ${S.tab === k ? "pri" : ""}" data-tab="${k}" aria-current="${S.tab === k ? "page" : "false"}">${ic(i, "w-4 h-4")}${l}${n ? ` (${n})` : ""}</button>`).join("")}</nav>
+ ${S.tab === "gallery" ? tGallery(c) : S.tab === "diary" ? tDiary(c) : S.tab === "contacts" ? tContacts(c) : S.tab === "companions" ? tHeroCompanions(c) : S.tab === "network" ? vProfileRelationships(`hero:${c.id}`) : S.tab === "family" ? vHeroFamilyTree(`hero:${c.id}`) : tSheet(c)}`;
       }
 
       function tHeroCompanions(hero) {
+        const companions = S.companions.filter((companion) =>
+          (companion.heroIds || []).includes(hero.id),
+        );
+        const availableCompanions = S.companions.filter((companion) =>
+          !(companion.heroIds || []).includes(hero.id),
+        );
         return `<section class="panel"><div class="ph"><span class="flex items-center gap-2">${ic("paw-print")}Begleiter von ${esc(hero.name || "deinem Helden")}</span></div>
-        ${S.companions.length ? `<div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">${S.companions.map((companion) => `<article class="rounded border p-4" style="border-color:var(--line);background:var(--field-surface)">
+        ${companions.length ? `<div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">${companions.map((companion) => `<article class="rounded border p-4" style="border-color:var(--line);background:var(--field-surface)">
           <button class="flex w-full items-center gap-3 text-left" data-companion-open="${esc(companion.id)}">
             ${companion.portrait ? `<img class="h-16 w-16 flex-none rounded-full object-cover" src="${esc(companion.portrait)}" alt="">` : `<span class="flex h-16 w-16 flex-none items-center justify-center rounded-full border" style="border-color:var(--gold2);background:var(--bg2);color:var(--gold)">${ic(companion.crest || "paw-print", "w-8 h-8")}</span>`}
             <span class="min-w-0"><span class="block truncate text-lg font-semibold" style="color:var(--highlight)">${esc(companion.name || "Namenlos")}</span>
@@ -2584,10 +2932,13 @@
           </button>
           <p class="mt-3 line-clamp-3 text-sm" style="color:var(--mute)">${esc(companion.description || companion.notes || "Noch keine Beschreibung.")}</p>
           <label class="mt-4 flex items-center gap-3 border-t pt-3" style="border-color:var(--line)">
-            <input class="settings-check" type="checkbox" data-hero-companion="${esc(companion.id)}" ${(companion.heroIds || []).includes(hero.id) ? "checked" : ""}>
-            <span>${(companion.heroIds || []).includes(hero.id) ? "Gehört zu diesem Helden" : "Diesem Helden zuordnen"}</span>
+            <input class="settings-check" type="checkbox" data-hero-companion="${esc(companion.id)}" checked>
+            <span>Gehört zu diesem Helden</span>
           </label></article>`).join("")}</div>
-        <button class="btn mt-4" data-act="companions">${ic("images", "w-4 h-4")}Begleiter-Galerie verwalten</button>` : `<p class="py-6 text-center" style="color:var(--mute)">Lege zuerst in der Begleiter-Galerie einen Begleiter an.</p><button class="btn pri" data-act="companion-new">${ic("plus", "w-4 h-4")}Begleiter anlegen</button>`}</section>`;
+        <button class="btn mt-4" data-act="companions">${ic("images", "w-4 h-4")}Begleiter-Galerie verwalten</button>` : `<p class="py-6 text-center" style="color:var(--mute)">${S.companions.length ? "Diesem Helden sind noch keine Begleiter zugeordnet." : "Lege zuerst einen Begleiter an oder ordne einen vorhandenen zu."}</p>`}
+        ${availableCompanions.length ? `<div class="mt-5 border-t pt-5" style="border-color:var(--line)"><h3 class="mb-3 font-bold" style="color:var(--gold)">Begleiter zuordnen</h3><div class="flex flex-wrap gap-3"><select id="hero-companion-select" class="inp min-w-[14rem] flex-1" aria-label="Vorhandenen Begleiter auswählen"><option value="">Begleiter auswählen …</option>${availableCompanions.map((companion) => `<option value="${esc(companion.id)}">${esc(companion.name || "Namenlos")}${companion.species ? ` · ${esc(companion.species)}` : ""}</option>`).join("")}</select><button class="btn pri" type="button" data-act="hero-companion-add">${ic("plus", "w-4 h-4")}Zuordnen</button></div></div>` : S.companions.length
+          ? `<p class="mt-5 border-t pt-4 text-sm" style="border-color:var(--line);color:var(--mute)">Alle vorhandenen Begleiter sind diesem Helden bereits zugeordnet.</p>`
+          : `<button class="btn pri" data-act="companion-new">${ic("plus", "w-4 h-4")}Begleiter anlegen</button>`}</section>`;
       }
 
       function vCompanions() {
@@ -2642,8 +2993,9 @@
     <button class="btn ${S.companionTab === "profile" ? "pri" : ""}" data-companion-tab="profile">${ic("user", "w-4 h-4")}Profil</button>
     <button class="btn ${S.companionTab === "story" ? "pri" : ""}" data-companion-tab="story">${ic("scroll-text", "w-4 h-4")}Hintergrundgeschichte</button>
     <button class="btn ${S.companionTab === "diary" ? "pri" : ""}" data-companion-tab="diary">${ic("book-open-text", "w-4 h-4")}Tagebuch (${(c.diary || []).length})</button>
+    <button class="btn ${S.companionTab === "network" ? "pri" : ""}" data-companion-tab="network">${ic("share-2", "w-4 h-4")}Beziehungen (${S.network.relationships.filter((edge) => edge.from === `companion:${c.id}` || edge.to === `companion:${c.id}`).length})</button>
   </nav>
-  ${S.companionTab === "story" ? pCompanionStory(c) : S.companionTab === "diary" ? S.read && (c.diary || []).some((entry) => entry.id === S.read) ? vRead(c) : tDiary(c, true) :
+  ${S.companionTab === "story" ? pCompanionStory(c) : S.companionTab === "diary" ? S.read && (c.diary || []).some((entry) => entry.id === S.read) ? vRead(c) : tDiary(c, true) : S.companionTab === "network" ? vProfileRelationships(`companion:${c.id}`) :
   `<div class="grid gap-6 lg:grid-cols-2">${profileFieldVisible(c, COMPANION_PROFILE_FIELDS[2]) ? `<section class="panel"><h2 class="ph">${esc(profileFieldLabel(c, COMPANION_PROFILE_FIELDS[2]))}</h2><p class="pre">${esc(c.description) || "Noch keine Beschreibung."}</p></section>` : ""}
   ${profileFieldVisible(c, COMPANION_PROFILE_FIELDS[3]) ? `<section class="panel"><h2 class="ph">${esc(profileFieldLabel(c, COMPANION_PROFILE_FIELDS[3]))}</h2><p class="pre">${esc(c.notes) || "Noch keine Notizen."}</p></section>` : ""}
   ${customProfileDisplay(c.customFields) ? `<section class="panel lg:col-span-2"><h2 class="ph">${ic("list")}Eigene Profilfelder</h2>${customProfileDisplay(c.customFields)}</section>` : ""}
@@ -2703,6 +3055,133 @@
         </div>${list.length ? `<div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">${list.map(({ hero, contact }) => contactCard(contact, hero.id)).join("")}</div>` :
           `<section class="panel text-center py-12"><p class="text-xl mb-4">${allContacts().length ? "Keine Kontakte für diese Suche gefunden." : "Noch keine Kontakte gespeichert."}</p><button class="btn pri" data-act="contact-new-global">${ic("plus", "w-4 h-4")}Kontakt hinzufügen</button></section>`}`;
       }
+      const networkEntityLabel = (entity) => `${entity.name}${entity.detail ? ` · ${entity.detail}` : ""}`;
+      const networkEntityOptions = (selected = "") =>
+        networkEntities().map((entity) => `<option value="${esc(entity.key)}" ${entity.key === selected ? "selected" : ""}>${esc(networkEntityLabel(entity))}</option>`).join("");
+      const networkEntityButton = (entity) =>
+        `<${entity.type === "family" ? "div" : "button"} class="network-entity" ${entity.type === "family" ? "" : `type="button" data-network-open="${esc(entity.key)}"`}>
+          ${entity.portrait ? `<img src="${esc(entity.portrait)}" alt="">` : `<span class="network-entity-icon">${ic(entity.type === "hero" ? "shield" : entity.type === "companion" ? "paw-print" : entity.type === "contact" ? "user-round" : "users", "w-5 h-5")}</span>`}
+          <span class="min-w-0"><span class="block truncate font-semibold" style="color:var(--highlight)">${esc(entity.name)}</span><span class="block truncate text-sm" style="color:var(--mute)">${esc(entity.detail || "Chronik")}</span></span>
+        </${entity.type === "family" ? "div" : "button"}>`;
+      function vNetwork() {
+        const entities = networkEntities();
+        const relationshipNodes = new Set((S.network.relationships || []).flatMap((edge) => [edge.from, edge.to]));
+        const relationshipCards = (S.network.relationships || []).map((edge) => {
+          const from = networkNode(edge.from), to = networkNode(edge.to);
+          if (!from || !to) return "";
+          return `<article class="network-link-card">${networkEntityButton(from)}<div class="network-connector">${esc(edge.label || "verbunden")}</div>${networkEntityButton(to)}<button type="button" class="btn dng" data-relationship-delete="${esc(edge.id)}" aria-label="Verbindung löschen">${ic("trash-2", "w-4 h-4")}</button></article>`;
+        }).filter(Boolean).join("");
+        const familyCards = (S.network.familyLinks || []).map((edge) => {
+          const from = networkNode(edge.from), to = networkNode(edge.to);
+          if (!from || !to) return "";
+          return `<article class="network-link-card">${networkEntityButton(from)}<div class="network-connector">${esc(edge.label || "verwandt")}</div>${networkEntityButton(to)}<button type="button" class="btn dng" data-family-link-delete="${esc(edge.id)}" aria-label="Familienverbindung löschen">${ic("trash-2", "w-4 h-4")}</button></article>`;
+        }).filter(Boolean).join("");
+        const familyMembers = entities.filter((entity) => entity.type === "family");
+        const unconnected = entities.filter((entity) => !relationshipNodes.has(entity.key));
+        return `<div class="mb-6"><p class="cz text-xs uppercase tracking-[.2em]" style="color:var(--gold)">Chronik · Beziehungen</p><h1 class="text-3xl sm:text-4xl" style="color:var(--highlight)">Netzwerk &amp; Stammbaum</h1><p class="mt-1" style="color:var(--mute)">Verknüpfe Helden, Begleiter und Kontakte und entdecke, wie deine Figuren miteinander verbunden sind.</p></div>
+        <nav class="flex flex-wrap gap-2 mb-5" aria-label="Netzwerkbereiche">
+          <button class="btn ${S.networkTab === "relationships" ? "pri" : ""}" data-network-tab="relationships">${ic("share-2", "w-4 h-4")}Beziehungsnetz (${S.network.relationships.length})</button>
+          <button class="btn ${S.networkTab === "family" ? "pri" : ""}" data-network-tab="family">${ic("git-branch", "w-4 h-4")}Stammbaum (${S.network.familyLinks.length})</button>
+        </nav>
+        ${S.networkTab === "relationships" ? `<section class="panel mb-5"><h2 class="ph">${ic("share-2")}Verbindung anlegen</h2>
+          ${entities.length >= 2 ? `<div class="grid gap-3 sm:grid-cols-2"><label><span class="l">Von</span><select id="network-from" class="inp"><option value="">Person auswählen …</option>${networkEntityOptions()}</select></label><label><span class="l">Zu</span><select id="network-to" class="inp"><option value="">Person auswählen …</option>${networkEntityOptions()}</select></label>
+          <label class="sm:col-span-2"><span class="l">Art der Verbindung</span><input id="network-label" class="inp" maxlength="80" placeholder="z. B. ist Mentorin von, misstraut, Geschwister"></label></div>
+          <button class="btn pri mt-4" type="button" data-act="relationship-add">${ic("plus", "w-4 h-4")}Verbindung hinzufügen</button>` : `<p style="color:var(--mute)">Lege mindestens zwei Einträge an, um eine Verbindung zu erstellen.</p>`}
+        </section>
+        <section class="panel"><h2 class="ph">${ic("share-2")}Verknüpfungen (${relationshipCards ? S.network.relationships.length : 0})</h2>
+          ${relationshipCards ? `<div class="space-y-3">${relationshipCards}</div>` : `<p class="py-5 text-center" style="color:var(--mute)">Noch keine Verbindungen angelegt.</p>`}
+          ${unconnected.length ? `<details class="mt-5 border-t pt-4" style="border-color:var(--line)"><summary class="cursor-pointer" style="color:var(--gold)">Noch nicht vernetzt (${unconnected.length})</summary><div class="mt-4 grid gap-3 sm:grid-cols-2">${unconnected.map(networkEntityButton).join("")}</div></details>` : ""}
+        </section>` : `<section class="panel mb-5"><div class="flex flex-wrap items-start justify-between gap-3"><div><h2 class="ph">${ic("git-branch")}Familienbeziehungen</h2><p class="text-sm" style="color:var(--mute)">Ergänze vorhandene Profile oder erfasse eigenständige Personen wie Vorfahren ohne vollständige Charakterkarte.</p></div><button class="btn" type="button" data-act="family-add-toggle">${ic("user-plus", "w-4 h-4")}${S.familyAddOpen ? "Abbrechen" : "Person hinzufügen"}</button></div>
+          <div class="mt-4 grid gap-3 sm:grid-cols-2"><label><span class="l">Person A</span><select id="family-from" class="inp"><option value="">Person auswählen …</option>${networkEntityOptions()}</select></label><label><span class="l">Person B</span><select id="family-to" class="inp"><option value="">Person auswählen …</option>${networkEntityOptions()}</select></label>
+          <label><span class="l">Verbindung</span><select id="family-label" class="inp"><option value="Elternteil von">Elternteil von</option><option value="Kind von">Kind von</option><option value="Geschwister">Geschwister</option><option value="Partner/in">Partner/in</option><option value="Verwandt">Verwandt</option></select></label></div>
+          <button class="btn pri mt-4" type="button" data-act="family-link-add">${ic("plus", "w-4 h-4")}Familienverbindung hinzufügen</button>
+          ${S.familyAddOpen ? `<div class="mt-5 border-t pt-5" style="border-color:var(--line)"><h3 class="mb-3 font-semibold" style="color:var(--highlight)">Eigenständige Person anlegen und verbinden</h3><div class="grid gap-3 sm:grid-cols-2"><label><span class="l">Name</span><input id="family-name" class="inp" maxlength="80" placeholder="Name des Familienmitglieds"></label><label><span class="l">Verbinden mit</span><select id="family-anchor" class="inp"><option value="">Profil wählen …</option>${networkEntityOptions()}</select></label><label><span class="l">Diese Person ist</span><select id="family-role" class="inp"><option value="parent">Elternteil der ausgewählten Person</option><option value="child">Kind der ausgewählten Person</option><option value="sibling">Geschwister der ausgewählten Person</option><option value="partner">Partner/in der ausgewählten Person</option><option value="relative">Verwandt mit der ausgewählten Person</option></select></label><label><span class="l">Notiz (optional)</span><input id="family-notes" class="inp" maxlength="240" placeholder="z. B. unbekannt, verschollen"></label></div><button class="btn pri mt-4" type="button" data-act="family-member-add">${ic("user-plus", "w-4 h-4")}Person anlegen</button></div>` : ""}
+        </section>
+        <section class="panel"><h2 class="ph">${ic("git-branch")}Stammbaum-Ansicht</h2>
+          ${familyCards ? `<div class="space-y-3">${familyCards}</div>` : `<p class="py-5 text-center" style="color:var(--mute)">Noch keine Familienverbindungen. Wähle zwei vorhandene Profile oder füge eine eigenständige Person hinzu.</p>`}
+          ${familyMembers.length ? `<div class="mt-5 border-t pt-4" style="border-color:var(--line)"><h3 class="mb-3 font-semibold" style="color:var(--gold)">Eigenständige Stammbaum-Personen</h3><div class="grid gap-3 sm:grid-cols-2">${familyMembers.map((entity) => `<div class="network-member-card">${networkEntityButton(entity)}<button type="button" class="btn dng" data-family-member-delete="${esc(entity.id)}" aria-label="${esc(entity.name)} aus dem Stammbaum löschen">${ic("trash-2", "w-4 h-4")}</button></div>`).join("")}</div></div>` : ""}
+        </section>`}`;
+      }
+      function vProfileRelationships(ownerKey) {
+        const owner = networkNode(ownerKey);
+        if (!owner) return `<section class="panel"><p style="color:var(--mute)">Dieses Profil ist nicht mehr verfügbar.</p></section>`;
+        const edges = S.network.relationships.filter((edge) => edge.from === ownerKey || edge.to === ownerKey);
+        const others = networkEntities().filter((entity) => entity.key !== ownerKey);
+        const cards = edges.map((edge) => {
+          const from = networkNode(edge.from), to = networkNode(edge.to);
+          if (!from || !to) return "";
+          return `<article class="network-link-card">${networkEntityButton(from)}<div class="network-connector">${esc(edge.label || "verbunden")}</div>${networkEntityButton(to)}<button type="button" class="btn dng" data-relationship-delete="${esc(edge.id)}" aria-label="Verbindung löschen">${ic("trash-2", "w-4 h-4")}</button></article>`;
+        }).filter(Boolean).join("");
+        return `<section class="panel mb-5"><div class="ph">${ic("share-2")}Beziehung hinzufügen</div>
+          <p class="mb-4 text-sm" style="color:var(--mute)">Neue Verbindungen werden im gemeinsamen Beziehungsnetz gespeichert und sind auch bei den anderen beteiligten Profilen sichtbar.</p>
+          ${others.length ? `<div class="grid gap-3 sm:grid-cols-2"><label><span class="l">Verbunden mit</span><select id="profile-network-target" class="inp"><option value="">Profil auswählen …</option>${others.map((entity) => `<option value="${esc(entity.key)}">${esc(networkEntityLabel(entity))}</option>`).join("")}</select></label><label><span class="l">Art der Verbindung (von ${esc(owner.name)})</span><input id="profile-network-label" class="inp" maxlength="80" placeholder="z. B. vertraut, ist Mentorin von"></label></div><button class="btn pri mt-4" type="button" data-act="profile-relationship-add" data-network-owner="${esc(ownerKey)}">${ic("plus", "w-4 h-4")}Verbindung hinzufügen</button>` : `<p style="color:var(--mute)">Lege zuerst ein weiteres Helden-, Begleiter- oder Kontaktprofil an.</p>`}
+        </section>
+        <section class="panel"><h2 class="ph">${ic("share-2")}Verbindungen von ${esc(owner.name)} (${edges.length})</h2>
+          ${cards ? `<div class="space-y-3">${cards}</div>` : `<p class="py-5 text-center" style="color:var(--mute)">Für dieses Profil gibt es noch keine Verbindungen.</p>`}
+        </section>`;
+      }
+      function vHeroFamilyTree(rootKey) {
+        const root = networkNode(rootKey);
+        if (!root) return `<section class="panel"><p style="color:var(--mute)">Dieses Profil ist nicht mehr verfügbar.</p></section>`;
+        const parentEdges = S.network.familyLinks.flatMap((edge) =>
+          edge.label === "Kind von"
+            ? [{ parent: edge.to, child: edge.from, edge }]
+            : edge.label === "Elternteil von"
+              ? [{ parent: edge.from, child: edge.to, edge }]
+              : [],
+        );
+        const findGeneration = (starting, direction, blocked) => {
+          const found = [];
+          let frontier = [starting];
+          const visited = new Set(blocked);
+          while (frontier.length) {
+            const next = new Set();
+            for (const key of frontier) {
+              for (const edge of parentEdges) {
+                const candidate = direction === "up"
+                  ? edge.child === key ? edge.parent : null
+                  : edge.parent === key ? edge.child : null;
+                if (candidate && !visited.has(candidate) && networkNode(candidate)) next.add(candidate);
+              }
+            }
+            if (!next.size) break;
+            const generation = [...next];
+            generation.forEach((key) => visited.add(key));
+            found.push(generation);
+            frontier = generation;
+          }
+          return found;
+        };
+        const ancestors = findGeneration(rootKey, "up", [rootKey]);
+        const blockedDescendants = [rootKey, ...ancestors.flat()];
+        const descendants = findGeneration(rootKey, "down", blockedDescendants);
+        const generations = [
+          ...ancestors.slice().reverse().map((nodes, index) => ({
+            label: `Vorfahren · Generation ${ancestors.length - index}`,
+            nodes,
+          })),
+          { label: "Ausgangspunkt", nodes: [rootKey] },
+          ...descendants.map((nodes, index) => ({
+            label: `Nachkommen · Generation ${index + 1}`,
+            nodes,
+          })),
+        ];
+        const familyCards = S.network.familyLinks
+          .filter((edge) => (edge.from === rootKey || edge.to === rootKey) && !parentEdges.some((item) => item.edge === edge))
+          .map((edge) => {
+            const from = networkNode(edge.from), to = networkNode(edge.to);
+            if (!from || !to) return "";
+            return `<article class="network-link-card">${networkEntityButton(from)}<div class="network-connector">${esc(edge.label || "verwandt")}</div>${networkEntityButton(to)}<button type="button" class="btn dng" data-family-link-delete="${esc(edge.id)}" aria-label="Familienverbindung löschen">${ic("trash-2", "w-4 h-4")}</button></article>`;
+          }).filter(Boolean).join("");
+        return `<section class="panel mb-5"><div class="ph">${ic("git-branch")}Stammbaum von ${esc(root.name)}</div><p style="color:var(--mute)">Eltern stehen oberhalb, Kinder darunter. Jede Generation kann sich in mehrere Familienzweige auffächern.</p>
+          <div class="family-tree mt-5">${generations.map((generation, index) => `<section class="family-tree-generation ${index === 0 ? "first" : ""} ${index === generations.length - 1 ? "last" : ""}"><h3 class="family-tree-label">${esc(generation.label)}</h3><div class="family-tree-nodes">${generation.nodes.map((key) => {
+            const entity = networkNode(key);
+            return entity ? `<div class="family-tree-node">${networkEntityButton(entity)}</div>` : "";
+          }).join("")}</div></section>`).join("")}</div>
+          ${familyCards ? `<div class="mt-6 border-t pt-5" style="border-color:var(--line)"><h3 class="ph">${ic("users")}Weitere Familienverbindungen</h3><div class="space-y-3">${familyCards}</div></div>` : ""}
+          ${!S.network.familyLinks.some((edge) => edge.from === rootKey || edge.to === rootKey) ? `<p class="mt-5 border-t pt-4 text-sm" style="border-color:var(--line);color:var(--mute)">Für diesen Helden sind noch keine Familienverbindungen angelegt. Du kannst sie im zentralen Netzwerk erstellen.</p>` : ""}
+        </section>`;
+      }
       function vContactEdit() {
         const c = S.contactEdit;
         const input = (key, label, placeholder = "") => `<label><span class="l">${label}</span><input class="inp" data-contact-field="${key}" value="${esc(c[key])}" placeholder="${placeholder}"></label>`;
@@ -2745,6 +3224,11 @@
         ].filter(([, value]) => value);
         return `<div class="flex flex-wrap gap-2 mb-6 justify-between"><button class="btn" data-act="contact-back">${ic("arrow-left", "w-4 h-4")}Zurück zu den Kontakten</button>
           <div class="flex gap-2"><button class="btn" data-contact-edit="${esc(contact.id)}" data-contact-hero="${esc(hero.id)}">${ic("pencil", "w-4 h-4")}Profil bearbeiten</button><button class="btn dng" data-contact-delete="${esc(contact.id)}" data-contact-hero="${esc(hero.id)}">${ic("trash-2", "w-4 h-4")}Kontakt löschen</button></div></div>
+          <nav class="flex flex-wrap gap-2 mb-6" aria-label="Kontaktbereiche">
+            <button class="btn ${S.contactTab === "profile" ? "pri" : ""}" data-contact-tab="profile">${ic("user", "w-4 h-4")}Profil</button>
+            <button class="btn ${S.contactTab === "relationships" ? "pri" : ""}" data-contact-tab="relationships">${ic("share-2", "w-4 h-4")}Beziehungen (${S.network.relationships.filter((edge) => edge.from === `contact:${hero.id}:${contact.id}` || edge.to === `contact:${hero.id}:${contact.id}`).length})</button>
+          </nav>
+          ${S.contactTab === "relationships" ? vProfileRelationships(`contact:${hero.id}:${contact.id}`) : `
           <section class="panel mb-6"><div class="flex items-center gap-5">${contact.portrait ? `<img class="h-24 w-24 rounded-full object-cover" src="${esc(contact.portrait)}" alt="Porträt von ${esc(contact.name)}">` : ""}<div><p class="cz" style="color:var(--gold)">Kontakt von ${esc(hero.name || "Namenlos")}</p><h1 class="logo text-4xl mt-2">${esc(contact.name) || "Unbenannter Kontakt"}</h1></div></div>
           <dl class="grid gap-x-8 gap-y-4 sm:grid-cols-2 mt-6">${fields.length ? fields.map(([label, value]) => `<div><dt class="cz text-sm" style="color:var(--gold)">${label}</dt><dd class="pre">${esc(value)}</dd></div>`).join("") : `<p style="color:var(--mute)">Für dieses Profil wurden noch keine Informationen eingetragen.</p>`}</dl></section>
           <section class="panel"><div class="ph justify-between"><span>${ic("book-open-text")}Gesammelte Notizen (${notes.length})</span><button class="btn pri" data-act="contact-note-new">${ic("plus", "w-4 h-4")}Notiz hinzufügen</button></div>
@@ -2752,21 +3236,22 @@
             <div><span class="l">Notiz</span>${editor(S.contactNoteEdit.html || entryHtml(S.contactNoteEdit), "Neue Erkenntnisse und RP-Wissen …")}</div>
             <div class="flex gap-2"><button class="btn pri" data-act="contact-note-save">${ic("save", "w-4 h-4")}Notiz speichern</button><button class="btn" data-act="contact-note-cancel">Abbrechen</button></div></div>` :
             notes.length ? `<div class="space-y-4 mt-4">${notes.map((entry) => `<article class="rounded border p-4" style="border-color:var(--line)"><div class="flex justify-between gap-2"><div><h3 class="text-xl" style="color:var(--highlight)">${esc(entry.title) || "Notiz"}</h3><p class="text-sm" style="color:var(--mute)">${esc(entry.date)}</p></div><div class="flex gap-2"><button class="btn" data-contact-note-edit="${esc(entry.id)}" aria-label="Notiz bearbeiten">${ic("pencil", "w-4 h-4")}</button><button class="btn dng" data-contact-note-delete="${esc(entry.id)}" aria-label="Notiz löschen">${ic("trash-2", "w-4 h-4")}</button></div></div><div class="rich read mt-3">${entryHtml(entry)}</div></article>`).join("")}</div>` :
-            `<p class="py-8 text-center" style="color:var(--mute)">Noch keine einzelnen Notizen gesammelt.</p>`}</section>`;
+            `<p class="py-8 text-center" style="color:var(--mute)">Noch keine einzelnen Notizen gesammelt.</p>`}</section>`}
+        `;
       }
 
       const SUBS = [
-        ["aussehen", "Aussehen", "eye", ["id", "er"]],
-        ["ueber", "Über den Charakter", "users", ["he", "be"]],
+        ["profil", "Charakterübersicht", "user", ["id", "er", "he", "be"]],
         ["geschichte", "Geschichte", "scroll-text", []],
         ["faehigkeiten", "Fähigkeiten", "wand-2", ["fa"]],
         ["attribute", "Attribute", "shield", []],
         ["wesen", "Wesen", "heart", ["we"]],
       ];
       function tSheet(c) {
-        const sub = SUBS.find((x) => x[0] === S.sub) || SUBS[0];
+        const sections = orderedSheetSections(c);
+        const sub = sections.find((x) => x[0] === S.sub) || sections[0];
         return `<div class="grid gap-6 lg:grid-cols-[15rem_1fr] items-start">
-  <nav class="side panel" aria-label="Abschnitte des Charakterblatts">${SUBS.map(([k, l, i]) => `<button class="sub ${sub[0] === k ? "on" : ""}" data-sub="${k}" aria-current="${sub[0] === k}">${ic(i)}${l}</button>`).join("")}</nav>
+  <nav class="side panel" aria-label="Abschnitte des Charakterblatts">${sections.map(([k, l, i]) => `<button class="sub ${sub[0] === k ? "on" : ""}" data-sub="${k}" aria-current="${sub[0] === k}">${ic(i)}${l}</button>`).join("")}</nav>
   <div class="space-y-6 fade">${sub[0] === "attribute" ? pAttr(c) : sub[0] === "geschichte" ? pStory(c) : pSecs(c, sub)}</div></div>`;
       }
       function pAttr(c) {
@@ -2784,11 +3269,13 @@
         ]
           .filter(Boolean)
           .join("");
+        const stats = STATS.filter(([key]) => profileStatVisible(c, key));
+        const customStats = c.customStats || [];
         return `<section class="panel"><h3 class="ph">${ic("shield")}Attribute</h3>
-  <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">${STATS.map(
+  ${stats.length || customStats.length ? `<div class="grid grid-cols-2 sm:grid-cols-3 gap-3">${stats.map(
     ([k, l, i]) => `
   <div class="stat"><span style="color:var(--gold)">${ic(i)}</span><span class="cz text-sm block">${l}</span><b>${c.stats[k]}</b><span style="color:var(--mute)">Modifikator ${mod(c.stats[k])}</span></div>`,
-  ).join("")}${(c.customStats || []).map((stat) => `<div class="stat"><span style="color:var(--gold)">${ic("sparkles")}</span><span class="cz text-sm block">${esc(stat.label)}</span><b>${stat.value}</b><span style="color:var(--mute)">Modifikator ${mod(stat.value)}</span></div>`).join("")}</div></section>
+  ).join("")}${customStats.map((stat) => `<div class="stat"><span style="color:var(--gold)">${ic("sparkles")}</span><span class="cz text-sm block">${esc(stat.label)}</span><b>${stat.value}</b><span style="color:var(--mute)">Modifikator ${mod(stat.value)}</span></div>`).join("")}</div>` : `<p class="py-6 text-center" style="color:var(--mute)">Alle Standardattribute sind ausgeblendet. Du kannst sie jederzeit in der Heldenbearbeitung wieder aktivieren.</p>`}</section>
  ${vitality ? `<section class="panel"><h3 class="ph">${ic("heart-pulse")}Lebenskraft</h3><div class="grid gap-4 sm:grid-cols-2">${vitality}</div></section>` : ""}`;
       }
       function pStory(c) {
@@ -2806,41 +3293,31 @@
       }
       function pSecs(c, sub) {
         const skip = ["name", "titel", "art", "klasse", "level"];
-        const out = SECTIONS.filter((s) => sub[3].includes(s.id))
-          .map((s) => {
-            const rows = s.fields.filter((f) => profileFieldVisible(c, f) && c[f.k] && !skip.includes(f.k));
-            if (s.id === "er") {
-              return `<section class="panel"><h3 class="ph">${ic(s.icon)}${s.title}</h3>
-  <div class="grid gap-6 sm:grid-cols-[minmax(12rem,0.7fr)_1.3fr] items-start">
-   <div class="flex flex-col items-center gap-3">
-    <div class="appearance-portrait">${c.portrait ? `<img src="${esc(c.portrait)}" alt="Porträt von ${esc(c.name)}">` : `<div class="flex h-full flex-col items-center justify-center gap-3 p-4 text-center" style="color:var(--mute)">${ic("user", "w-12 h-12")}<span>Noch kein Charakter-Porträt</span></div>`}</div>
-    <div class="flex flex-wrap justify-center gap-2">
-     <button class="btn" data-act="portrait">${ic("upload", "w-4 h-4")}${c.portrait ? "Porträt ändern" : "Porträt hinzufügen"}</button>
-     ${c.portrait ? `<button class="btn dng" data-act="portraitdel">${ic("trash-2", "w-4 h-4")}Entfernen</button>` : ""}
-    </div>
-   </div>
-   <div>${rows.length ? `<dl class="grid gap-x-8 gap-y-4 sm:grid-cols-2">${rows
-     .map(
-       (f) => `
-   <div class="${f.full ? "sm:col-span-2" : ""}"><dt class="cz text-sm" style="color:var(--gold)">${esc(profileFieldLabel(c, f))}</dt><dd class="pre">${esc(c[f.k])}</dd></div>`,
-     )
-     .join("")}</dl>` : `<p style="color:var(--mute)">Die Beschreibung des Aussehens ist noch leer.</p>`}</div>
-  </div></section>`;
-            }
-            if (!rows.length) return "";
-            return `<section class="panel"><h3 class="ph">${ic(s.icon)}${s.title}</h3>
-   <dl class="grid gap-x-8 gap-y-4 ${s.cols === 2 ? "sm:grid-cols-2" : ""}">${rows
-     .map(
-       (f) => `
-   <div class="${f.full ? "sm:col-span-2" : ""}"><dt class="cz text-sm" style="color:var(--gold)">${esc(profileFieldLabel(c, f))}</dt><dd class="pre">${esc(c[f.k])}</dd></div>`,
-     )
-     .join("")}</dl></section>`;
-          })
-          .join("");
-        return (
-          [out, customProfileDisplay(c.customFields) ? `<section class="panel"><h3 class="ph">${ic("list")}Eigene Profilfelder</h3>${customProfileDisplay(c.customFields)}</section>` : ""].filter(Boolean).join("") ||
-          `<section class="panel text-center py-10"><p style="color:var(--mute)">Zu „${sub[1]}“ ist noch nichts eingetragen.</p><button class="btn mt-4" data-edit="${c.id}">${ic("pencil", "w-4 h-4")}Jetzt ergänzen</button></section>`
-        );
+        const sections = orderedHeroSections(c).filter((section) => sub[3].includes(section.id));
+        if (!sections.length) {
+          return `<section class="panel text-center py-10"><p style="color:var(--mute)">Zu „${sub[1]}“ ist noch nichts eingetragen.</p><button class="btn mt-4" data-edit="${c.id}">${ic("pencil", "w-4 h-4")}Jetzt ergänzen</button></section>`;
+        }
+        const blocks = sections.map((section, index) => {
+          const rows = section.fields.filter((field) => profileFieldVisible(c, field) && c[field.k] && !skip.includes(field.k));
+          const custom = customFieldsForSection(c, section.id)
+            .map(({ field }) => field)
+            .filter((field) => (field.label || "").trim() || (field.value || "").trim());
+          const fieldRows = [
+            ...rows.map((field) => `<div class="${field.full ? "sm:col-span-2" : ""}"><dt class="cz text-sm" style="color:var(--gold)">${esc(profileFieldLabel(c, field))}</dt><dd class="profile-field-value">${esc(c[field.k])}</dd></div>`),
+            ...custom.map((field) => `<div><dt class="cz text-sm" style="color:var(--gold)">${esc(field.label) || "Unbenanntes Feld"}</dt><dd class="profile-field-value">${esc(field.value) || `<span style="color:var(--mute)">Noch keine Angabe</span>`}</dd></div>`),
+          ].join("");
+          const profileContent = section.id === "er"
+            ? `<div class="grid gap-6 sm:grid-cols-[minmax(12rem,0.7fr)_1.3fr] items-start">
+    <div class="flex flex-col items-center gap-3"><div class="appearance-portrait">${c.portrait ? `<img src="${esc(c.portrait)}" alt="Porträt von ${esc(c.name)}">` : `<div class="flex h-full flex-col items-center justify-center gap-3 p-4 text-center" style="color:var(--mute)">${ic("user", "w-12 h-12")}<span>Noch kein Charakter-Porträt</span></div>`}</div>
+     <div class="flex flex-wrap justify-center gap-2"><button class="btn" data-act="portrait">${ic("upload", "w-4 h-4")}${c.portrait ? "Porträt ändern" : "Porträt hinzufügen"}</button>${c.portrait ? `<button class="btn dng" data-act="portraitdel">${ic("trash-2", "w-4 h-4")}Entfernen</button>` : ""}</div></div>
+    <div>${fieldRows ? `<dl class="grid gap-x-8 gap-y-4 sm:grid-cols-2">${fieldRows}</dl>` : `<p style="color:var(--mute)">Die Beschreibung des Aussehens ist noch leer.</p>`}</div>
+   </div>`
+            : fieldRows
+              ? `<dl class="grid gap-x-8 gap-y-4 ${section.cols === 2 ? "sm:grid-cols-2" : ""}">${fieldRows}</dl>`
+              : `<p style="color:var(--mute)">In diesem Bereich sind noch keine Angaben vorhanden.</p>`;
+          return `<section class="${index ? "mt-6 border-t pt-5" : ""}" style="${index ? "border-color:var(--line)" : ""}"><h3 class="ph">${ic(section.icon)}${section.title}</h3>${profileContent}</section>`;
+        }).join("");
+        return `<section class="panel"><h2 class="ph">${ic(sub[2])}${esc(sub[1])}</h2>${blocks}</section>`;
       }
 
       function tGallery(c) {
@@ -2926,10 +3403,9 @@
         let el;
         if (f.area)
           el = `<textarea class="inp" id="${id}" data-f="${f.k}" rows="${f.rows || 3}" placeholder="${f.ph || ""}">${v}</textarea>`;
-        else if (f.k === "art" || f.k === "klasse") {
-          const key = f.k === "art" ? "arten" : "klassen";
-          const options = [...new Set(profileOptionsForField(key, c[f.k]))];
-          el = `<input class="inp" id="${id}" data-f="${f.k}" list="dl_${f.k}" value="${v}" placeholder="${f.k === "art" ? "Art oder Volk" : "Klasse oder Beruf"}"><datalist id="dl_${f.k}">${options.map((option) => `<option value="${esc(option)}">`).join("")}</datalist>`;
+        else if (PROFILE_OPTION_FIELDS[f.k]) {
+          const key = PROFILE_OPTION_FIELDS[f.k];
+          el = `<select class="inp" id="${id}" data-f="${f.k}" aria-label="${esc(profileFieldLabel(c, f))}"><option value="" ${c[f.k] ? "" : "selected"}>Bitte auswählen …</option>${profileOptionGroups(key, c[f.k])}</select>`;
         } else if (f.opts) {
           const options = f.opts.includes(c[f.k])
             ? f.opts
@@ -2943,49 +3419,67 @@
 
       function vEdit() {
         const c = S.draft,
+          sections = orderedHeroSections(c),
+          sheetSections = orderedSheetSections(c),
           num = (k, l, sub) =>
             `<div><label class="l" for="n_${k}">${l}</label><input class="inp" type="number" min="0" max="999" id="n_${k}" data-v="${k}" value="${c[k]}"></div>`;
-        return `<div class="flex flex-wrap gap-2 mb-6 justify-between">
-  <h1 class="text-3xl" style="color:var(--gold)">${S.id ? "Held bearbeiten" : "Neuen Helden erschaffen"}</h1>
-  <div class="flex gap-2"><button class="btn" data-act="cancel">${ic("arrow-left", "w-4 h-4")}Abbrechen</button>
-  <button class="btn pri" data-act="save">${ic("save", "w-4 h-4")}Speichern</button></div></div>
- <div class="grid gap-6 lg:grid-cols-2">
-  <section class="panel lg:col-span-2"><h3 class="ph">${ic("camera")}Porträt & Wappen</h3>
+        const stages = [
+          ["identity", "Identität", "user", "Wer ist dein Held?", ["id"]],
+          ["appearance", "Aussehen", "eye", "Gestalt und sichtbare Merkmale.", ["er"]],
+          ["background", "Hintergrund", "map", "Herkunft und prägende Vergangenheit.", ["he"]],
+          ["nature", "Wesen", "heart", "Persönlichkeit, Ideale und Schwächen.", ["we"]],
+          ["skills", "Fähigkeiten", "backpack", "Können, Ausrüstung und Beziehungen.", ["fa", "be"]],
+          ["attributes", "Werte", "shield", "Attribute und Lebensressourcen.", []],
+          ["advanced", "Anordnung", "settings", "Passe Reihenfolge und Navigation des Charakterblatts an.", []],
+        ];
+        const stage = stages.find(([id]) => id === S.editTab) || stages[0];
+        const sectionCard = (id) => {
+          const s = sections.find((section) => section.id === id);
+          if (!s) return "";
+          const customFields = customFieldsForSection(c, s.id);
+          const editableFields = s.fields.filter((item) => item.k !== "name" && item.k !== "level");
+          const customizer = S.fieldSectionsOpen[s.id]
+            ? `<div class="mt-4 space-y-3 border-t pt-4" style="border-color:var(--line)"><p class="text-sm" style="color:var(--mute)">Felder kannst du hier umbenennen oder ausblenden. Ausgeblendete Werte bleiben erhalten.</p>${editableFields.map((item) => `<div class="grid items-center gap-3 sm:grid-cols-[auto_1fr_auto]"><label class="flex items-center gap-2"><input class="settings-check" type="checkbox" data-field-toggle="${item.k}" ${profileFieldVisible(c, item) ? "checked" : ""}><span>Anzeigen</span></label><input class="inp" data-field-label="${item.k}" value="${esc(profileFieldLabel(c, item))}" aria-label="Bezeichnung von ${esc(item.l)}"><span class="text-sm" style="color:var(--mute)">${esc(item.l)}</span></div>`).join("")}</div>`
+            : "";
+          return `<section class="hero-edit-card panel"><div class="ph flex-wrap justify-between"><h3 class="flex items-center gap-2">${ic(s.icon)}${s.title}</h3><div class="flex flex-wrap items-center gap-2"><button class="btn" type="button" data-custom-field-add="${s.id}">${ic("plus", "w-4 h-4")}Feld hinzufügen</button><button class="btn" type="button" data-section-fields-toggle="${s.id}" aria-expanded="${!!S.fieldSectionsOpen[s.id]}">${ic("settings", "w-4 h-4")}Anpassen</button>${s.id === "id" ? `<label class="flex items-center gap-2 text-sm"><input class="settings-check" type="checkbox" data-field-toggle="level" ${profileFieldVisible(c, { k: "level" }) ? "checked" : ""}><span>Stufe</span></label>` : ""}</div></div>
+   <div class="grid gap-4 ${s.cols === 2 ? "sm:grid-cols-2" : ""}">${s.fields.filter((f) => profileFieldVisible(c, f)).map((f) => field(f, c)).join("")}</div>
+   ${customFields.length ? `<div class="mt-5 space-y-3 border-t pt-4" style="border-color:var(--line)">${customFields.map(({ field: item, index }) => customFieldInput(item, index)).join("")}</div>` : ""}
+   ${customizer}</section>`;
+        };
+        const portrait = `<section class="hero-edit-card panel"><div class="ph">${ic("camera")}Porträt & Wappen</div>
    <div class="flex flex-wrap items-center gap-6">${hexOf(c, true)}
    <div class="space-y-3"><div class="flex flex-wrap gap-2"><button type="button" class="btn" data-act="portrait">${ic("upload", "w-4 h-4")}Porträt hochladen</button>
    ${c.portrait ? `<button type="button" class="btn dng" data-act="portraitdel">${ic("trash-2", "w-4 h-4")}Entfernen</button>` : ""}</div>
    <p class="text-sm" style="color:var(--mute)">Ohne Porträt zeigt das Medaillon das gewählte Wappen.</p>
-   <div class="flex flex-wrap gap-2">${CRESTS.map((n) => `<button type="button" class="crest" data-crest="${n}" aria-pressed="${c.crest === n}" aria-label="${n}">${ic(n, "w-7 h-7")}</button>`).join("")}</div></div></div></section>
-  ${SECTIONS.map(
-    (
-      s,
-    ) => `<section class="panel ${s.id === "he" ? "lg:col-span-2" : ""}"><h3 class="ph">${ic(s.icon)}${s.title}</h3>
-   <div class="grid gap-4 ${s.cols === 2 ? "sm:grid-cols-2" : ""}">${s.fields.filter((f) => profileFieldVisible(c, f)).map((f) => field(f, c)).join("")}</div></section>`,
-  ).join("")}
-  <section class="panel"><div class="ph justify-between"><span>${ic("shield")}Attribute</span><button class="btn" type="button" data-act="custom-stat-add">${ic("plus", "w-4 h-4")}Eigenes Attribut</button></div>
-   <div class="grid grid-cols-2 gap-3">${STATS.map(
-     ([k, l]) => `<div><label class="l" for="s_${k}">${l}</label>
-   <div class="flex gap-1"><button type="button" class="btn" data-step="${k}" data-d="-1" aria-label="${l} senken">−</button>
-   <input class="inp text-center" type="number" min="1" max="30" id="s_${k}" data-s="${k}" value="${c.stats[k]}">
-   <button type="button" class="btn" data-step="${k}" data-d="1" aria-label="${l} erhöhen">+</button></div></div>`,
-   ).join("")}${(c.customStats || []).map((stat, index) => `<div><label class="l">Eigenes Attribut</label><input class="inp mb-2" data-custom-stat-label="${index}" value="${esc(stat.label)}"><div class="flex gap-1"><input class="inp text-center" type="number" min="1" max="30" data-custom-stat="${index}" value="${stat.value}"><button class="btn dng" type="button" data-custom-stat-delete="${index}" aria-label="${esc(stat.label)} löschen">${ic("trash-2", "w-4 h-4")}</button></div></div>`).join("")}</div></section>
-  <section class="panel lg:col-span-2"><div class="ph justify-between"><span>${ic("list")}Eigene Profilfelder</span><button class="btn" type="button" data-act="custom-field-add">${ic("plus", "w-4 h-4")}Profilfeld hinzufügen</button></div>
-    <p class="mb-4 text-sm" style="color:var(--mute)">Individuelle Felder ergänzen das Profil dieses Helden, ohne andere Profile zu verändern.</p>
-    ${(c.customFields || []).length ? `<div>${c.customFields.map((item, index) => customFieldInput(item, index)).join("")}</div>` : `<div class="rounded border p-5 text-center" style="border-color:var(--line);background:var(--field-surface)"><div class="mb-2" style="color:var(--gold)">${ic("list", "w-6 h-6")}</div><p class="text-sm" style="color:var(--mute)">Noch keine eigenen Profilfelder. Lege zum Beispiel Herkunft, Eigenheiten oder besondere Bindungen an.</p></div>`}</section>
-  <section class="panel lg:col-span-2"><div class="ph justify-between"><span>${ic("settings")}Profilfelder anpassen</span><button class="btn" type="button" data-act="field-manager-toggle">${S.fieldManagerOpen ? "Schließen" : "Felder umbenennen / ausblenden"}</button></div>
-   ${S.fieldManagerOpen ? `<div class="space-y-4">${SECTIONS.flatMap((section) => section.fields).filter((item) => item.k !== "name").map((item) => `<div class="grid items-center gap-3 sm:grid-cols-[auto_1fr_auto]"><label class="flex items-center gap-2"><input class="settings-check" type="checkbox" data-field-toggle="${item.k}" ${profileFieldVisible(c, item) ? "checked" : ""}><span>Aktiv</span></label><input class="inp" data-field-label="${item.k}" value="${esc(profileFieldLabel(c, item))}" aria-label="Bezeichnung von ${esc(item.l)}"><span class="text-sm" style="color:var(--mute)">${esc(item.l)}</span></div>`).join("")}</div><p class="mt-3 text-sm" style="color:var(--mute)">Deaktivierte Standardfelder werden in diesem Profil ausgeblendet; gespeicherte Werte bleiben erhalten. Der Name ist ein Pflichtfeld.</p>` : ""}</section>
-  <section class="panel"><h3 class="ph">${ic("heart-pulse")}Lebenskraft</h3>
-   <div class="space-y-5">
-    <section>
-     <label class="flex items-center gap-3"><input class="settings-check" type="checkbox" data-stat-toggle="showLp" ${showLp(c) ? "checked" : ""}><span>Lebenspunkte anzeigen</span></label>
-     ${showLp(c) ? `<div class="grid grid-cols-2 gap-4 mt-3">${num("lp", "Lebenspunkte")}${num("lpMax", "Max. Lebenspunkte")}</div>` : `<p class="mt-2 text-sm" style="color:var(--mute)">Lebenspunkte sind deaktiviert. Die gespeicherten Werte bleiben erhalten.</p>`}
-    </section>
-    <section>
-     <label class="flex items-center gap-3"><input class="settings-check" type="checkbox" data-stat-toggle="showMp" ${showMp(c) ? "checked" : ""}><span>Mana anzeigen</span></label>
-     ${showMp(c) ? `<div class="grid grid-cols-2 gap-4 mt-3">${num("mp", "Mana")}${num("mpMax", "Max. Mana")}</div>` : `<p class="mt-2 text-sm" style="color:var(--mute)">Mana ist deaktiviert. Die gespeicherten Werte bleiben erhalten.</p>`}
-    </section>
+   <div class="flex flex-wrap gap-2">${CRESTS.map((n) => `<button type="button" class="crest" data-crest="${n}" aria-pressed="${c.crest === n}" aria-label="${n}">${ic(n, "w-7 h-7")}</button>`).join("")}</div></div></div></section>`;
+        const identityFields = stage[0] === "identity" ? portrait : "";
+        const content = stage[0] === "attributes"
+          ? `<section class="hero-edit-card panel"><div class="ph justify-between"><span>${ic("shield")}Attribute</span><button class="btn" type="button" data-act="custom-stat-add">${ic("plus", "w-4 h-4")}Eigenes Attribut</button></div>
+   <p class="mb-4 text-sm" style="color:var(--mute)">Blende einzelne Werte im Charakterblatt aus, ohne sie zu löschen.</p>
+   <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">${STATS.map(
+     ([k, l]) => `<div class="hero-edit-summary rounded p-3"><div class="mb-2 flex items-center justify-between gap-2"><label class="l mb-0" for="s_${k}">${l}</label><label class="flex items-center gap-2 text-sm"><input class="settings-check" type="checkbox" data-stat-visibility="${k}" ${profileStatVisible(c, k) ? "checked" : ""}><span>Anzeigen</span></label></div>
+   <div class="flex gap-1"><button type="button" class="btn" data-step="${k}" data-d="-1" aria-label="${l} senken">−</button><input class="inp text-center" type="number" min="1" max="30" id="s_${k}" data-s="${k}" value="${c.stats[k]}"><button type="button" class="btn" data-step="${k}" data-d="1" aria-label="${l} erhöhen">+</button></div></div>`,
+   ).join("")}${(c.customStats || []).map((stat, index) => `<div class="hero-edit-summary rounded p-3"><label class="l">Eigenes Attribut</label><input class="inp mb-2" data-custom-stat-label="${index}" value="${esc(stat.label)}"><div class="flex gap-1"><input class="inp text-center" type="number" min="1" max="30" data-custom-stat="${index}" value="${stat.value}"><button class="btn dng" type="button" data-custom-stat-delete="${index}" aria-label="${esc(stat.label)} löschen">${ic("trash-2", "w-4 h-4")}</button></div></div>`).join("")}</div></section>
+  <section class="hero-edit-card panel"><h3 class="ph">${ic("heart-pulse")}Lebenskraft</h3><div class="grid gap-5 sm:grid-cols-2">
+    <div><label class="flex items-center gap-3"><input class="settings-check" type="checkbox" data-stat-toggle="showLp" ${showLp(c) ? "checked" : ""}><span>Lebenspunkte anzeigen</span></label>${showLp(c) ? `<div class="grid grid-cols-2 gap-3 mt-3">${num("lp", "Aktuell")}${num("lpMax", "Maximum")}</div>` : `<p class="mt-2 text-sm" style="color:var(--mute)">Lebenspunkte bleiben gespeichert.</p>`}</div>
+    <div><label class="flex items-center gap-3"><input class="settings-check" type="checkbox" data-stat-toggle="showMp" ${showMp(c) ? "checked" : ""}><span>Mana anzeigen</span></label>${showMp(c) ? `<div class="grid grid-cols-2 gap-3 mt-3">${num("mp", "Aktuell")}${num("mpMax", "Maximum")}</div>` : `<p class="mt-2 text-sm" style="color:var(--mute)">Mana bleibt gespeichert.</p>`}</div>
+  </div></section>`
+          : stage[0] === "advanced"
+            ? `<section class="hero-edit-card panel"><div class="ph">${ic("list")}Ansicht anordnen</div><p class="mb-5 text-sm" style="color:var(--mute)">Passe die Reihenfolge der Profilbereiche und der Charakterblatt-Navigation an.</p>
+   <div class="grid gap-6 lg:grid-cols-2">
+    <div><h3 class="ph">Profilabschnitte</h3><div class="space-y-2">${sections.map((section, index) => `<div class="flex items-center justify-between gap-3 rounded border px-3 py-2" style="border-color:var(--line);background:var(--field-surface)"><span class="flex items-center gap-2">${ic(section.icon, "w-4 h-4")}${section.title}</span><span class="flex gap-1"><button class="btn" type="button" data-section-move="up" data-section-id="${section.id}" ${index === 0 ? "disabled" : ""} aria-label="${esc(section.title)} nach oben verschieben">↑</button><button class="btn" type="button" data-section-move="down" data-section-id="${section.id}" ${index === sections.length - 1 ? "disabled" : ""} aria-label="${esc(section.title)} nach unten verschieben">↓</button></span></div>`).join("")}</div></div>
+    <div><h3 class="ph">Charakterblatt-Bereiche</h3><div class="space-y-2">${sheetSections.map(([id, label, icon], index) => `<div class="flex items-center justify-between gap-3 rounded border px-3 py-2" style="border-color:var(--line);background:var(--field-surface)"><span class="flex items-center gap-2">${ic(icon, "w-4 h-4")}${label}</span><span class="flex gap-1"><button class="btn" type="button" data-sheet-move="up" data-sheet-id="${id}" ${index === 0 ? "disabled" : ""} aria-label="${esc(label)} nach oben verschieben">↑</button><button class="btn" type="button" data-sheet-move="down" data-sheet-id="${id}" ${index === sheetSections.length - 1 ? "disabled" : ""} aria-label="${esc(label)} nach unten verschieben">↓</button></span></div>`).join("")}</div></div>
    </div></section>
- </div>`;
+  <section class="hero-edit-card panel"><div class="ph">${ic("settings")}Anordnung</div><p class="text-sm" style="color:var(--mute)">Ordne die Profilbereiche und die Navigation deines Charakterblatts. Individuelle Felder verwaltest du direkt im jeweiligen Bereich.</p></section>`
+            : stage[4].map(sectionCard).join("");
+        const nav = stages.map(([id, label, icon, description], index) => `<button type="button" class="hero-edit-tab btn" data-edit-tab="${id}" aria-current="${S.editTab === id ? "step" : "false"}" aria-label="${label}: ${description}"><span class="flex items-center gap-2">${ic(icon, "w-4 h-4")}<span>${label}</span><span class="text-xs opacity-60">${index + 1}</span></span></button>`).join("");
+        return `<div class="mb-5 flex flex-wrap items-center justify-between gap-4">
+  <div><p class="cz text-xs uppercase tracking-[.2em]" style="color:var(--gold)">Chronik · Charakterwerkstatt</p><h1 class="text-3xl sm:text-4xl" style="color:var(--highlight)">${S.id ? "Held bearbeiten" : "Neuen Helden erschaffen"}</h1><p class="mt-1" style="color:var(--mute)">${esc(c.name || "Dein neuer Charakter")} · Schritt ${stages.findIndex(([id]) => id === stage[0]) + 1} von ${stages.length}</p></div>
+  <div class="flex gap-2"><button class="btn" data-act="cancel">${ic("arrow-left", "w-4 h-4")}Abbrechen</button><button class="btn pri" data-act="save">${ic("save", "w-4 h-4")}Speichern</button></div></div>
+  <nav class="hero-edit-tabs mb-5" aria-label="Bearbeitungsschritte">${nav}</nav>
+  <section class="hero-edit-card panel mb-5"><div class="flex items-start gap-3"><span class="mt-1" style="color:var(--gold)">${ic(stage[2], "w-6 h-6")}</span><div><h2 class="text-xl" style="color:var(--highlight)">${stage[1]}</h2><p class="text-sm" style="color:var(--mute)">${stage[3]}</p></div></div></section>
+  <div class="space-y-5">${identityFields}${content}</div>
+  <div class="mt-5 flex flex-wrap justify-between gap-3"><button class="btn" data-edit-tab="${stages[Math.max(0, stages.findIndex(([id]) => id === stage[0]) - 1)][0]}" ${stage[0] === stages[0][0] ? "disabled" : ""}>${ic("chevron-left", "w-4 h-4")}Zurück</button><div class="flex gap-2">${stage[0] !== stages[stages.length - 1][0] ? `<button class="btn pri" data-edit-tab="${stages[stages.findIndex(([id]) => id === stage[0]) + 1][0]}">Weiter${ic("chevron-right", "w-4 h-4")}</button>` : `<button class="btn pri" data-act="save">${ic("save", "w-4 h-4")}Speichern</button>`}</div></div>`;
       }
 
       /* ---------- Events (delegiert) ---------- */
@@ -3006,6 +3500,167 @@
           $("#defaults-dialog input")?.focus();
         } else if (d.act === "defaults-close") {
           $("#defaults-dialog").close();
+        } else if (d.editTab) {
+          if (!["identity", "appearance", "background", "nature", "skills", "attributes", "advanced"].includes(d.editTab)) return;
+          S.editTab = d.editTab;
+          render(true);
+        } else if (d.networkTab) {
+          if (!["relationships", "family"].includes(d.networkTab)) return;
+          S.networkTab = d.networkTab;
+          render(true);
+        } else if (d.act === "family-add-toggle") {
+          S.familyAddOpen = !S.familyAddOpen;
+          render(true);
+        } else if (d.act === "relationship-add") {
+          const from = $("#network-from")?.value;
+          const to = $("#network-to")?.value;
+          const label = $("#network-label")?.value.trim();
+          if (!from || !to || from === to || !networkNode(from) || !networkNode(to) || !label) {
+            toast("Wähle zwei verschiedene Personen und beschreibe ihre Verbindung.");
+            return;
+          }
+          const saved = await persistNetworkMutation(() => S.network.relationships.push({
+            id: "rel" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+            from, to, label: label.slice(0, 80),
+          }));
+          if (!saved) return;
+          toast("Verbindung im Netzwerk gespeichert.");
+          render(true);
+        } else if (d.act === "profile-relationship-add") {
+          const from = d.networkOwner;
+          const to = $("#profile-network-target")?.value;
+          const label = $("#profile-network-label")?.value.trim();
+          if (!from || from === to || !networkNode(from) || !networkNode(to) || !label) {
+            toast("Wähle ein anderes Profil und beschreibe die Verbindung.");
+            return;
+          }
+          const saved = await persistNetworkMutation(() => S.network.relationships.push({
+            id: "rel" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+            from, to, label: label.slice(0, 80),
+          }));
+          if (!saved) return;
+          toast("Verbindung im gemeinsamen Netzwerk gespeichert.");
+          render(true);
+        } else if (d.relationshipDelete) {
+          const edge = S.network.relationships.find((item) => item.id === d.relationshipDelete);
+          if (!edge || !(await askConfirmation("Diese Netzwerk-Verbindung löschen?"))) return;
+          if (!(await persistNetworkMutation(() => {
+            S.network.relationships = S.network.relationships.filter((item) => item.id !== edge.id);
+          }))) return;
+          render(true);
+        } else if (d.act === "family-link-add") {
+          const from = $("#family-from")?.value;
+          const to = $("#family-to")?.value;
+          const selectedLabel = $("#family-label")?.value;
+          if (!from || !to || from === to || !networkNode(from) || !networkNode(to)) {
+            toast("Wähle zwei verschiedene Personen für die Familienverbindung.");
+            return;
+          }
+          const familyLabels = ["Elternteil von", "Kind von", "Geschwister", "Partner/in", "Verwandt"];
+          if (!familyLabels.includes(selectedLabel)) {
+            toast("Wähle eine gültige Familienverbindung.");
+            return;
+          }
+          const [parent, child, label] = selectedLabel === "Kind von"
+            ? [to, from, "Elternteil von"]
+            : [from, to, selectedLabel];
+          const saved = await persistNetworkMutation(() => S.network.familyLinks.push({
+            id: "fam" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+            from: parent, to: child, label,
+          }));
+          if (!saved) return;
+          S.networkTab = "family";
+          toast("Familienverbindung hinzugefügt.");
+          render(true);
+        } else if (d.familyLinkDelete) {
+          const edge = S.network.familyLinks.find((item) => item.id === d.familyLinkDelete);
+          if (!edge || !(await askConfirmation("Diese Familienverbindung löschen?"))) return;
+          if (!(await persistNetworkMutation(() => {
+            S.network.familyLinks = S.network.familyLinks.filter((item) => item.id !== edge.id);
+          }))) return;
+          render(true);
+        } else if (d.act === "family-member-add") {
+          const name = $("#family-name")?.value.trim();
+          const anchor = $("#family-anchor")?.value;
+          const role = $("#family-role")?.value;
+          if (!name || !anchor || !networkNode(anchor)) {
+            toast("Gib einen Namen ein und wähle ein Profil zum Verbinden.");
+            return;
+          }
+          const member = {
+            id: "fm" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+            name: name.slice(0, 80),
+            notes: ($("#family-notes")?.value || "").trim().slice(0, 240),
+          };
+          const memberKey = `family:${member.id}`;
+          const roleData = {
+            parent: [memberKey, anchor, "Elternteil von"],
+            child: [anchor, memberKey, "Elternteil von"],
+            sibling: [memberKey, anchor, "Geschwister"],
+            partner: [memberKey, anchor, "Partner/in"],
+            relative: [memberKey, anchor, "Verwandt"],
+          }[role];
+          if (!roleData) {
+            toast("Diese Familienrolle ist ungültig.");
+            return;
+          }
+          const saved = await persistNetworkMutation(() => {
+            S.network.familyMembers.push(member);
+            S.network.familyLinks.push({
+              id: "fam" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+              from: roleData[0], to: roleData[1], label: roleData[2],
+            });
+          });
+          if (!saved) return;
+          S.networkTab = "family";
+          S.familyAddOpen = false;
+          toast("Familienmitglied hinzugefügt.");
+          render(true);
+        } else if (d.familyMemberDelete) {
+          const member = S.network.familyMembers.find((item) => item.id === d.familyMemberDelete);
+          if (!member || !(await askConfirmation(`„${member.name}“ aus dem Stammbaum entfernen? Verbindungen zu dieser Person werden ebenfalls gelöscht.`))) return;
+          if (!(await persistNetworkMutation(() => {
+            S.network.familyMembers = S.network.familyMembers.filter((item) => item.id !== member.id);
+            removeNetworkNode(`family:${member.id}`);
+          }))) return;
+          render(true);
+        } else if (d.networkOpen) {
+          const [type, ...idParts] = d.networkOpen.split(":");
+          const id = idParts.pop();
+          if (type === "hero" && Store.get(id)) go("sheet", id);
+          else if (type === "companion" && S.companions.some((item) => item.id === id)) {
+            S.id = id;
+            S.view = "companion-sheet";
+            render();
+          } else if (type === "contact" && idParts.length) {
+            const heroId = idParts[0];
+            if (!findContact(heroId, id)) return;
+            S.contactReturnView = "network";
+            S.contactHeroId = heroId;
+            S.contactId = id;
+            S.contactTab = "profile";
+            S.view = "contact-profile";
+            render();
+          }
+        } else if (d.sectionFieldsToggle) {
+          S.fieldSectionsOpen[d.sectionFieldsToggle] = !S.fieldSectionsOpen[d.sectionFieldsToggle];
+          render(true);
+        } else if (d.sectionMove) {
+          const sections = orderedHeroSections(S.draft);
+          const index = sections.findIndex((section) => section.id === d.sectionId);
+          const nextIndex = index + (d.sectionMove === "up" ? -1 : 1);
+          if (index < 0 || nextIndex < 0 || nextIndex >= sections.length) return;
+          [sections[index], sections[nextIndex]] = [sections[nextIndex], sections[index]];
+          S.draft.sectionOrder = sections.map((section) => section.id);
+          render(true);
+        } else if (d.sheetMove) {
+          const sections = orderedSheetSections(S.draft);
+          const index = sections.findIndex(([id]) => id === d.sheetId);
+          const nextIndex = index + (d.sheetMove === "up" ? -1 : 1);
+          if (index < 0 || nextIndex < 0 || nextIndex >= sections.length) return;
+          [sections[index], sections[nextIndex]] = [sections[nextIndex], sections[index]];
+          S.draft.sheetOrder = sections.map(([id]) => id);
+          render(true);
         } else if (d.defaultRename) {
           const key = d.defaultRename;
           const id = d.defaultId;
@@ -3063,6 +3718,7 @@
             "Standardvorgabe konnte nicht wiederhergestellt werden.",
           );
         } else if (d.defaultAdd) {
+          if (!PROFILE_STANDARDS[d.defaultAdd]) return;
           const input = $(`[data-default-input="${d.defaultAdd}"]`);
           const value = input.value.trim();
           if (!value) {
@@ -3084,6 +3740,7 @@
             $(`[data-default-input="${d.defaultAdd}"]`)?.focus();
           }
         } else if (d.defaultDelete) {
+          if (!PROFILE_STANDARDS[d.defaultDelete]) return;
           const index = Number(d.defaultIndex);
           const values = S.customOptions[d.defaultDelete] || [];
           if (!Number.isInteger(index) || index < 0 || index >= values.length) return;
@@ -3109,6 +3766,19 @@
           S.contactNoteEdit = null;
           S.q = "";
           render();
+        } else if (d.act === "network") {
+          if (S.contactEdit && !(await askConfirmation("Ungespeicherte Änderungen am Kontakt verwerfen?"))) return;
+          if (S.contactNoteEdit && !(await askConfirmation("Ungespeicherte Änderungen an der Notiz verwerfen?"))) return;
+          if (S.view === "companion-edit" && !(await askConfirmation("Ungespeicherte Änderungen am Begleiter verwerfen?"))) return;
+          if (S.companionStoryEdit && !(await askConfirmation("Ungespeicherte Änderungen an der Hintergrundgeschichte verwerfen?"))) return;
+          if (S.dEdit && !(await askConfirmation("Ungespeicherte Änderungen am Tagebucheintrag verwerfen?"))) return;
+          S.view = "network";
+          S.id = null;
+          S.q = "";
+          S.companionDraft = null;
+          S.contactEdit = null;
+          S.contactNoteEdit = null;
+          render();
         } else if (d.act === "companions") {
           if (S.contactEdit && !(await askConfirmation("Ungespeicherte Änderungen am Kontakt verwerfen?"))) return;
           if (S.view === "companion-edit" && !(await askConfirmation("Ungespeicherte Änderungen am Begleiter verwerfen?"))) return;
@@ -3120,6 +3790,29 @@
           S.companionDraft = null;
           S.contactEdit = null;
           render();
+        } else if (d.act === "hero-companion-add") {
+          const hero = S.view === "sheet" ? Store.get(S.id) : null;
+          const companionId = $("#hero-companion-select")?.value;
+          const companion = S.companions.find((item) => item.id === companionId);
+          if (!hero || !companion) {
+            toast("Bitte wähle einen vorhandenen Begleiter aus.");
+            return;
+          }
+          const previousHeroIds = [...(companion.heroIds || [])];
+          if (previousHeroIds.includes(hero.id)) {
+            toast("Dieser Begleiter ist dem Helden bereits zugeordnet.");
+            return;
+          }
+          companion.heroIds = [...previousHeroIds, hero.id];
+          try {
+            await Store.persist();
+            toast("Begleiter wurde zugeordnet.");
+            render(true);
+          } catch (error) {
+            companion.heroIds = previousHeroIds;
+            console.error("Begleiter konnte nicht zugeordnet werden.", error);
+            toast("Begleiter konnte nicht zugeordnet werden.");
+          }
         } else if (d.act === "companion-new") {
           if (S.contactEdit && !(await askConfirmation("Ungespeicherte Änderungen am Kontakt verwerfen?"))) return;
           if (S.view === "companion-edit" && !(await askConfirmation("Ungespeicherte Änderungen am Begleiter verwerfen?"))) return;
@@ -3179,6 +3872,7 @@
         } else if (d.companionTab) {
           if (S.companionStoryEdit && !(await askConfirmation("Ungespeicherte Änderungen an der Hintergrundgeschichte verwerfen?"))) return;
           if (S.dEdit && !(await askConfirmation("Ungespeicherte Änderungen am Tagebucheintrag verwerfen?"))) return;
+          if (!["profile", "story", "diary", "network"].includes(d.companionTab)) return;
           S.companionTab = d.companionTab;
           S.read = null;
           S.dEdit = null;
@@ -3228,10 +3922,17 @@
           S.contactReturnView = S.view === "sheet" && S.tab === "contacts" ? "sheet" : "contacts";
           S.contactHeroId = d.contactHero;
           S.contactId = d.contactOpen;
+          S.contactTab = "profile";
           S.contactNoteEdit = null;
           S.contactEdit = null;
           S.view = "contact-profile";
           render();
+        } else if (d.contactTab) {
+          if (!["profile", "relationships"].includes(d.contactTab)) return;
+          if (S.contactNoteEdit && !(await askConfirmation("Ungespeicherte Änderungen an der Notiz verwerfen?"))) return;
+          S.contactTab = d.contactTab;
+          S.contactNoteEdit = null;
+          render(true);
         } else if (d.contactEdit) {
           const heroId = d.contactHero;
           const found = findContact(heroId, d.contactEdit);
@@ -3285,11 +3986,15 @@
             const returnToSheet =
               (S.view === "sheet" && S.tab === "contacts") ||
               (S.view === "contact-profile" && S.contactReturnView === "sheet");
+            const returnToNetwork =
+              S.view === "network" ||
+              (S.view === "contact-profile" && S.contactReturnView === "network");
             c.contacts = (c.contacts || []).filter((x) => x.id !== d.contactDelete);
+            removeNetworkNode(`contact:${d.contactHero}:${d.contactDelete}`);
             await Store.save(c);
             S.contactEdit = null;
             S.contactNoteEdit = null;
-            S.contactReturnView = returnToSheet ? "sheet" : "contacts";
+            S.contactReturnView = returnToSheet ? "sheet" : returnToNetwork ? "network" : "contacts";
             S.view = S.contactReturnView;
             if (S.view === "sheet") S.tab = "contacts";
             else S.id = null;
@@ -3297,9 +4002,9 @@
           }
         } else if (d.act === "contact-back") {
           S.contactNoteEdit = null;
-          S.view = S.contactReturnView === "sheet" ? "sheet" : "contacts";
+          S.view = ["sheet", "network"].includes(S.contactReturnView) ? S.contactReturnView : "contacts";
           if (S.view === "sheet") S.tab = "contacts";
-          else S.id = null;
+          if (S.view !== "sheet") S.id = null;
           render();
         } else if (d.act === "contact-note-new") {
           S.contactNoteEdit = { id: "cn" + Date.now().toString(36), title: "", text: "", html: "", date: new Date().toISOString().slice(0, 10), fresh: true };
@@ -3532,13 +4237,17 @@
         } else if (d.act === "field-manager-toggle") {
           S.fieldManagerOpen = !S.fieldManagerOpen;
           render(true);
-        } else if (d.act === "custom-field-add") {
+        } else if (d.customFieldAdd || d.act === "custom-field-add") {
           const companion = S.view === "companion-edit";
           const record = companion ? S.companionDraft : S.draft;
-          const label = await askText("Wie soll das neue Profilfeld heißen?");
+          const sectionId = d.customFieldAdd;
+          if (!companion && sectionId && !SECTIONS.some((section) => section.id === sectionId)) return;
+          const section = SECTIONS.find((item) => item.id === sectionId);
+          const label = await askText(`Wie soll das neue Feld${section ? ` in „${section.title}“` : ""} heißen?`);
           if (!label) return;
           record.customFields = record.customFields || [];
-          record.customFields.push({ id: "pf" + Date.now().toString(36), label, value: "" });
+          record.customFields.push({ id: "pf" + Date.now().toString(36), label, value: "", ...(sectionId ? { sectionId } : {}) });
+          if (sectionId) S.fieldSectionsOpen[sectionId] = true;
           render(true);
         } else if (d.customFieldDelete !== undefined) {
           const companion = S.view === "companion-edit";
@@ -3569,7 +4278,8 @@
             return;
           }
           const newOptions = { ...S.customOptions };
-          for (const [key, value] of [["arten", S.draft.art], ["klassen", S.draft.klasse]]) {
+          for (const [field, key] of Object.entries(PROFILE_OPTION_FIELDS)) {
+            const value = S.draft[field];
             const normalizedValue = (value || "").trim();
             const isStandard = standardProfileOptions(key).some(
               (option) =>
@@ -3595,7 +4305,7 @@
         } else if (d.act === "export") {
           const a = document.createElement("a");
           a.href = URL.createObjectURL(
-            new Blob([JSON.stringify([...S.chars, ...S.companions], null, 2)], {
+            new Blob([JSON.stringify([...S.chars, ...S.companions, S.network], null, 2)], {
               type: "application/json",
             }),
           );
@@ -3748,7 +4458,12 @@
           record.hiddenFields = [...hidden];
           render(true);
         }
-        if (e.target.dataset.statToggle) {
+        if (e.target.dataset.statVisibility !== undefined) {
+          const hidden = new Set(S.draft.hiddenStats || []);
+          e.target.checked ? hidden.delete(e.target.dataset.statVisibility) : hidden.add(e.target.dataset.statVisibility);
+          S.draft.hiddenStats = [...hidden];
+          render(true);
+        } else if (e.target.dataset.statToggle) {
           S.draft[e.target.dataset.statToggle] = e.target.checked;
           render(true);
         }
@@ -3815,7 +4530,30 @@
         try {
           const arr = JSON.parse(await e.target.files[0].text());
           if (!Array.isArray(arr)) throw 0;
+          const networkEntries = arr.filter((item) => item?.type === "chronicle-network");
+          if (networkEntries.length > 1) throw 0;
+          const importedNetwork = networkEntries[0];
+          if (importedNetwork) {
+            const validRelationships = (items) => Array.isArray(items) && items.every((item) =>
+              item && typeof item.id === "string" && typeof item.from === "string" &&
+              typeof item.to === "string" && typeof item.label === "string",
+            );
+            const validMembers = Array.isArray(importedNetwork.familyMembers) && importedNetwork.familyMembers.every((item) =>
+              item && typeof item.id === "string" && typeof item.name === "string",
+            );
+            if (!validRelationships(importedNetwork.relationships) || !validRelationships(importedNetwork.familyLinks) || !validMembers) throw 0;
+          }
           arr.forEach((c) => {
+            if (c?.type === "chronicle-network") {
+              S.network = {
+                type: "chronicle-network",
+                id: "chronicle-network",
+                relationships: c.relationships,
+                familyLinks: c.familyLinks,
+                familyMembers: c.familyMembers,
+              };
+              return;
+            }
             if (c && c.id && c.name) {
               if (c.type === "companion") {
                 const i = S.companions.findIndex((x) => x.id === c.id);
