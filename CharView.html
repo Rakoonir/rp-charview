@@ -303,6 +303,35 @@
         outline: 2px solid var(--gold);
         outline-offset: 2px;
       }
+      .action-menu > summary {
+        list-style: none;
+      }
+      .action-menu > summary::-webkit-details-marker {
+        display: none;
+      }
+      .action-menu-panel {
+        position: absolute;
+        z-index: 30;
+        top: calc(100% + 0.5rem);
+        right: 0;
+        display: grid;
+        gap: 0.35rem;
+        width: min(14rem, calc(100vw - 2rem));
+        padding: 0.55rem;
+        border: 1px solid var(--line);
+        border-radius: 5px;
+        background: linear-gradient(160deg, var(--panel), var(--bg2));
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.55);
+      }
+      .action-menu-panel .btn {
+        justify-content: flex-start;
+        width: 100%;
+      }
+      .main-nav-link[aria-current="page"] {
+        border-color: var(--gold);
+        background: linear-gradient(180deg, var(--gold), var(--gold2));
+        color: color-mix(in srgb, var(--bg) 88%, black 12%);
+      }
       dialog {
         position: fixed;
         inset: 0;
@@ -319,6 +348,166 @@
       dialog::backdrop {
         background: var(--modal-backdrop);
         backdrop-filter: blur(4px);
+      }
+      #action-dialog {
+        width: min(calc(100% - 2rem), 30rem);
+      }
+      #defaults-dialog {
+        box-sizing: border-box;
+        width: min(calc(100% - 2rem), 70rem);
+        padding: 0.75rem;
+        overflow: hidden;
+      }
+      .defaults-dialog-panel {
+        box-sizing: border-box;
+        --defaults-panel-padding: clamp(1rem, 3vw, 2rem);
+        max-height: calc(100dvh - 4rem);
+        overflow-y: auto;
+        padding: var(--defaults-panel-padding);
+        background:
+          radial-gradient(ellipse at 50% 0, color-mix(in srgb, var(--gold) 10%, transparent), transparent 48%),
+          linear-gradient(160deg, var(--panel), var(--bg2));
+      }
+      .defaults-dialog-header {
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--line);
+      }
+      .defaults-content {
+        display: grid;
+        gap: 1.25rem;
+        margin-top: 1.25rem;
+      }
+      .defaults-dialog-footer {
+        position: sticky;
+        bottom: calc(0rem - var(--defaults-panel-padding));
+        z-index: 1;
+        margin: 1.25rem calc(0rem - var(--defaults-panel-padding)) calc(0rem - var(--defaults-panel-padding));
+        padding: 0.85rem var(--defaults-panel-padding);
+        border-top: 1px solid var(--line);
+        background: color-mix(in srgb, var(--panel) 94%, transparent);
+        backdrop-filter: blur(10px);
+      }
+      .defaults-card {
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: color-mix(in srgb, var(--bg) 44%, var(--panel));
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035), 0 12px 28px rgba(0, 0, 0, 0.2);
+      }
+      .defaults-card-header {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        padding: 1rem 1.1rem;
+        border-bottom: 1px solid var(--line);
+        background: linear-gradient(100deg, color-mix(in srgb, var(--gold) 8%, transparent), transparent 72%);
+      }
+      .defaults-card-icon {
+        display: grid;
+        width: 2.6rem;
+        height: 2.6rem;
+        flex: none;
+        place-items: center;
+        border: 1px solid var(--line);
+        border-radius: 50%;
+        background: color-mix(in srgb, var(--gold) 9%, var(--bg));
+        color: var(--gold);
+      }
+      .defaults-card-body {
+        padding: clamp(1rem, 2.5vw, 1.5rem);
+      }
+      .defaults-add-row {
+        display: flex;
+        gap: 0.75rem;
+        margin-bottom: 1.5rem;
+      }
+      .defaults-lists {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1.25rem;
+      }
+      .defaults-list-heading {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 0.75rem;
+        margin-bottom: 0.6rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid var(--line);
+      }
+      .defaults-list-group {
+        min-width: 0;
+      }
+      .defaults-list {
+        display: grid;
+        gap: 0.55rem;
+      }
+      .defaults-item {
+        display: flex;
+        min-width: 0;
+        min-height: 3rem;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+        padding: 0.55rem 0.75rem 0.55rem 1rem;
+        border: 1px solid color-mix(in srgb, var(--line) 72%, transparent);
+        border-radius: 5px;
+        background: color-mix(in srgb, var(--panel) 70%, transparent);
+      }
+      .defaults-hidden {
+        margin-top: 0.9rem;
+        color: var(--mute);
+        font-size: 0.875rem;
+      }
+      .defaults-hidden summary {
+        width: fit-content;
+        cursor: pointer;
+        color: var(--gold);
+      }
+      .defaults-item > span:first-child {
+        min-width: 0;
+        overflow-wrap: anywhere;
+      }
+      .custom-profile-card {
+        min-width: 0;
+        padding: 1rem;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: linear-gradient(145deg, color-mix(in srgb, var(--gold) 5%, var(--panel)), var(--bg2));
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035);
+      }
+      .custom-profile-value {
+        min-height: 3rem;
+        padding: 0.75rem 0.85rem;
+        border-left: 2px solid var(--gold2);
+        border-radius: 0 4px 4px 0;
+        background: color-mix(in srgb, var(--bg) 58%, transparent);
+        color: var(--ink);
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+      }
+      .custom-profile-editor {
+        position: relative;
+        padding: 1rem;
+        border: 1px solid color-mix(in srgb, var(--line) 84%, transparent);
+        border-radius: 6px;
+        background: color-mix(in srgb, var(--bg) 34%, var(--panel));
+      }
+      .custom-profile-editor + .custom-profile-editor {
+        margin-top: 0.75rem;
+      }
+      @media (max-width: 760px) {
+        .defaults-lists {
+          grid-template-columns: minmax(0, 1fr);
+        }
+      }
+      @media (max-width: 640px) {
+        .custom-profile-editor {
+          padding: 0.8rem;
+        }
+        .defaults-add-row {
+          flex-direction: column;
+        }
       }
       .settings-check {
         accent-color: var(--gold);
@@ -760,10 +949,10 @@
           <img
             src="./assets/icon.png"
             alt="Chronik der Helden Logo"
-            class="h-24 w-24 rounded-md object-contain"
+            class="h-14 w-14 rounded-md object-contain"
             style="filter: drop-shadow(0 0 10px rgba(216, 166, 75, 0.5));"
           />
-          <span class="logo text-3xl sm:text-4xl">Chronik der Helden</span>
+          <span class="logo text-2xl sm:text-3xl">Chronik der Helden</span>
         </button>
         <div
           id="home-update-status"
@@ -776,19 +965,19 @@
           <span class="update-label">Update-Status</span>
         </div>
       </div>
-      <nav class="flex flex-wrap gap-2">
-        <button class="btn" data-act="settings">
-          <span aria-hidden="true">⚙</span>Einstellungen
-        </button>
-        <button class="btn" data-act="import">
-          <span data-ic="upload" data-c="w-4 h-4"></span>Importieren
-        </button>
-        <button class="btn" data-act="export">
-          <span data-ic="download" data-c="w-4 h-4"></span>Exportieren
-        </button>
-        <button class="btn pri" data-act="new">
-          <span data-ic="plus" data-c="w-4 h-4"></span>Neuer Held
-        </button>
+      <details id="action-menu" class="action-menu relative">
+        <summary class="btn"><span data-ic="ellipsis" data-c="w-4 h-4"></span>Mehr</summary>
+        <div class="action-menu-panel" aria-label="Weitere Aktionen">
+          <button class="btn" data-act="settings"><span data-ic="settings" data-c="w-4 h-4"></span>Einstellungen</button>
+          <button class="btn" data-act="defaults"><span data-ic="list" data-c="w-4 h-4"></span>Vorgaben</button>
+          <button class="btn" data-act="import"><span data-ic="upload" data-c="w-4 h-4"></span>Importieren</button>
+          <button class="btn" data-act="export"><span data-ic="download" data-c="w-4 h-4"></span>Exportieren</button>
+        </div>
+      </details>
+      <nav class="flex w-full flex-wrap gap-2 border-t pt-3" style="border-color:var(--line)" aria-label="Hauptnavigation">
+        <button class="btn main-nav-link" data-act="heroes"><span data-ic="shield" data-c="w-4 h-4"></span>Helden</button>
+        <button class="btn main-nav-link" data-act="companions"><span data-ic="paw-print" data-c="w-4 h-4"></span>Begleiter</button>
+        <button class="btn main-nav-link" data-act="contacts"><span data-ic="users" data-c="w-4 h-4"></span>Kontakte</button>
       </nav>
       <input type="file" id="ifile" accept="image/*" class="hidden" /><input
         type="file"
@@ -803,6 +992,8 @@
         class="hidden"
       />
       <input type="file" id="file" accept="application/json" class="hidden" />
+      <input type="file" id="cfile" accept="image/*" class="hidden" />
+      <input type="file" id="contact-file" accept="image/*" class="hidden" />
     </header>
     <main id="app" class="max-w-6xl mx-auto px-4 py-8"></main>
     <div
@@ -922,7 +1113,7 @@
           <section>
             <h3 class="ph">Daten</h3>
             <p class="text-sm" style="color: var(--mute)">
-              Charaktere und hochgeladene Bilder werden gemeinsam in einer Chronik-Datei im gewählten Ordner gespeichert. Beim Wechsel bleibt die bisherige Datei als Sicherung erhalten.
+              Charaktere, Begleiter, Bilder, Tagebücher und Kontakte werden getrennt im gewählten Datenordner gespeichert. Beim Wechsel kannst du die vorhandenen Daten übernehmen oder sichern.
             </p>
             <p id="data-directory" class="mt-3 break-all text-sm" style="color: var(--gold)"></p>
             <div class="mt-3 flex flex-wrap gap-2">
@@ -937,6 +1128,32 @@
             <button class="btn" data-act="settings-close">Schließen</button>
             <button class="btn pri" data-act="settings-save">Speichern</button>
           </div>
+        </div>
+      </section>
+    </dialog>
+    <dialog id="action-dialog" aria-labelledby="action-dialog-title">
+      <section class="panel">
+        <h2 id="action-dialog-title" class="ph">Chronik der Helden</h2>
+        <p id="action-dialog-message" class="my-4"></p>
+        <input id="action-dialog-input" class="inp hidden" autocomplete="off">
+        <div class="flex justify-end gap-2 mt-6">
+          <button class="btn" data-act="dialog-cancel">Abbrechen</button>
+          <button class="btn pri" data-act="dialog-accept">Bestätigen</button>
+        </div>
+      </section>
+    </dialog>
+    <dialog id="defaults-dialog" aria-labelledby="defaults-title">
+      <section class="panel defaults-dialog-panel">
+        <div class="defaults-dialog-header flex items-start justify-between gap-4">
+          <div>
+            <h2 id="defaults-title" class="text-2xl" style="color:var(--gold)">Vorgaben</h2>
+            <p class="mt-1" style="color:var(--mute)">Arten und Klassen für neue Helden anpassen. Änderungen wirken sich nicht auf bereits gespeicherte Figurenwerte aus.</p>
+          </div>
+          <button class="btn" data-act="defaults-close" aria-label="Vorgaben schließen"><span aria-hidden="true">×</span></button>
+        </div>
+        <div id="defaults-content" class="defaults-content"></div>
+        <div class="defaults-dialog-footer flex justify-end">
+          <button class="btn" data-act="defaults-close">Schließen</button>
         </div>
       </section>
     </dialog>
@@ -987,6 +1204,35 @@
         "Nekromant",
         "Assassine",
       ];
+      const PROFILE_STANDARDS = { arten: ARTEN, klassen: KLASSEN };
+      const normalizeProfileOptions = (options) => {
+        const normalized = {
+          arten: Array.isArray(options?.arten) ? [...new Set(options.arten.filter((value) => typeof value === "string").map((value) => value.trim()).filter(Boolean))] : [],
+          klassen: Array.isArray(options?.klassen) ? [...new Set(options.klassen.filter((value) => typeof value === "string").map((value) => value.trim()).filter(Boolean))] : [],
+          standard: { arten: {}, klassen: {} },
+        };
+        for (const key of ["arten", "klassen"]) {
+          const overrides = options?.standard?.[key];
+          if (!overrides || typeof overrides !== "object" || Array.isArray(overrides)) continue;
+          for (const [id, override] of Object.entries(overrides)) {
+            if (!PROFILE_STANDARDS[key].includes(id) || !override || typeof override !== "object" || Array.isArray(override)) continue;
+            const label = typeof override.label === "string" ? override.label.trim() : "";
+            const hidden = override.hidden === true;
+            if (label && label !== id) normalized.standard[key][id] = { label, ...(hidden ? { hidden: true } : {}) };
+            else if (hidden) normalized.standard[key][id] = { hidden: true };
+          }
+        }
+        for (const key of ["arten", "klassen"]) {
+          const standardNames = new Set(
+            [
+              ...PROFILE_STANDARDS[key],
+              ...Object.entries(normalized.standard[key]).map(([id, override]) => override.label || id),
+            ].map((value) => value.toLocaleLowerCase("de")),
+          );
+          normalized[key] = normalized[key].filter((value) => !standardNames.has(value.toLocaleLowerCase("de")));
+        }
+        return normalized;
+      };
       const GESINNUNG = [
         "Rechtschaffen gut",
         "Neutral gut",
@@ -1005,6 +1251,12 @@
         ["in", "Intelligenz", "book-open"],
         ["we", "Weisheit", "sparkles"],
         ["ch", "Charisma", "crown"],
+      ];
+      const COMPANION_PROFILE_FIELDS = [
+        { k: "name", l: "Name" },
+        { k: "species", l: "Art / Spezies" },
+        { k: "description", l: "Beschreibung" },
+        { k: "notes", l: "Notizen" },
       ];
       const SECTIONS = [
         {
@@ -1110,10 +1362,31 @@
         mpMax: 10,
         showMp: true,
         stats: { st: 10, ge: 10, ko: 10, in: 10, we: 10, ch: 10 },
+        customStats: [],
+        customFields: [],
+        fieldLabels: {},
+        hiddenFields: [],
         level: 1,
         gesinnung: "Neutral",
         art: "Mensch",
         klasse: "Krieger",
+      });
+      const blankCompanion = () => ({
+        id: "p" + Date.now().toString(36),
+        type: "companion",
+        name: "",
+        species: "",
+        description: "",
+        notes: "",
+        customFields: [],
+        fieldLabels: {},
+        hiddenFields: [],
+        diary: [],
+        geschichte: "",
+        geschichteHtml: "",
+        heroIds: [],
+        portrait: "",
+        crest: "paw-print",
       });
       const SEED = [
         {
@@ -1220,6 +1493,7 @@
       /* ---------- 3. core/store ---------- */
       const S = {
         chars: [],
+        companions: [],
         view: "list",
         id: null,
         q: "",
@@ -1230,15 +1504,43 @@
         read: null,
         sub: "aussehen",
         sEdit: null,
+        companionDraft: null,
+        companionTab: "profile",
+        companionStoryEdit: null,
+        fieldManagerOpen: false,
+        customOptions: normalizeProfileOptions(),
+        contactEdit: null,
+        contactHeroId: null,
+        contactId: null,
+        contactNoteEdit: null,
+        contactSourceHeroId: null,
+        contactReturnView: "contacts",
+        contactEditCancelView: "contacts",
       };
       const Store = {
         async init() {
           const d = await Storage.load();
-          S.chars = Array.isArray(d) ? d : SEED;
+          S.chars = Array.isArray(d) ? d.filter((x) => x?.type !== "companion") : SEED;
+          S.companions = Array.isArray(d) ? d.filter((x) => x?.type === "companion") : [];
+          S.customOptions = await this.loadProfileOptions();
+        },
+        async loadProfileOptions() {
+          if (window.desktop?.loadProfileOptions) return normalizeProfileOptions(await window.desktop.loadProfileOptions());
+          try {
+            return normalizeProfileOptions(JSON.parse(localStorage.getItem("chronik.profile-options.v1") || "{}"));
+          } catch (error) {
+            console.error("Profiloptionen konnten nicht geladen werden.", error);
+            throw error;
+          }
+        },
+        async saveProfileOptions(options) {
+          const normalized = normalizeProfileOptions(options);
+          if (window.desktop?.saveProfileOptions) return window.desktop.saveProfileOptions(normalized);
+          localStorage.setItem("chronik.profile-options.v1", JSON.stringify(normalized));
         },
         async persist() {
           try {
-            await Storage.save(S.chars);
+            await Storage.save([...S.chars, ...S.companions]);
           } catch (error) {
             console.error("Chronik konnte nicht gespeichert werden.", error);
             toast("Speichern fehlgeschlagen. Bitte Speicherplatz und Berechtigungen prüfen.");
@@ -1255,6 +1557,18 @@
         },
         remove(id) {
           S.chars = S.chars.filter((c) => c.id !== id);
+          S.companions.forEach((companion) => {
+            companion.heroIds = (companion.heroIds || []).filter((heroId) => heroId !== id);
+          });
+          return this.persist();
+        },
+        saveCompanion(companion) {
+          const i = S.companions.findIndex((x) => x.id === companion.id);
+          i < 0 ? S.companions.unshift(companion) : (S.companions[i] = companion);
+          return this.persist();
+        },
+        removeCompanion(id) {
+          S.companions = S.companions.filter((x) => x.id !== id);
           return this.persist();
         },
       };
@@ -1299,6 +1613,12 @@
           '<path d="M4 10a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z" /> <path d="M8 10h8" /> <path d="M8 18h8" /> <path d="M8 22v-6a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v6" /> <path d="M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" />',
         users:
           '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /> <path d="M16 3.128a4 4 0 0 1 0 7.744" /> <path d="M22 21v-2a4 4 0 0 0-3-3.87" /> <circle cx="9" cy="7" r="4" />',
+        "paw-print":
+          '<circle cx="11" cy="4" r="2" /> <circle cx="18" cy="8" r="2" /> <circle cx="4" cy="8" r="2" /> <path d="M12 12a5 5 0 0 0-8 4 3 3 0 0 0 3 3h10a3 3 0 0 0 3-3 5 5 0 0 0-8-4" />',
+        settings:
+          '<path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z" /> <path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-1.8 3.12-.08-.02a1.7 1.7 0 0 0-1.72.5l-.06.06h-3.6l-.04-.08a1.7 1.7 0 0 0-1.43-1.04 1.7 1.7 0 0 0-1.6.78l-.05.08-3.12-1.8.02-.08a1.7 1.7 0 0 0-.5-1.72l-.06-.06v-3.6l.08-.04a1.7 1.7 0 0 0 1.04-1.43 1.7 1.7 0 0 0-.78-1.6l-.08-.05 1.8-3.12.08.02a1.7 1.7 0 0 0 1.72-.5l.06-.06h3.6l.04.08a1.7 1.7 0 0 0 1.43 1.04 1.7 1.7 0 0 0 1.6-.78l.05-.08 3.12 1.8-.02.08a1.7 1.7 0 0 0 .5 1.72l.06.06v3.6z" />',
+        ellipsis:
+          '<circle cx="5" cy="12" r="1" /> <circle cx="12" cy="12" r="1" /> <circle cx="19" cy="12" r="1" />',
         dumbbell:
           '<path d="M17.596 12.768a2 2 0 1 0 2.829-2.829l-1.768-1.767a2 2 0 0 0 2.828-2.829l-2.828-2.828a2 2 0 0 0-2.829 2.828l-1.767-1.768a2 2 0 1 0-2.829 2.829z" /> <path d="m2.5 21.5 1.4-1.4" /> <path d="m20.1 3.9 1.4-1.4" /> <path d="M5.343 21.485a2 2 0 1 0 2.829-2.828l1.767 1.768a2 2 0 1 0 2.829-2.829l-6.364-6.364a2 2 0 1 0-2.829 2.829l1.768 1.767a2 2 0 0 0-2.828 2.829z" /> <path d="m9.6 14.4 4.8-4.8" />',
         wind: '<path d="M12.8 19.6A2 2 0 1 0 14 16H2" /> <path d="M17.5 8a2.5 2.5 0 1 1 2 4H2" /> <path d="M9.8 4.4A2 2 0 1 1 11 8H2" />',
@@ -1421,7 +1741,34 @@
         [...(c.diary || [])].sort((a, b) =>
           (b.date + b.id).localeCompare(a.date + a.id),
         );
-      const E = () => S.dEdit || S.sEdit;
+      const E = () => {
+        if (S.view === "contact-profile") return S.contactNoteEdit;
+        if (S.view === "companion-sheet" && S.companionTab === "story") return S.companionStoryEdit;
+        return S.dEdit || S.sEdit;
+      };
+      const diaryOwner = () =>
+        S.view === "companion-sheet" ? S.companions.find((x) => x.id === S.id) : cur();
+      const profileFieldLabel = (record, field) => record.fieldLabels?.[field.k] || field.l;
+      const profileFieldVisible = (record, field) => !(record.hiddenFields || []).includes(field.k);
+      const customFieldInput = (field, index, companion = false) => {
+        const prefix = companion ? "companion" : "hero";
+        return `<article class="custom-profile-editor">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+            <span class="flex items-center gap-2 cz text-sm" style="color:var(--gold)">${ic("list", "w-4 h-4")}Profilfeld ${index + 1}</span>
+            <button class="btn dng" type="button" data-custom-field-delete="${index}" aria-label="${esc(field.label || "Profilfeld")} entfernen">${ic("trash-2", "w-4 h-4")}Entfernen</button>
+          </div>
+          <div class="grid gap-3 sm:grid-cols-[minmax(10rem,0.7fr)_1.3fr]">
+            <label><span class="l">Bezeichnung</span><input class="inp" data-custom-label="${index}" data-custom-owner="${prefix}" value="${esc(field.label)}" placeholder="z. B. Zugehörigkeit"></label>
+            <label><span class="l">Information</span><textarea class="inp" data-custom-value="${index}" data-custom-owner="${prefix}" rows="2" placeholder="Information zu diesem Profilfeld">${esc(field.value)}</textarea></label>
+          </div>
+        </article>`;
+      };
+      const customProfileDisplay = (fields) => {
+        const visible = (fields || []).filter((field) => (field.label || "").trim() || (field.value || "").trim());
+        return visible.length
+          ? `<dl class="grid gap-3 sm:grid-cols-2">${visible.map((field) => `<div class="custom-profile-card"><dt class="mb-2 flex items-center gap-2 cz text-sm" style="color:var(--gold)">${ic("sparkles", "w-4 h-4")}${esc(field.label) || "Unbenanntes Feld"}</dt><dd class="custom-profile-value">${esc(field.value) || `<span style="color:var(--mute)">Noch keine Angabe</span>`}</dd></div>`).join("")}</dl>`
+          : "";
+      };
       const storyHtml = (c) =>
         entryHtml({ html: c.geschichteHtml, text: c.geschichte });
       const editor = (
@@ -1493,6 +1840,25 @@
         clearTimeout(t._t);
         t._t = setTimeout(() => t.classList.add("hidden"), 2200);
       };
+      const openActionDialog = (message, mode, initialValue = "") =>
+        new Promise((resolve) => {
+          const dialog = $("#action-dialog");
+          const input = $("#action-dialog-input");
+          $("#action-dialog-message").textContent = message;
+          input.value = initialValue;
+          input.classList.toggle("hidden", mode !== "text");
+          $("#action-dialog-title").textContent = mode === "confirm" ? "Bitte bestätigen" : "Profilfeld hinzufügen";
+          S.actionDialog = { mode, resolve };
+          dialog.showModal();
+          if (mode === "text") input.focus();
+        });
+      const askConfirmation = (message) => openActionDialog(message, "confirm");
+      const askText = (message, initialValue = "") => openActionDialog(message, "text", initialValue);
+      $("#action-dialog").addEventListener("cancel", () => {
+        const pending = S.actionDialog;
+        S.actionDialog = null;
+        pending?.resolve(pending.mode === "text" ? null : false);
+      });
       const updateStatus = (status = {}) => {
         const event = status.event || "idle";
         const message = status.message || "Noch nicht nach Updates gesucht.";
@@ -1764,6 +2130,67 @@
           toast("Einstellungen konnten nicht geladen werden.");
         }
       };
+      const standardProfileOptions = (key) =>
+        PROFILE_STANDARDS[key].map((id) => {
+          const override = S.customOptions.standard?.[key]?.[id] || {};
+          return { id, label: override.label || id, hidden: override.hidden === true };
+        });
+      const profileOptionsForField = (key, currentValue) => [
+        ...standardProfileOptions(key).filter((option) => !option.hidden).map((option) => option.label),
+        ...(S.customOptions[key] || []),
+        ...(currentValue ? [currentValue] : []),
+      ];
+      const persistProfileOptions = async (options, successMessage, failureMessage) => {
+        try {
+          const normalized = normalizeProfileOptions(options);
+          await Store.saveProfileOptions(normalized);
+          S.customOptions = normalized;
+          renderDefaults();
+          toast(successMessage);
+          return true;
+        } catch (error) {
+          console.error(failureMessage, error);
+          toast(failureMessage);
+          return false;
+        }
+      };
+      const renderDefaults = () => {
+        const sections = [
+          { key: "arten", title: "Arten / Rassen", standard: ARTEN, placeholder: "z. B. Fee, Golem, Echsenmensch" },
+          { key: "klassen", title: "Klassen / Berufe", standard: KLASSEN, placeholder: "z. B. Runenschmied, Orakel" },
+        ];
+        $("#defaults-content").innerHTML = sections.map(({ key, title, standard, placeholder }) => {
+          const custom = S.customOptions[key] || [];
+          const standardOptions = standardProfileOptions(key);
+          const visibleStandards = standardOptions.filter((option) => !option.hidden);
+          const hiddenStandards = standardOptions.filter((option) => option.hidden);
+          return `<section class="defaults-card">
+            <header class="defaults-card-header">
+              <span class="defaults-card-icon">${ic(key === "arten" ? "users" : "backpack", "w-5 h-5")}</span>
+              <div class="min-w-0 flex-1"><h3 class="text-lg">${title}</h3><p class="text-sm" style="color:var(--mute)">${visibleStandards.length} Standard · ${custom.length} eigene</p></div>
+            </header>
+            <div class="defaults-card-body">
+              <label class="l" for="default-${key}">Eigene Vorgabe hinzufügen</label>
+              <div class="defaults-add-row">
+                <input id="default-${key}" class="inp min-w-0 flex-1" data-default-input="${key}" placeholder="${placeholder}" aria-label="Neue Vorgabe: ${title}">
+                <button class="btn pri flex-none" type="button" data-default-add="${key}">${ic("plus", "w-4 h-4")}Hinzufügen</button>
+              </div>
+              <div class="defaults-lists">
+               <section class="defaults-list-group">
+                <div class="defaults-list-heading"><h4 class="cz text-sm">Standard</h4><span class="text-xs" style="color:var(--mute)">${visibleStandards.length} Einträge</span></div>
+                <div class="defaults-list">${visibleStandards.length ? visibleStandards.map(({ id, label }) => `<div class="defaults-item"><span>${esc(label)}</span><div class="flex flex-none gap-1"><button class="btn" type="button" data-default-rename="${key}" data-default-id="${esc(id)}" aria-label="„${esc(label)}“ umbenennen" title="Umbenennen">${ic("pencil", "w-4 h-4")}</button><button class="btn dng" type="button" data-default-remove="${key}" data-default-id="${esc(id)}" aria-label="„${esc(label)}“ aus den Standardvorgaben entfernen" title="Entfernen">${ic("trash-2", "w-4 h-4")}</button></div></div>`).join("") : `<p class="rounded border p-4 text-sm" style="border-color:var(--line);color:var(--mute)">Alle Standardvorgaben wurden entfernt.</p>`}</div>
+                ${hiddenStandards.length ? `<details class="defaults-hidden"><summary>Entfernte Standardvorgaben (${hiddenStandards.length})</summary><div class="defaults-list mt-3">${hiddenStandards.map(({ id, label }) => `<div class="defaults-item"><span>${esc(label)}</span><button class="btn" type="button" data-default-restore="${key}" data-default-id="${esc(id)}" aria-label="„${esc(label)}“ wiederherstellen" title="Wiederherstellen">${ic("rotate-ccw", "w-4 h-4")}Wiederherstellen</button></div>`).join("")}</div></details>` : ""}
+               </section>
+               <section class="defaults-list-group"><div class="defaults-list-heading"><h4 class="cz text-sm">Eigene Vorgaben</h4><span class="text-xs" style="color:var(--mute)">${custom.length} Einträge</span></div>
+                <div class="defaults-list">
+                  ${custom.length ? custom.map((value, index) => `<div class="defaults-item"><span>${esc(value)}</span><button class="btn dng flex-none" type="button" data-default-delete="${key}" data-default-index="${index}" aria-label="„${esc(value)}“ entfernen" title="Entfernen">${ic("trash-2", "w-4 h-4")}</button></div>`).join("") : `<p class="rounded border p-4 text-sm" style="border-color:var(--line);color:var(--mute)">Noch keine eigenen Vorgaben angelegt.</p>`}
+                </div>
+               </section>
+              </div>
+            </div>
+          </section>`;
+        }).join("");
+      };
       const go = (view, id = null) => {
         S.view = view;
         S.id = id;
@@ -1773,6 +2200,12 @@
         S.read = null;
         S.sub = "aussehen";
         S.sEdit = null;
+        S.companionStoryEdit = null;
+        S.companionTab = "profile";
+        S.fieldManagerOpen = false;
+        S.contactEdit = null;
+        S.companionDraft = null;
+        S.contactNoteEdit = null;
         S.draft =
           view === "edit"
             ? structuredClone(id ? Store.get(id) : blank())
@@ -1780,9 +2213,39 @@
         render();
         scrollTo(0, 0);
       };
+      const editCompanion = (id = null) => {
+        S.id = id;
+        S.view = "companion-edit";
+        S.fieldManagerOpen = false;
+        S.companionDraft = structuredClone(
+          id ? S.companions.find((x) => x.id === id) : blankCompanion(),
+        );
+        S.contactEdit = null;
+        render();
+        scrollTo(0, 0);
+      };
 
       function render(q) {
-        app.innerHTML = `<div class="${q ? "" : "fade"}">${S.view === "list" ? vList() : S.view === "sheet" ? vSheet() : vEdit()}</div>${S.view === "sheet" ? vLightbox() : ""}`;
+        const content = S.view === "list" ? vList()
+          : S.view === "sheet" ? vSheet()
+          : S.view === "companions" ? vCompanions()
+          : S.view === "companion-edit" ? vCompanionEdit()
+          : S.view === "companion-sheet" ? vCompanionSheet()
+          : S.view === "contacts" ? vAllContacts()
+          : S.view === "contact-profile" ? vContactProfile()
+          : S.view === "contact-edit" ? vContactEdit()
+          : vEdit();
+        app.innerHTML = `<div class="${q ? "" : "fade"}">${content}</div>${S.view === "sheet" ? vLightbox() : ""}`;
+        const activeNavigation =
+          S.view === "contacts" || S.view.startsWith("contact-") || (S.view === "sheet" && S.tab === "contacts")
+            ? "contacts"
+            : S.view === "companions" || S.view.startsWith("companion-") || (S.view === "sheet" && S.tab === "companions")
+              ? "companions"
+              : "heroes";
+        document.querySelectorAll(".main-nav-link").forEach((button) => {
+          if (button.dataset.act === activeNavigation) button.setAttribute("aria-current", "page");
+          else button.removeAttribute("aria-current");
+        });
       }
 
       function vList() {
@@ -1795,8 +2258,8 @@
           );
         return `<div class="flex flex-wrap items-end justify-between gap-4 mb-8">
   <div><h1 class="text-3xl" style="color:var(--gold)">Deine Helden</h1><p style="color:var(--mute)">${S.chars.length} Charaktere in der Chronik</p></div>
-  <div class="relative w-full sm:w-72"><span class="absolute left-3 top-2.5" style="color:var(--gold2)">${ic("search", "w-4 h-4")}</span>
-  <input id="q" class="inp" style="padding-left:2.2rem" placeholder="Held suchen …" value="${esc(S.q)}"></div></div>
+  <div class="flex flex-wrap items-center gap-3"><div class="relative w-full sm:w-72"><span class="absolute left-3 top-2.5" style="color:var(--gold2)">${ic("search", "w-4 h-4")}</span>
+  <input id="q" class="inp" style="padding-left:2.2rem" placeholder="Held suchen …" value="${esc(S.q)}"></div><button class="btn pri" data-act="new">${ic("plus", "w-4 h-4")}Neuer Held</button></div></div>
  ${
    L.length
      ? `<div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">${L.map(
@@ -1805,8 +2268,8 @@
    <div class="flex gap-4">${hexOf(c)}
    <div class="min-w-0"><h2 class="text-xl truncate" style="color:var(--highlight)">${esc(c.name) || "Namenlos"}</h2>
    <p class="italic truncate" style="color:var(--mute)">${esc(c.titel)}</p>
-   <p class="mt-1">${esc(c.art)} ${esc(c.klasse)}</p>
-   <p class="cz text-sm" style="color:var(--gold)">Stufe ${esc(c.level)}</p></div></div>
+   ${[profileFieldVisible(c, { k: "art" }) ? esc(c.art) : "", profileFieldVisible(c, { k: "klasse" }) ? esc(c.klasse) : ""].filter(Boolean).length ? `<p class="mt-1">${[profileFieldVisible(c, { k: "art" }) ? esc(c.art) : "", profileFieldVisible(c, { k: "klasse" }) ? esc(c.klasse) : ""].filter(Boolean).join(" ")}</p>` : ""}
+   ${profileFieldVisible(c, { k: "level" }) ? `<p class="cz text-sm" style="color:var(--gold)">${esc(profileFieldLabel(c, { k: "level", l: "Stufe" }))} ${esc(c.level)}</p>` : ""}</div></div>
    ${showLp(c) ? `<div class="bar mt-4"><i class="lp" style="width:${pct(c.lp, c.lpMax)}%"></i></div>` : ""}</article>`,
        ).join("")}</div>`
      : `<div class="panel text-center py-12"><p class="text-xl mb-4">Keine Helden gefunden. Erschaffe den ersten Namen für die Chronik.</p><button class="btn pri" data-act="new">${ic("plus", "w-4 h-4")}Neuer Held</button></div>`
@@ -1830,6 +2293,8 @@
           ["sheet", "Charakterblatt", "scroll-text", 0],
           ["gallery", "Galerie", "images", (c.gallery || []).length],
           ["diary", "Tagebuch", "book-open-text", (c.diary || []).length],
+          ["companions", "Begleiter", "paw-print", S.companions.filter((x) => (x.heroIds || []).includes(c.id)).length],
+          ["contacts", "Kontakte", "users", (c.contacts || []).length],
         ];
         const resources = [
           showLp(c)
@@ -1849,10 +2314,191 @@
   <div class="flex flex-wrap items-center gap-6">${hexOf(c, true)}
   <div class="flex-1 min-w-[16rem]"><h1 class="logo text-4xl sm:text-5xl leading-tight">${esc(c.name) || "Namenlos"}</h1>
   <p class="text-xl italic" style="color:var(--mute)">${esc(c.titel)}</p>
-  <p class="cz mt-2" style="color:var(--gold)">${esc(c.art)} · ${esc(c.klasse)} · Stufe ${esc(c.level)}</p></div>
+  <p class="cz mt-2" style="color:var(--gold)">${[profileFieldVisible(c, { k: "art" }) ? esc(c.art) : "", profileFieldVisible(c, { k: "klasse" }) ? esc(c.klasse) : "", profileFieldVisible(c, { k: "level" }) ? `${esc(profileFieldLabel(c, { k: "level", l: "Stufe" }))} ${esc(c.level)}` : ""].filter(Boolean).join(" · ")}</p></div>
   ${resources ? `<div class="w-full sm:w-64 space-y-3">${resources}</div>` : ""}</div></section>
  <nav class="flex flex-wrap gap-2 mb-6" aria-label="Bereiche">${T.map(([k, l, i, n]) => `<button class="btn ${S.tab === k ? "pri" : ""}" data-tab="${k}" aria-current="${S.tab === k}">${ic(i, "w-4 h-4")}${l}${n ? ` (${n})` : ""}</button>`).join("")}</nav>
- ${S.tab === "gallery" ? tGallery(c) : S.tab === "diary" ? tDiary(c) : tSheet(c)}`;
+ ${S.tab === "gallery" ? tGallery(c) : S.tab === "diary" ? tDiary(c) : S.tab === "contacts" ? tContacts(c) : S.tab === "companions" ? tHeroCompanions(c) : tSheet(c)}`;
+      }
+
+      function tHeroCompanions(hero) {
+        return `<section class="panel"><div class="ph"><span class="flex items-center gap-2">${ic("paw-print")}Begleiter von ${esc(hero.name || "deinem Helden")}</span></div>
+        ${S.companions.length ? `<div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">${S.companions.map((companion) => `<article class="rounded border p-4" style="border-color:var(--line);background:var(--field-surface)">
+          <button class="flex w-full items-center gap-3 text-left" data-companion-open="${esc(companion.id)}">
+            ${companion.portrait ? `<img class="h-16 w-16 flex-none rounded-full object-cover" src="${esc(companion.portrait)}" alt="">` : `<span class="flex h-16 w-16 flex-none items-center justify-center rounded-full border" style="border-color:var(--gold2);background:var(--bg2);color:var(--gold)">${ic(companion.crest || "paw-print", "w-8 h-8")}</span>`}
+            <span class="min-w-0"><span class="block truncate text-lg font-semibold" style="color:var(--highlight)">${esc(companion.name || "Namenlos")}</span>
+            <span class="block text-sm italic" style="color:var(--gold)">${esc(companion.species) || "Begleiter"}</span></span>
+          </button>
+          <p class="mt-3 line-clamp-3 text-sm" style="color:var(--mute)">${esc(companion.description || companion.notes || "Noch keine Beschreibung.")}</p>
+          <label class="mt-4 flex items-center gap-3 border-t pt-3" style="border-color:var(--line)">
+            <input class="settings-check" type="checkbox" data-hero-companion="${esc(companion.id)}" ${(companion.heroIds || []).includes(hero.id) ? "checked" : ""}>
+            <span>${(companion.heroIds || []).includes(hero.id) ? "Gehört zu diesem Helden" : "Diesem Helden zuordnen"}</span>
+          </label></article>`).join("")}</div>
+        <button class="btn mt-4" data-act="companions">${ic("images", "w-4 h-4")}Begleiter-Galerie verwalten</button>` : `<p class="py-6 text-center" style="color:var(--mute)">Lege zuerst in der Begleiter-Galerie einen Begleiter an.</p><button class="btn pri" data-act="companion-new">${ic("plus", "w-4 h-4")}Begleiter anlegen</button>`}</section>`;
+      }
+
+      function vCompanions() {
+        const q = S.q.toLowerCase();
+        const list = S.companions.filter((x) =>
+          [x.name, x.species, x.description].join(" ").toLowerCase().includes(q),
+        );
+        return `<div class="flex flex-wrap items-end justify-between gap-4 mb-8">
+  <div><h1 class="text-3xl" style="color:var(--gold)">Begleiter-Galerie</h1><p style="color:var(--mute)">${S.companions.length} Begleiter in der Chronik</p></div>
+  <div class="relative w-full sm:w-72"><input id="q" class="inp" placeholder="Begleiter suchen …" value="${esc(S.q)}"></div>
+  <button class="btn pri" data-act="companion-new">${ic("plus", "w-4 h-4")}Neuer Begleiter</button></div>
+  ${list.length ? `<div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">${list.map((x) => {
+    const heroes = S.chars.filter((c) => (x.heroIds || []).includes(c.id));
+    return `<article class="panel card cursor-pointer" data-companion-open="${esc(x.id)}" tabindex="0">
+      <div class="flex gap-4">${hexOf(x)}<div class="min-w-0"><h2 class="text-xl truncate" style="color:var(--highlight)">${esc(x.name) || "Namenlos"}</h2>
+      ${profileFieldVisible(x, COMPANION_PROFILE_FIELDS[1]) ? `<p class="italic truncate" style="color:var(--mute)">${esc(x.species)}</p>` : ""}
+      <p class="mt-2">${esc(x.description)}</p>
+      <p class="cz text-sm mt-2" style="color:var(--gold)">${heroes.length ? `Gehört: ${heroes.map((c) => esc(c.name)).join(", ")}` : "Noch keinem Helden zugeordnet"}</p></div></div></article>`;
+  }).join("")}</div>` : `<div class="panel text-center py-12"><p class="text-xl mb-4">${S.companions.length ? "Keine Begleiter gefunden." : "Noch keine Begleiter angelegt."}</p><button class="btn pri" data-act="companion-new">${ic("plus", "w-4 h-4")}Neuen Begleiter anlegen</button></div>`}`;
+      }
+
+      function vCompanionEdit() {
+        const c = S.companionDraft;
+        return `<div class="flex flex-wrap gap-2 mb-6 justify-between">
+  <h1 class="text-3xl" style="color:var(--gold)">${c.id && S.companions.some((x) => x.id === c.id) ? "Begleiter bearbeiten" : "Neuen Begleiter erschaffen"}</h1>
+  <div class="flex gap-2"><button class="btn" data-act="companion-cancel">Abbrechen</button><button class="btn pri" data-act="companion-save">${ic("save", "w-4 h-4")}Speichern</button></div></div>
+  <div class="grid gap-6 lg:grid-cols-2">
+    <section class="panel lg:col-span-2"><h3 class="ph">${ic("camera")}Begleiterbild</h3><div class="flex flex-wrap items-center gap-6">${hexOf(c, true)}<button class="btn" data-act="companion-portrait">${ic("upload", "w-4 h-4")}${c.portrait ? "Bild ändern" : "Bild hinzufügen"}</button>${c.portrait ? `<button class="btn dng" data-act="companion-portrait-delete">Entfernen</button>` : ""}</div></section>
+    <section class="panel">${profileFieldVisible(c, COMPANION_PROFILE_FIELDS[0]) ? `<label class="l" for="cf_name">${esc(profileFieldLabel(c, COMPANION_PROFILE_FIELDS[0]))}</label><input id="cf_name" class="inp" data-cf="name" value="${esc(c.name)}" placeholder="Name des Begleiters">` : ""}
+    ${profileFieldVisible(c, COMPANION_PROFILE_FIELDS[1]) ? `<label class="l mt-4" for="cf_species">${esc(profileFieldLabel(c, COMPANION_PROFILE_FIELDS[1]))}</label><input id="cf_species" class="inp" data-cf="species" value="${esc(c.species)}" placeholder="z. B. Rabe, Wolf, Vertrauter">` : ""}</section>
+    <section class="panel">${profileFieldVisible(c, COMPANION_PROFILE_FIELDS[2]) ? `<label class="l" for="cf_description">${esc(profileFieldLabel(c, COMPANION_PROFILE_FIELDS[2]))}</label><textarea id="cf_description" class="inp" data-cf="description" rows="4" placeholder="Aussehen, Persönlichkeit und besondere Merkmale">${esc(c.description)}</textarea>` : ""}
+    ${profileFieldVisible(c, COMPANION_PROFILE_FIELDS[3]) ? `<label class="l mt-4" for="cf_notes">${esc(profileFieldLabel(c, COMPANION_PROFILE_FIELDS[3]))}</label><textarea id="cf_notes" class="inp" data-cf="notes" rows="4" placeholder="Weitere Informationen">${esc(c.notes)}</textarea>` : ""}</section>
+    <section class="panel lg:col-span-2"><div class="ph justify-between"><span>${ic("list")}Eigene Profilfelder</span><button class="btn" type="button" data-act="custom-field-add">${ic("plus", "w-4 h-4")}Profilfeld hinzufügen</button></div>
+    <p class="mb-4 text-sm" style="color:var(--mute)">Ergänze individuelle Informationen, die nur für diesen Begleiter gelten.</p>
+    ${(c.customFields || []).length ? `<div>${c.customFields.map((item, index) => customFieldInput(item, index, true)).join("")}</div>` : `<div class="rounded border p-5 text-center" style="border-color:var(--line);background:var(--field-surface)"><div class="mb-2" style="color:var(--gold)">${ic("list", "w-6 h-6")}</div><p class="text-sm" style="color:var(--mute)">Noch keine eigenen Profilfelder. Lege zum Beispiel Herkunft, Eigenheiten oder besondere Bindungen an.</p></div>`}</section>
+    <section class="panel lg:col-span-2"><div class="ph justify-between"><span>${ic("settings")}Profilfelder anpassen</span><button class="btn" type="button" data-act="field-manager-toggle">${S.fieldManagerOpen ? "Schließen" : "Felder umbenennen / ausblenden"}</button></div>
+    ${S.fieldManagerOpen ? `<div class="space-y-4">${COMPANION_PROFILE_FIELDS.filter((item) => item.k !== "name").map((item) => `<div class="grid items-center gap-3 sm:grid-cols-[auto_1fr_auto]"><label class="flex items-center gap-2"><input class="settings-check" type="checkbox" data-field-toggle="${item.k}" ${profileFieldVisible(c, item) ? "checked" : ""}><span>Aktiv</span></label><input class="inp" data-field-label="${item.k}" value="${esc(profileFieldLabel(c, item))}" aria-label="Bezeichnung von ${esc(item.l)}"><span class="text-sm" style="color:var(--mute)">${esc(item.l)}</span></div>`).join("")}</div><p class="mt-3 text-sm" style="color:var(--mute)">Deaktivierte Felder werden in diesem Profil ausgeblendet; Werte bleiben gespeichert. Der Name ist ein Pflichtfeld.</p>` : ""}</section>
+    <section class="panel lg:col-span-2"><h3 class="ph">${ic("users")}Zugeordnete Helden</h3>
+    ${S.chars.length ? `<div class="grid gap-2 sm:grid-cols-2">${S.chars.map((hero) => `<label class="flex items-center gap-3"><input class="settings-check" type="checkbox" data-companion-hero="${esc(hero.id)}" ${(c.heroIds || []).includes(hero.id) ? "checked" : ""}><span>${esc(hero.name || "Namenlos")}</span></label>`).join("")}</div>` : `<p style="color:var(--mute)">Lege zuerst einen Helden an, um diesen Begleiter zuzuordnen.</p>`}</section>
+  </div>`;
+      }
+
+      function vCompanionSheet() {
+        const c = S.companions.find((x) => x.id === S.id);
+        if (!c) return vCompanions();
+        const heroes = S.chars.filter((x) => (c.heroIds || []).includes(x.id));
+        return `<div class="flex flex-wrap gap-2 mb-6 justify-between">
+  <button class="btn" data-act="companions-back">${ic("arrow-left", "w-4 h-4")}Zur Begleiter-Galerie</button>
+  <div class="flex gap-2"><button class="btn" data-companion-edit="${esc(c.id)}">${ic("pencil", "w-4 h-4")}Bearbeiten</button><button class="btn dng" data-companion-delete="${esc(c.id)}">${ic("trash-2", "w-4 h-4")}Löschen</button></div></div>
+  <section class="panel mb-6"><div class="flex flex-wrap items-center gap-6">${hexOf(c, true)}<div><h1 class="logo text-4xl">${esc(c.name) || "Namenlos"}</h1>${profileFieldVisible(c, COMPANION_PROFILE_FIELDS[1]) ? `<p class="text-xl italic" style="color:var(--mute)">${esc(profileFieldLabel(c, COMPANION_PROFILE_FIELDS[1]))}: ${esc(c.species)}</p>` : ""}</div></div></section>
+  <nav class="flex flex-wrap gap-2 mb-6" aria-label="Begleiterbereiche">
+    <button class="btn ${S.companionTab === "profile" ? "pri" : ""}" data-companion-tab="profile">${ic("user", "w-4 h-4")}Profil</button>
+    <button class="btn ${S.companionTab === "story" ? "pri" : ""}" data-companion-tab="story">${ic("scroll-text", "w-4 h-4")}Hintergrundgeschichte</button>
+    <button class="btn ${S.companionTab === "diary" ? "pri" : ""}" data-companion-tab="diary">${ic("book-open-text", "w-4 h-4")}Tagebuch (${(c.diary || []).length})</button>
+  </nav>
+  ${S.companionTab === "story" ? pCompanionStory(c) : S.companionTab === "diary" ? S.read && (c.diary || []).some((entry) => entry.id === S.read) ? vRead(c) : tDiary(c, true) :
+  `<div class="grid gap-6 lg:grid-cols-2">${profileFieldVisible(c, COMPANION_PROFILE_FIELDS[2]) ? `<section class="panel"><h2 class="ph">${esc(profileFieldLabel(c, COMPANION_PROFILE_FIELDS[2]))}</h2><p class="pre">${esc(c.description) || "Noch keine Beschreibung."}</p></section>` : ""}
+  ${profileFieldVisible(c, COMPANION_PROFILE_FIELDS[3]) ? `<section class="panel"><h2 class="ph">${esc(profileFieldLabel(c, COMPANION_PROFILE_FIELDS[3]))}</h2><p class="pre">${esc(c.notes) || "Noch keine Notizen."}</p></section>` : ""}
+  ${customProfileDisplay(c.customFields) ? `<section class="panel lg:col-span-2"><h2 class="ph">${ic("list")}Eigene Profilfelder</h2>${customProfileDisplay(c.customFields)}</section>` : ""}
+  <section class="panel lg:col-span-2"><h2 class="ph">Zugeordnete Helden</h2>${heroes.length ? `<div class="flex flex-wrap gap-2">${heroes.map((h) => `<button class="btn" data-open="${esc(h.id)}">${esc(h.name || "Namenlos")}</button>`).join("")}</div>` : `<p style="color:var(--mute)">Dieser Begleiter ist noch keinem Helden zugeordnet.</p>`}</section></div>`}`;
+      }
+
+      function pCompanionStory(companion) {
+        const has = (companion.geschichteHtml || companion.geschichte || "").replace(/<[^>]*>/g, "").trim() || /<img/.test(companion.geschichteHtml || "");
+        if (S.companionStoryEdit) return `<section class="panel"><h2 class="ph">Hintergrundgeschichte bearbeiten</h2>${editor(S.companionStoryEdit.html, "Schreibe die Hintergrundgeschichte des Begleiters …")}
+          <div class="flex gap-2 mt-4"><button class="btn pri" data-act="companion-story-save">${ic("save", "w-4 h-4")}Geschichte speichern</button><button class="btn" data-act="companion-story-cancel">Abbrechen</button></div></section>`;
+        return `<section class="panel"><div class="ph justify-between"><span>${ic("scroll-text")}Hintergrundgeschichte</span><button class="btn" data-act="companion-story-edit">${ic("pencil", "w-4 h-4")}Bearbeiten</button></div>
+          ${has ? `<div class="rich read">${storyHtml(companion)}</div>` : `<p class="py-8 text-center" style="color:var(--mute)">Für diesen Begleiter wurde noch keine Hintergrundgeschichte geschrieben.</p>`}</section>`;
+      }
+
+      function tContacts(c) {
+        const contacts = c.contacts || [];
+        return `<section class="panel"><div class="ph justify-between"><span class="flex items-center gap-2">${ic("users")}Kontakte von ${esc(c.name || "deinem Helden")}</span><button class="btn pri" data-act="contact-new">${ic("plus", "w-4 h-4")}Kontakt hinzufügen</button></div>
+        ${contacts.length ? `<div class="grid gap-4 sm:grid-cols-2 mt-4">${contacts.map((x) => contactCard(x, c.id)).join("")}</div>` :
+        `<p class="py-8 text-center" style="color:var(--mute)">Für diesen Helden sind noch keine Kontakte gespeichert. Du kannst Kontakte auch über die zentrale Kontakte-Übersicht anlegen.</p>`}</section>`;
+      }
+
+      const allContacts = () => S.chars.flatMap((hero) =>
+        (hero.contacts || []).map((contact) => ({ hero, contact })),
+      );
+      const findContact = (heroId, contactId) => {
+        const hero = Store.get(heroId);
+        const contact = hero?.contacts?.find((entry) => entry.id === contactId);
+        return hero && contact ? { hero, contact } : null;
+      };
+      const contactCard = (contact, heroId) => `<article class="rounded border p-4" style="border-color:var(--line)">
+        <button class="flex gap-3 w-full text-left" data-contact-open="${esc(contact.id)}" data-contact-hero="${esc(heroId)}">
+          ${contact.portrait ? `<img class="h-16 w-16 rounded-full object-cover" src="${esc(contact.portrait)}" alt="">` : ""}
+          <span class="min-w-0">
+          <h3 class="text-xl" style="color:var(--highlight)">${esc(contact.name) || "Unbenannter Kontakt"}</h3>
+          <p class="italic" style="color:var(--gold)">${esc(contact.relation || contact.role)}</p>
+          <p class="mt-2 line-clamp-3">${esc(contact.notes || contact.appearance || "Noch keine Profilnotizen.")}</p>
+          </span>
+        </button>
+        <div class="flex justify-between items-center gap-2 mt-3"><span class="text-sm" style="color:var(--mute)">Held: ${esc(Store.get(heroId)?.name || "Unbekannt")}</span>
+          <button class="btn dng" data-contact-delete="${esc(contact.id)}" data-contact-hero="${esc(heroId)}" aria-label="Kontakt löschen">${ic("trash-2", "w-4 h-4")}Löschen</button>
+        </div></article>`;
+      function vAllContacts() {
+        const q = S.q.toLowerCase();
+        const list = allContacts().filter(({ hero, contact }) =>
+          [
+            contact.name, contact.relation, contact.role, contact.species, contact.age,
+            contact.location, contact.appearance, contact.personality, contact.notes,
+            (contact.entries || []).map((entry) => `${entry.title} ${entry.text}`).join(" "),
+            hero.name,
+          ]
+            .join(" ").toLowerCase().includes(q),
+        );
+        return `<div class="flex flex-wrap items-end justify-between gap-4 mb-8">
+          <div><h1 class="text-3xl" style="color:var(--gold)">Alle Kontakte</h1><p style="color:var(--mute)">${allContacts().length} Kontakte aus ${S.chars.length} Helden</p></div>
+          <div class="relative w-full sm:w-72"><input id="q" class="inp" placeholder="Kontakte oder Helden suchen …" value="${esc(S.q)}"></div>
+          <button class="btn pri" data-act="contact-new-global">${ic("plus", "w-4 h-4")}Kontakt hinzufügen</button>
+        </div>${list.length ? `<div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">${list.map(({ hero, contact }) => contactCard(contact, hero.id)).join("")}</div>` :
+          `<section class="panel text-center py-12"><p class="text-xl mb-4">${allContacts().length ? "Keine Kontakte für diese Suche gefunden." : "Noch keine Kontakte gespeichert."}</p><button class="btn pri" data-act="contact-new-global">${ic("plus", "w-4 h-4")}Kontakt hinzufügen</button></section>`}`;
+      }
+      function vContactEdit() {
+        const c = S.contactEdit;
+        const input = (key, label, placeholder = "") => `<label><span class="l">${label}</span><input class="inp" data-contact-field="${key}" value="${esc(c[key])}" placeholder="${placeholder}"></label>`;
+        const area = (key, label, placeholder = "", rows = 3) => `<label><span class="l">${label}</span><textarea class="inp" data-contact-field="${key}" rows="${rows}" placeholder="${placeholder}">${esc(c[key])}</textarea></label>`;
+        return `<div class="flex flex-wrap gap-2 mb-6 justify-between"><h1 class="text-3xl" style="color:var(--gold)">${c.fresh ? "Neuen Kontakt anlegen" : "Kontaktprofil bearbeiten"}</h1>
+          <div class="flex gap-2"><button class="btn" data-act="contact-cancel">${ic("arrow-left", "w-4 h-4")}Abbrechen</button><button class="btn pri" data-act="contact-save">${ic("save", "w-4 h-4")}Profil speichern</button></div></div>
+          <div class="grid gap-6 lg:grid-cols-2">
+            <section class="panel"><h2 class="ph">Person</h2><div class="flex items-center gap-4 mb-4">${c.portrait ? `<img class="h-20 w-20 rounded-full object-cover" src="${esc(c.portrait)}" alt="Porträt von ${esc(c.name)}">` : `<div class="h-20 w-20 rounded-full flex items-center justify-center" style="background:var(--bg2);color:var(--mute)">${ic("user", "w-8 h-8")}</div>`}<button class="btn" data-act="contact-portrait">${ic("upload", "w-4 h-4")}${c.portrait ? "Bild ändern" : "Porträt hinzufügen"}</button>${c.portrait ? `<button class="btn dng" data-act="contact-portrait-delete">Entfernen</button>` : ""}</div><div class="space-y-4">
+              ${input("name", "Name", "Name der Person")}
+              ${input("relation", "Beziehung zum Helden", "z. B. Informantin, Händler, alte Freundin")}
+              ${input("role", "Beruf / Rolle", "z. B. Heilerin, Hauptmann")}
+              ${input("species", "Volk / Spezies")}
+              ${input("age", "Alter")}
+              ${input("location", "Herkunft / Aufenthaltsort")}
+            </div></section>
+            <section class="panel"><h2 class="ph">Profil & Wissen</h2><div class="space-y-4">
+              ${area("appearance", "Aussehen", "Merkmale, Kleidung, Stimme …")}
+              ${area("personality", "Persönlichkeit", "Auftreten, Eigenheiten …")}
+              ${area("notes", "Allgemeine Notizen", "Bekanntes Wissen über diese Person …", 5)}
+            </div></section>
+            <section class="panel lg:col-span-2"><label class="l" for="contact-owner">Zu welchem Helden gehört dieser Kontakt?</label>
+              <select id="contact-owner" class="inp" data-contact-owner>${S.chars.map((hero) => `<option value="${esc(hero.id)}" ${hero.id === S.contactHeroId ? "selected" : ""}>${esc(hero.name || "Namenlos")}</option>`).join("")}</select>
+            </section>
+          </div>`;
+      }
+      function vContactProfile() {
+        const found = findContact(S.contactHeroId, S.contactId);
+        if (!found) return vAllContacts();
+        const { hero, contact } = found;
+        const notes = contact.entries || [];
+        const fields = [
+          ["Beziehung zum Helden", contact.relation],
+          ["Beruf / Rolle", contact.role],
+          ["Volk / Spezies", contact.species],
+          ["Alter", contact.age],
+          ["Herkunft / Aufenthaltsort", contact.location],
+          ["Aussehen", contact.appearance],
+          ["Persönlichkeit", contact.personality],
+          ["Allgemeine Notizen", contact.notes],
+        ].filter(([, value]) => value);
+        return `<div class="flex flex-wrap gap-2 mb-6 justify-between"><button class="btn" data-act="contact-back">${ic("arrow-left", "w-4 h-4")}Zurück zu den Kontakten</button>
+          <div class="flex gap-2"><button class="btn" data-contact-edit="${esc(contact.id)}" data-contact-hero="${esc(hero.id)}">${ic("pencil", "w-4 h-4")}Profil bearbeiten</button><button class="btn dng" data-contact-delete="${esc(contact.id)}" data-contact-hero="${esc(hero.id)}">${ic("trash-2", "w-4 h-4")}Kontakt löschen</button></div></div>
+          <section class="panel mb-6"><div class="flex items-center gap-5">${contact.portrait ? `<img class="h-24 w-24 rounded-full object-cover" src="${esc(contact.portrait)}" alt="Porträt von ${esc(contact.name)}">` : ""}<div><p class="cz" style="color:var(--gold)">Kontakt von ${esc(hero.name || "Namenlos")}</p><h1 class="logo text-4xl mt-2">${esc(contact.name) || "Unbenannter Kontakt"}</h1></div></div>
+          <dl class="grid gap-x-8 gap-y-4 sm:grid-cols-2 mt-6">${fields.length ? fields.map(([label, value]) => `<div><dt class="cz text-sm" style="color:var(--gold)">${label}</dt><dd class="pre">${esc(value)}</dd></div>`).join("") : `<p style="color:var(--mute)">Für dieses Profil wurden noch keine Informationen eingetragen.</p>`}</dl></section>
+          <section class="panel"><div class="ph justify-between"><span>${ic("book-open-text")}Gesammelte Notizen (${notes.length})</span><button class="btn pri" data-act="contact-note-new">${ic("plus", "w-4 h-4")}Notiz hinzufügen</button></div>
+          ${S.contactNoteEdit ? `<div class="grid gap-4 mt-4"><label><span class="l">Titel</span><input class="inp" data-contact-note-field="title" value="${esc(S.contactNoteEdit.title)}" placeholder="Kurzer Titel"></label>
+            <div><span class="l">Notiz</span>${editor(S.contactNoteEdit.html || entryHtml(S.contactNoteEdit), "Neue Erkenntnisse und RP-Wissen …")}</div>
+            <div class="flex gap-2"><button class="btn pri" data-act="contact-note-save">${ic("save", "w-4 h-4")}Notiz speichern</button><button class="btn" data-act="contact-note-cancel">Abbrechen</button></div></div>` :
+            notes.length ? `<div class="space-y-4 mt-4">${notes.map((entry) => `<article class="rounded border p-4" style="border-color:var(--line)"><div class="flex justify-between gap-2"><div><h3 class="text-xl" style="color:var(--highlight)">${esc(entry.title) || "Notiz"}</h3><p class="text-sm" style="color:var(--mute)">${esc(entry.date)}</p></div><div class="flex gap-2"><button class="btn" data-contact-note-edit="${esc(entry.id)}" aria-label="Notiz bearbeiten">${ic("pencil", "w-4 h-4")}</button><button class="btn dng" data-contact-note-delete="${esc(entry.id)}" aria-label="Notiz löschen">${ic("trash-2", "w-4 h-4")}</button></div></div><div class="rich read mt-3">${entryHtml(entry)}</div></article>`).join("")}</div>` :
+            `<p class="py-8 text-center" style="color:var(--mute)">Noch keine einzelnen Notizen gesammelt.</p>`}</section>`;
       }
 
       const SUBS = [
@@ -1888,7 +2534,7 @@
   <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">${STATS.map(
     ([k, l, i]) => `
   <div class="stat"><span style="color:var(--gold)">${ic(i)}</span><span class="cz text-sm block">${l}</span><b>${c.stats[k]}</b><span style="color:var(--mute)">Modifikator ${mod(c.stats[k])}</span></div>`,
-  ).join("")}</div></section>
+  ).join("")}${(c.customStats || []).map((stat) => `<div class="stat"><span style="color:var(--gold)">${ic("sparkles")}</span><span class="cz text-sm block">${esc(stat.label)}</span><b>${stat.value}</b><span style="color:var(--mute)">Modifikator ${mod(stat.value)}</span></div>`).join("")}</div></section>
  ${vitality ? `<section class="panel"><h3 class="ph">${ic("heart-pulse")}Lebenskraft</h3><div class="grid gap-4 sm:grid-cols-2">${vitality}</div></section>` : ""}`;
       }
       function pStory(c) {
@@ -1908,7 +2554,7 @@
         const skip = ["name", "titel", "art", "klasse", "level"];
         const out = SECTIONS.filter((s) => sub[3].includes(s.id))
           .map((s) => {
-            const rows = s.fields.filter((f) => c[f.k] && !skip.includes(f.k));
+            const rows = s.fields.filter((f) => profileFieldVisible(c, f) && c[f.k] && !skip.includes(f.k));
             if (s.id === "er") {
               return `<section class="panel"><h3 class="ph">${ic(s.icon)}${s.title}</h3>
   <div class="grid gap-6 sm:grid-cols-[minmax(12rem,0.7fr)_1.3fr] items-start">
@@ -1922,7 +2568,7 @@
    <div>${rows.length ? `<dl class="grid gap-x-8 gap-y-4 sm:grid-cols-2">${rows
      .map(
        (f) => `
-   <div class="${f.full ? "sm:col-span-2" : ""}"><dt class="cz text-sm" style="color:var(--gold)">${f.l}</dt><dd class="pre">${esc(c[f.k])}</dd></div>`,
+   <div class="${f.full ? "sm:col-span-2" : ""}"><dt class="cz text-sm" style="color:var(--gold)">${esc(profileFieldLabel(c, f))}</dt><dd class="pre">${esc(c[f.k])}</dd></div>`,
      )
      .join("")}</dl>` : `<p style="color:var(--mute)">Die Beschreibung des Aussehens ist noch leer.</p>`}</div>
   </div></section>`;
@@ -1932,13 +2578,13 @@
    <dl class="grid gap-x-8 gap-y-4 ${s.cols === 2 ? "sm:grid-cols-2" : ""}">${rows
      .map(
        (f) => `
-   <div class="${f.full ? "sm:col-span-2" : ""}"><dt class="cz text-sm" style="color:var(--gold)">${f.l}</dt><dd class="pre">${esc(c[f.k])}</dd></div>`,
+   <div class="${f.full ? "sm:col-span-2" : ""}"><dt class="cz text-sm" style="color:var(--gold)">${esc(profileFieldLabel(c, f))}</dt><dd class="pre">${esc(c[f.k])}</dd></div>`,
      )
      .join("")}</dl></section>`;
           })
           .join("");
         return (
-          out ||
+          [out, customProfileDisplay(c.customFields) ? `<section class="panel"><h3 class="ph">${ic("list")}Eigene Profilfelder</h3>${customProfileDisplay(c.customFields)}</section>` : ""].filter(Boolean).join("") ||
           `<section class="panel text-center py-10"><p style="color:var(--mute)">Zu „${sub[1]}“ ist noch nichts eingetragen.</p><button class="btn mt-4" data-edit="${c.id}">${ic("pencil", "w-4 h-4")}Jetzt ergänzen</button></section>`
         );
       }
@@ -1970,7 +2616,7 @@
    <button class="btn" data-act="lbx">${ic("x", "w-4 h-4")}Schließen</button></div></div>`;
       }
 
-      function tDiary(c) {
+      function tDiary(c, companion = false) {
         const e = S.dEdit,
           L = diarySorted(c);
         const form = e
@@ -1981,7 +2627,7 @@
    ${editor(e.html, "Was ist heute geschehen? Schreibe hier deine Geschichte …")}</div></div>
   <div class="flex gap-2 mt-4"><button class="btn pri" data-act="dsave">${ic("save", "w-4 h-4")}Eintrag speichern</button><button class="btn" data-act="dcancel">Abbrechen</button></div></div>`
           : "";
-        return `${form}<section class="panel"><div class="ph justify-between"><span class="flex items-center gap-2">${ic("book-open-text")}Tagebuch</span>
+        return `${form}<section class="panel"><div class="ph justify-between"><span class="flex items-center gap-2">${ic("book-open-text")}${companion ? "Tagebuch des Begleiters" : "Tagebuch"}</span>
   <button class="btn" data-act="dnew">${ic("plus", "w-4 h-4")}Neuer Eintrag</button></div>
   ${
     L.length
@@ -2026,7 +2672,11 @@
         let el;
         if (f.area)
           el = `<textarea class="inp" id="${id}" data-f="${f.k}" rows="${f.rows || 3}" placeholder="${f.ph || ""}">${v}</textarea>`;
-        else if (f.opts) {
+        else if (f.k === "art" || f.k === "klasse") {
+          const key = f.k === "art" ? "arten" : "klassen";
+          const options = [...new Set(profileOptionsForField(key, c[f.k]))];
+          el = `<input class="inp" id="${id}" data-f="${f.k}" list="dl_${f.k}" value="${v}" placeholder="${f.k === "art" ? "Art oder Volk" : "Klasse oder Beruf"}"><datalist id="dl_${f.k}">${options.map((option) => `<option value="${esc(option)}">`).join("")}</datalist>`;
+        } else if (f.opts) {
           const options = f.opts.includes(c[f.k])
             ? f.opts
             : [...f.opts, ...(c[f.k] ? [c[f.k]] : [])];
@@ -2034,7 +2684,7 @@
         }
         else
           el = `<input class="inp" id="${id}" data-f="${f.k}" ${f.num ? 'type="number" min="1" max="99" data-n="1"' : ""} ${f.list ? `list="dl_${f.k}"` : ""} value="${v}" placeholder="${f.ph || ""}">${f.list ? `<datalist id="dl_${f.k}">${f.list.map((o) => `<option value="${o}">`).join("")}</datalist>` : ""}`;
-        return `<div class="${cls}"><label class="l" for="${id}">${f.l}</label>${el}</div>`;
+        return `<div class="${cls}"><label class="l" for="${id}">${esc(profileFieldLabel(c, f))}</label>${el}</div>`;
       }
 
       function vEdit() {
@@ -2056,15 +2706,20 @@
     (
       s,
     ) => `<section class="panel ${s.id === "he" ? "lg:col-span-2" : ""}"><h3 class="ph">${ic(s.icon)}${s.title}</h3>
-   <div class="grid gap-4 ${s.cols === 2 ? "sm:grid-cols-2" : ""}">${s.fields.map((f) => field(f, c)).join("")}</div></section>`,
+   <div class="grid gap-4 ${s.cols === 2 ? "sm:grid-cols-2" : ""}">${s.fields.filter((f) => profileFieldVisible(c, f)).map((f) => field(f, c)).join("")}</div></section>`,
   ).join("")}
-  <section class="panel"><h3 class="ph">${ic("shield")}Attribute</h3>
+  <section class="panel"><div class="ph justify-between"><span>${ic("shield")}Attribute</span><button class="btn" type="button" data-act="custom-stat-add">${ic("plus", "w-4 h-4")}Eigenes Attribut</button></div>
    <div class="grid grid-cols-2 gap-3">${STATS.map(
      ([k, l]) => `<div><label class="l" for="s_${k}">${l}</label>
    <div class="flex gap-1"><button type="button" class="btn" data-step="${k}" data-d="-1" aria-label="${l} senken">−</button>
    <input class="inp text-center" type="number" min="1" max="30" id="s_${k}" data-s="${k}" value="${c.stats[k]}">
    <button type="button" class="btn" data-step="${k}" data-d="1" aria-label="${l} erhöhen">+</button></div></div>`,
-   ).join("")}</div></section>
+   ).join("")}${(c.customStats || []).map((stat, index) => `<div><label class="l">Eigenes Attribut</label><input class="inp mb-2" data-custom-stat-label="${index}" value="${esc(stat.label)}"><div class="flex gap-1"><input class="inp text-center" type="number" min="1" max="30" data-custom-stat="${index}" value="${stat.value}"><button class="btn dng" type="button" data-custom-stat-delete="${index}" aria-label="${esc(stat.label)} löschen">${ic("trash-2", "w-4 h-4")}</button></div></div>`).join("")}</div></section>
+  <section class="panel lg:col-span-2"><div class="ph justify-between"><span>${ic("list")}Eigene Profilfelder</span><button class="btn" type="button" data-act="custom-field-add">${ic("plus", "w-4 h-4")}Profilfeld hinzufügen</button></div>
+    <p class="mb-4 text-sm" style="color:var(--mute)">Individuelle Felder ergänzen das Profil dieses Helden, ohne andere Profile zu verändern.</p>
+    ${(c.customFields || []).length ? `<div>${c.customFields.map((item, index) => customFieldInput(item, index)).join("")}</div>` : `<div class="rounded border p-5 text-center" style="border-color:var(--line);background:var(--field-surface)"><div class="mb-2" style="color:var(--gold)">${ic("list", "w-6 h-6")}</div><p class="text-sm" style="color:var(--mute)">Noch keine eigenen Profilfelder. Lege zum Beispiel Herkunft, Eigenheiten oder besondere Bindungen an.</p></div>`}</section>
+  <section class="panel lg:col-span-2"><div class="ph justify-between"><span>${ic("settings")}Profilfelder anpassen</span><button class="btn" type="button" data-act="field-manager-toggle">${S.fieldManagerOpen ? "Schließen" : "Felder umbenennen / ausblenden"}</button></div>
+   ${S.fieldManagerOpen ? `<div class="space-y-4">${SECTIONS.flatMap((section) => section.fields).filter((item) => item.k !== "name").map((item) => `<div class="grid items-center gap-3 sm:grid-cols-[auto_1fr_auto]"><label class="flex items-center gap-2"><input class="settings-check" type="checkbox" data-field-toggle="${item.k}" ${profileFieldVisible(c, item) ? "checked" : ""}><span>Aktiv</span></label><input class="inp" data-field-label="${item.k}" value="${esc(profileFieldLabel(c, item))}" aria-label="Bezeichnung von ${esc(item.l)}"><span class="text-sm" style="color:var(--mute)">${esc(item.l)}</span></div>`).join("")}</div><p class="mt-3 text-sm" style="color:var(--mute)">Deaktivierte Standardfelder werden in diesem Profil ausgeblendet; gespeicherte Werte bleiben erhalten. Der Name ist ein Pflichtfeld.</p>` : ""}</section>
   <section class="panel"><h3 class="ph">${ic("heart-pulse")}Lebenskraft</h3>
    <div class="space-y-5">
     <section>
@@ -2081,14 +2736,364 @@
 
       /* ---------- Events (delegiert) ---------- */
       document.addEventListener("click", async (e) => {
-        const t = e.target.closest("button,[data-open],[data-bd]");
+        const t = e.target.closest("button,[data-open],[data-bd],[data-companion-open],[data-contact-open]");
         if (!t) return;
+        if (t.closest("#action-menu")) $("#action-menu").open = false;
         const d = t.dataset;
-        if (t.id === "home" || d.act === "back") {
+        if (d.act === "dialog-accept" || d.act === "dialog-cancel") {
+          const pending = S.actionDialog;
+          if (!pending) return;
+          S.actionDialog = null;
+          $("#action-dialog").close();
+          pending.resolve(d.act === "dialog-cancel" ? pending.mode === "text" ? null : false : pending.mode === "text" ? $("#action-dialog-input").value.trim() || null : true);
+        } else if (d.act === "defaults") {
+          renderDefaults();
+          $("#defaults-dialog").showModal();
+          $("#defaults-dialog input")?.focus();
+        } else if (d.act === "defaults-close") {
+          $("#defaults-dialog").close();
+        } else if (d.defaultRename) {
+          const key = d.defaultRename;
+          const id = d.defaultId;
+          if (!PROFILE_STANDARDS[key]?.includes(id)) return;
+          const option = standardProfileOptions(key).find((item) => item.id === id);
+          const label = await askText(`Standardvorgabe „${option.label}“ umbenennen:`, option.label);
+          if (!label) return;
+          const normalizedLabel = label.trim();
+          const otherLabels = [
+            ...(S.customOptions[key] || []),
+            ...standardProfileOptions(key).filter((item) => item.id !== id).flatMap((item) => [item.id, item.label]),
+          ];
+          if (otherLabels.some((item) => item.toLocaleLowerCase("de") === normalizedLabel.toLocaleLowerCase("de"))) {
+            toast("Diese Vorgabe ist bereits vorhanden.");
+            return;
+          }
+          const overrides = { ...(S.customOptions.standard[key] || {}) };
+          const override = { ...(overrides[id] || {}) };
+          if (normalizedLabel === id) delete override.label;
+          else override.label = normalizedLabel;
+          if (Object.keys(override).length) overrides[id] = override;
+          else delete overrides[id];
+          const nextOptions = {
+            ...S.customOptions,
+            standard: { ...S.customOptions.standard, [key]: overrides },
+          };
+          await persistProfileOptions(nextOptions, "Standardvorgabe umbenannt", "Standardvorgabe konnte nicht umbenannt werden.");
+        } else if (d.defaultRemove) {
+          const key = d.defaultRemove;
+          const id = d.defaultId;
+          if (!PROFILE_STANDARDS[key]?.includes(id)) return;
+          const option = standardProfileOptions(key).find((item) => item.id === id);
+          if (!(await askConfirmation(`Standardvorgabe „${option.label}“ aus den Vorschlägen entfernen? Bereits gespeicherte Figurenwerte bleiben unverändert.`))) return;
+          const overrides = {
+            ...(S.customOptions.standard[key] || {}),
+            [id]: { ...(S.customOptions.standard[key]?.[id] || {}), hidden: true },
+          };
+          await persistProfileOptions(
+            { ...S.customOptions, standard: { ...S.customOptions.standard, [key]: overrides } },
+            "Standardvorgabe entfernt",
+            "Standardvorgabe konnte nicht entfernt werden.",
+          );
+        } else if (d.defaultRestore) {
+          const key = d.defaultRestore;
+          const id = d.defaultId;
+          if (!PROFILE_STANDARDS[key]?.includes(id)) return;
+          const overrides = { ...(S.customOptions.standard[key] || {}) };
+          const override = { ...(overrides[id] || {}) };
+          delete override.hidden;
+          if (Object.keys(override).length) overrides[id] = override;
+          else delete overrides[id];
+          await persistProfileOptions(
+            { ...S.customOptions, standard: { ...S.customOptions.standard, [key]: overrides } },
+            "Standardvorgabe wiederhergestellt",
+            "Standardvorgabe konnte nicht wiederhergestellt werden.",
+          );
+        } else if (d.defaultAdd) {
+          const input = $(`[data-default-input="${d.defaultAdd}"]`);
+          const value = input.value.trim();
+          if (!value) {
+            input.focus();
+            toast("Bitte einen Namen für die Vorgabe eingeben.");
+            return;
+          }
+          const values = S.customOptions[d.defaultAdd] || [];
+          const existingLabels = [
+            ...values,
+            ...standardProfileOptions(d.defaultAdd).flatMap((item) => [item.id, item.label]),
+          ];
+          if (existingLabels.some((item) => item.toLocaleLowerCase("de") === value.toLocaleLowerCase("de"))) {
+            toast("Diese Vorgabe ist bereits vorhanden.");
+            return;
+          }
+          const nextOptions = { ...S.customOptions, [d.defaultAdd]: [...values, value] };
+          if (await persistProfileOptions(nextOptions, "Vorgabe hinzugefügt", "Vorgabe konnte nicht gespeichert werden.")) {
+            $(`[data-default-input="${d.defaultAdd}"]`)?.focus();
+          }
+        } else if (d.defaultDelete) {
+          const index = Number(d.defaultIndex);
+          const values = S.customOptions[d.defaultDelete] || [];
+          if (!Number.isInteger(index) || index < 0 || index >= values.length) return;
+          const nextOptions = { ...S.customOptions, [d.defaultDelete]: values.filter((_, itemIndex) => itemIndex !== index) };
+          await persistProfileOptions(nextOptions, "Vorgabe entfernt", "Vorgabe konnte nicht entfernt werden.");
+        } else if (d.act === "heroes" || t.id === "home" || d.act === "back") {
+          if (S.contactEdit && !(await askConfirmation("Ungespeicherte Änderungen am Kontakt verwerfen?"))) return;
+          if (S.contactNoteEdit && !(await askConfirmation("Ungespeicherte Änderungen an der Notiz verwerfen?"))) return;
+          if (S.view === "companion-edit" && !(await askConfirmation("Ungespeicherte Änderungen am Begleiter verwerfen?"))) return;
+          if (S.companionStoryEdit && !(await askConfirmation("Ungespeicherte Änderungen an der Hintergrundgeschichte verwerfen?"))) return;
+          if (S.dEdit && !(await askConfirmation("Ungespeicherte Änderungen am Tagebucheintrag verwerfen?"))) return;
+          S.contactEdit = null;
           go("list");
+        } else if (d.act === "contacts") {
+          if (S.contactEdit && !(await askConfirmation("Ungespeicherte Änderungen am Kontakt verwerfen?"))) return;
+          if (S.contactNoteEdit && !(await askConfirmation("Ungespeicherte Änderungen an der Notiz verwerfen?"))) return;
+          if (S.view === "companion-edit" && !(await askConfirmation("Ungespeicherte Änderungen am Begleiter verwerfen?"))) return;
+          if (S.companionStoryEdit && !(await askConfirmation("Ungespeicherte Änderungen an der Hintergrundgeschichte verwerfen?"))) return;
+          if (S.dEdit && !(await askConfirmation("Ungespeicherte Änderungen am Tagebucheintrag verwerfen?"))) return;
+          S.view = "contacts";
+          S.id = null;
+          S.contactEdit = null;
+          S.contactNoteEdit = null;
+          S.q = "";
+          render();
+        } else if (d.act === "companions") {
+          if (S.contactEdit && !(await askConfirmation("Ungespeicherte Änderungen am Kontakt verwerfen?"))) return;
+          if (S.view === "companion-edit" && !(await askConfirmation("Ungespeicherte Änderungen am Begleiter verwerfen?"))) return;
+          if (S.companionStoryEdit && !(await askConfirmation("Ungespeicherte Änderungen an der Hintergrundgeschichte verwerfen?"))) return;
+          if (S.dEdit && !(await askConfirmation("Ungespeicherte Änderungen am Tagebucheintrag verwerfen?"))) return;
+          S.view = "companions";
+          S.id = null;
+          S.q = "";
+          S.companionDraft = null;
+          S.contactEdit = null;
+          render();
+        } else if (d.act === "companion-new") {
+          if (S.contactEdit && !(await askConfirmation("Ungespeicherte Änderungen am Kontakt verwerfen?"))) return;
+          if (S.view === "companion-edit" && !(await askConfirmation("Ungespeicherte Änderungen am Begleiter verwerfen?"))) return;
+          if (S.companionStoryEdit && !(await askConfirmation("Ungespeicherte Änderungen an der Hintergrundgeschichte verwerfen?"))) return;
+          if (S.dEdit && !(await askConfirmation("Ungespeicherte Änderungen am Tagebucheintrag verwerfen?"))) return;
+          editCompanion();
+        } else if (d.act === "companion-cancel") {
+          if (!(await askConfirmation("Ungespeicherte Änderungen am Begleiter verwerfen?"))) return;
+          S.view = "companions";
+          S.companionDraft = null;
+          render();
+        } else if (d.act === "companion-save") {
+          const companion = S.companionDraft;
+          if (!(companion.name || "").trim()) {
+            toast("Ein Begleiter braucht einen Namen.");
+            $("#cf_name").focus();
+            return;
+          }
+          companion.name = companion.name.trim();
+          companion.type = "companion";
+          companion.heroIds = [...new Set(companion.heroIds || [])];
+          await Store.saveCompanion(companion);
+          S.view = "companion-sheet";
+          S.id = companion.id;
+          S.companionDraft = null;
+          toast("Begleiter gespeichert");
+          render();
+        } else if (d.act === "companion-portrait") {
+          $("#cfile").click();
+        } else if (d.act === "companion-portrait-delete") {
+          S.companionDraft.portrait = "";
+          render(true);
+        } else if (d.companionOpen) {
+          S.id = d.companionOpen;
+          S.view = "companion-sheet";
+          render();
+        } else if (d.companionEdit) {
+          if (S.companionStoryEdit && !(await askConfirmation("Ungespeicherte Änderungen an der Hintergrundgeschichte verwerfen?"))) return;
+          if (S.dEdit && !(await askConfirmation("Ungespeicherte Änderungen am Tagebucheintrag verwerfen?"))) return;
+          editCompanion(d.companionEdit);
+        } else if (d.companionDelete) {
+          if (S.companionStoryEdit && !(await askConfirmation("Ungespeicherte Änderungen an der Hintergrundgeschichte verwerfen?"))) return;
+          if (S.dEdit && !(await askConfirmation("Ungespeicherte Änderungen am Tagebucheintrag verwerfen?"))) return;
+          if (await askConfirmation("Diesen Begleiter endgültig aus der Chronik entfernen?")) {
+            await Store.removeCompanion(d.companionDelete);
+            toast("Begleiter entfernt");
+            S.view = "companions";
+            S.id = null;
+            render();
+          }
+        } else if (d.act === "companions-back") {
+          if (S.companionStoryEdit && !(await askConfirmation("Ungespeicherte Änderungen an der Hintergrundgeschichte verwerfen?"))) return;
+          if (S.dEdit && !(await askConfirmation("Ungespeicherte Änderungen am Tagebucheintrag verwerfen?"))) return;
+          S.view = "companions";
+          S.id = null;
+          render();
+        } else if (d.companionTab) {
+          if (S.companionStoryEdit && !(await askConfirmation("Ungespeicherte Änderungen an der Hintergrundgeschichte verwerfen?"))) return;
+          if (S.dEdit && !(await askConfirmation("Ungespeicherte Änderungen am Tagebucheintrag verwerfen?"))) return;
+          S.companionTab = d.companionTab;
+          S.read = null;
+          S.dEdit = null;
+          S.companionStoryEdit = null;
+          render(true);
+        } else if (d.act === "companion-story-edit") {
+          const companion = S.companions.find((x) => x.id === S.id);
+          S.companionStoryEdit = { html: storyHtml(companion) };
+          render(true);
+        } else if (d.act === "companion-story-cancel") {
+          S.companionStoryEdit = null;
+          render(true);
+        } else if (d.act === "companion-story-save") {
+          const companion = S.companions.find((x) => x.id === S.id);
+          const ed = $("#ed");
+          if (!companion || !ed) throw new Error("Begleiter-Geschichte oder Editor fehlt.");
+          companion.geschichteHtml = clean(ed.innerHTML);
+          companion.geschichte = ed.innerText.trim();
+          await Store.saveCompanion(companion);
+          S.companionStoryEdit = null;
+          toast("Hintergrundgeschichte gespeichert");
+          render(true);
+        } else if (d.act === "contact-new" || d.act === "contact-new-global") {
+          const heroId = d.act === "contact-new" ? cur()?.id : S.chars[0]?.id;
+          if (!heroId) {
+            toast("Lege zuerst einen Helden an, dem du den Kontakt zuordnen kannst.");
+            return;
+          }
+          S.contactSourceHeroId = null;
+          S.contactHeroId = heroId;
+          S.contactReturnView = d.act === "contact-new" ? "sheet" : "contacts";
+          S.contactEditCancelView = S.contactReturnView;
+          S.contactEdit = {
+            id: "n" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+            name: "", relation: "", role: "", species: "", age: "", location: "",
+            appearance: "", personality: "", notes: "", entries: [], fresh: true,
+          };
+          S.contactNoteEdit = null;
+          S.view = "contact-edit";
+          render();
+        } else if (d.act === "contact-portrait") {
+          $("#contact-file").click();
+        } else if (d.act === "contact-portrait-delete") {
+          S.contactEdit.portrait = "";
+          render(true);
+        } else if (d.contactOpen) {
+          S.contactReturnView = S.view === "sheet" && S.tab === "contacts" ? "sheet" : "contacts";
+          S.contactHeroId = d.contactHero;
+          S.contactId = d.contactOpen;
+          S.contactNoteEdit = null;
+          S.contactEdit = null;
+          S.view = "contact-profile";
+          render();
+        } else if (d.contactEdit) {
+          const heroId = d.contactHero;
+          const found = findContact(heroId, d.contactEdit);
+          if (!found) return;
+          S.contactSourceHeroId = heroId;
+          S.contactHeroId = heroId;
+          S.contactId = d.contactEdit;
+          S.contactEditCancelView = "contact-profile";
+          S.contactEdit = { ...found.contact, entries: [...(found.contact.entries || [])] };
+          S.view = "contact-edit";
+          render();
+        } else if (d.act === "contact-cancel") {
+          const returnView = S.contactEditCancelView;
+          if (S.contactSourceHeroId) S.contactHeroId = S.contactSourceHeroId;
+          S.contactEdit = null;
+          S.view = returnView === "sheet" ? "sheet" : returnView === "contact-profile" ? "contact-profile" : "contacts";
+          if (S.view === "contacts") S.id = null;
+          render();
+        } else if (d.act === "contact-save") {
+          const contact = S.contactEdit;
+          if (!(contact.name || "").trim()) {
+            toast("Ein Kontakt braucht einen Namen.");
+            return;
+          }
+          const oldHero = S.contactSourceHeroId ? Store.get(S.contactSourceHeroId) : null;
+          const newHero = Store.get(S.contactHeroId);
+          if (!newHero) {
+            toast("Bitte wähle einen gültigen Helden für diesen Kontakt.");
+            return;
+          }
+          contact.name = contact.name.trim();
+          delete contact.fresh;
+          if (oldHero && oldHero.id !== newHero.id) {
+            oldHero.contacts = (oldHero.contacts || []).filter((x) => x.id !== contact.id);
+            if (S.contactReturnView === "sheet") S.contactReturnView = "contacts";
+          }
+          newHero.contacts = newHero.contacts || [];
+          const index = newHero.contacts.findIndex((x) => x.id === contact.id);
+          index < 0 ? newHero.contacts.push(contact) : (newHero.contacts[index] = contact);
+          await Store.persist();
+          S.contactHeroId = newHero.id;
+          S.contactEdit = null;
+          S.contactId = contact.id;
+          S.view = "contact-profile";
+          toast("Kontakt gespeichert");
+          render();
+        } else if (d.contactDelete) {
+          if (await askConfirmation("Diesen Kontakt löschen?")) {
+            const c = Store.get(d.contactHero);
+            if (!c) return;
+            const returnToSheet =
+              (S.view === "sheet" && S.tab === "contacts") ||
+              (S.view === "contact-profile" && S.contactReturnView === "sheet");
+            c.contacts = (c.contacts || []).filter((x) => x.id !== d.contactDelete);
+            await Store.save(c);
+            S.contactEdit = null;
+            S.contactNoteEdit = null;
+            S.contactReturnView = returnToSheet ? "sheet" : "contacts";
+            S.view = S.contactReturnView;
+            if (S.view === "sheet") S.tab = "contacts";
+            else S.id = null;
+            render();
+          }
+        } else if (d.act === "contact-back") {
+          S.contactNoteEdit = null;
+          S.view = S.contactReturnView === "sheet" ? "sheet" : "contacts";
+          if (S.view === "sheet") S.tab = "contacts";
+          else S.id = null;
+          render();
+        } else if (d.act === "contact-note-new") {
+          S.contactNoteEdit = { id: "cn" + Date.now().toString(36), title: "", text: "", html: "", date: new Date().toISOString().slice(0, 10), fresh: true };
+          render(true);
+        } else if (d.contactNoteEdit) {
+          const found = findContact(S.contactHeroId, S.contactId);
+          const entry = found?.contact.entries?.find((x) => x.id === d.contactNoteEdit);
+          if (!entry) return;
+          S.contactNoteEdit = { ...entry, html: entryHtml(entry) };
+          render(true);
+        } else if (d.act === "contact-note-cancel") {
+          S.contactNoteEdit = null;
+          render(true);
+        } else if (d.act === "contact-note-save") {
+          const found = findContact(S.contactHeroId, S.contactId);
+          if (!found) return;
+          const entry = S.contactNoteEdit;
+          const editorElement = $("#ed");
+          if (!editorElement) throw new Error("Notizeditor fehlt.");
+          entry.html = clean(editorElement.innerHTML);
+          entry.text = editorElement.innerText.trim();
+          if (!entry.text && !/<img/.test(entry.html)) {
+            toast("Eine Notiz braucht einen Text.");
+            return;
+          }
+          entry.text = entry.text.trim();
+          entry.title = (entry.title || "").trim();
+          delete entry.fresh;
+          found.contact.entries = found.contact.entries || [];
+          const index = found.contact.entries.findIndex((x) => x.id === entry.id);
+          index < 0 ? found.contact.entries.unshift(entry) : (found.contact.entries[index] = entry);
+          await Store.save(found.hero);
+          S.contactNoteEdit = null;
+          toast("Notiz gespeichert");
+          render(true);
+        } else if (d.contactNoteDelete) {
+          if (await askConfirmation("Diese Notiz löschen?")) {
+            const found = findContact(S.contactHeroId, S.contactId);
+            if (!found) return;
+            found.contact.entries = (found.contact.entries || []).filter((x) => x.id !== d.contactNoteDelete);
+            await Store.save(found.hero);
+            render(true);
+          }
         } else if (d.open) go("sheet", d.open);
         else if (d.tab) {
-          if (E() && !confirm("Ungespeicherte Änderungen verwerfen?")) return;
+          if (S.contactEdit && !(await askConfirmation("Ungespeicherte Änderungen am Kontakt verwerfen?"))) return;
+          if (E() && !(await askConfirmation("Ungespeicherte Änderungen verwerfen?"))) return;
+          S.contactEdit = null;
           S.tab = d.tab;
           S.lb = null;
           S.dEdit = null;
@@ -2098,7 +3103,7 @@
         } else if (d.sub) {
           if (
             S.sEdit &&
-            !confirm("Ungespeicherte Änderungen an der Geschichte verwerfen?")
+            !(await askConfirmation("Ungespeicherte Änderungen an der Geschichte verwerfen?"))
           )
             return;
           S.sEdit = null;
@@ -2169,7 +3174,7 @@
           toast("Porträt gesetzt");
           render(true);
         } else if (d.act === "lbdel") {
-          if (confirm("Dieses Bild entfernen?")) {
+          if (await askConfirmation("Dieses Bild entfernen?")) {
             const c = cur();
             c.gallery.splice(S.lb, 1);
             S.lb = null;
@@ -2202,10 +3207,12 @@
           S.read = null;
           render(true);
         } else if (d.dedit) {
-          const x = cur().diary.find((y) => y.id === d.dedit);
+          const x = diaryOwner()?.diary?.find((y) => y.id === d.dedit);
+          if (!x) return;
           S.dEdit = { ...x, html: entryHtml(x) };
           S.read = null;
-          S.tab = "diary";
+          if (S.view === "companion-sheet") S.companionTab = "diary";
+          else S.tab = "diary";
           render(true);
           scrollTo(0, 0);
         } else if (d.act === "dcancel") {
@@ -2213,8 +3220,9 @@
           render(true);
         } else if (d.act === "dsave") {
           const e2 = S.dEdit,
-            c = cur(),
+            c = diaryOwner(),
             ed = $("#ed");
+          if (!c || !ed) throw new Error("Tagebuch oder Editor fehlt.");
           e2.html = clean(ed.innerHTML);
           e2.text = ed.innerText.trim();
           if (!(e2.title || "").trim() && !e2.text && !/<img/.test(e2.html)) {
@@ -2225,22 +3233,32 @@
           c.diary = c.diary || [];
           const i = c.diary.findIndex((x) => x.id === e2.id);
           i < 0 ? c.diary.push(e2) : (c.diary[i] = e2);
-          await Store.save(c);
+          if (S.view === "companion-sheet") await Store.saveCompanion(c);
+          else await Store.save(c);
           S.dEdit = null;
           toast("Eintrag gespeichert");
           render(true);
         } else if (d.ddel) {
-          if (confirm("Diesen Tagebucheintrag löschen?")) {
-            const c = cur();
+          if (await askConfirmation("Diesen Tagebucheintrag löschen?")) {
+            const c = diaryOwner();
+            if (!c) return;
             c.diary = c.diary.filter((x) => x.id !== d.ddel);
-            await Store.save(c);
+            if (S.view === "companion-sheet") await Store.saveCompanion(c);
+            else await Store.save(c);
             render(true);
           }
-        } else if (d.act === "new") go("edit");
+        } else if (d.act === "new") {
+          if (S.contactEdit && !(await askConfirmation("Ungespeicherte Änderungen am Kontakt verwerfen?"))) return;
+          if (S.view === "companion-edit" && !(await askConfirmation("Ungespeicherte Änderungen am Begleiter verwerfen?"))) return;
+          if (S.companionStoryEdit && !(await askConfirmation("Ungespeicherte Änderungen an der Hintergrundgeschichte verwerfen?"))) return;
+          if (S.dEdit && !(await askConfirmation("Ungespeicherte Änderungen am Tagebucheintrag verwerfen?"))) return;
+          S.contactEdit = null;
+          go("edit");
+        }
         else if (d.edit) go("edit", d.edit);
         else if (d.act === "cancel") S.id ? go("sheet", S.id) : go("list");
         else if (d.del) {
-          if (confirm("Diesen Helden endgültig aus der Chronik tilgen?")) {
+          if (await askConfirmation("Diesen Helden endgültig aus der Chronik tilgen?")) {
             await Store.remove(d.del);
             toast("Held getilgt");
             go("list");
@@ -2257,11 +3275,65 @@
             v = Math.max(1, Math.min(30, +i.value + +d.d));
           i.value = v;
           S.draft.stats[d.step] = v;
+        } else if (d.act === "field-manager-toggle") {
+          S.fieldManagerOpen = !S.fieldManagerOpen;
+          render(true);
+        } else if (d.act === "custom-field-add") {
+          const companion = S.view === "companion-edit";
+          const record = companion ? S.companionDraft : S.draft;
+          const label = await askText("Wie soll das neue Profilfeld heißen?");
+          if (!label) return;
+          record.customFields = record.customFields || [];
+          record.customFields.push({ id: "pf" + Date.now().toString(36), label, value: "" });
+          render(true);
+        } else if (d.customFieldDelete !== undefined) {
+          const companion = S.view === "companion-edit";
+          const record = companion ? S.companionDraft : S.draft;
+          const index = Number(d.customFieldDelete);
+          const item = record?.customFields?.[index];
+          if (item && await askConfirmation(`Profilfeld „${item.label || "Unbenannt"}“ samt gespeichertem Inhalt löschen?`)) {
+            record.customFields.splice(index, 1);
+            render(true);
+          }
+        } else if (d.act === "custom-stat-add") {
+          const label = await askText("Wie soll das eigene Attribut heißen?");
+          if (!label) return;
+          S.draft.customStats = S.draft.customStats || [];
+          S.draft.customStats.push({ id: "st" + Date.now().toString(36), label, value: 10 });
+          render(true);
+        } else if (d.customStatDelete !== undefined) {
+          const index = Number(d.customStatDelete);
+          const stat = S.draft.customStats?.[index];
+          if (stat && await askConfirmation(`Eigenes Attribut „${stat.label}“ löschen?`)) {
+            S.draft.customStats.splice(index, 1);
+            render(true);
+          }
         } else if (d.act === "save") {
           if (!(S.draft.name || "").trim()) {
             toast("Ein Held braucht einen Namen.");
             $("#f_name").focus();
             return;
+          }
+          const newOptions = { ...S.customOptions };
+          for (const [key, value] of [["arten", S.draft.art], ["klassen", S.draft.klasse]]) {
+            const normalizedValue = (value || "").trim();
+            const isStandard = standardProfileOptions(key).some(
+              (option) =>
+                normalizedValue.toLocaleLowerCase("de") === option.id.toLocaleLowerCase("de") ||
+                normalizedValue.toLocaleLowerCase("de") === option.label.toLocaleLowerCase("de"),
+            );
+            const customValues = S.customOptions[key] || [];
+            if (
+              normalizedValue &&
+              !isStandard &&
+              !customValues.some((option) => option.toLocaleLowerCase("de") === normalizedValue.toLocaleLowerCase("de"))
+            ) {
+              newOptions[key] = [...customValues, normalizedValue];
+            }
+          }
+          if (JSON.stringify(newOptions) !== JSON.stringify(S.customOptions)) {
+            await Store.saveProfileOptions(newOptions);
+            S.customOptions = newOptions;
           }
           await Store.save(S.draft);
           toast("In die Chronik eingetragen");
@@ -2269,7 +3341,7 @@
         } else if (d.act === "export") {
           const a = document.createElement("a");
           a.href = URL.createObjectURL(
-            new Blob([JSON.stringify(S.chars, null, 2)], {
+            new Blob([JSON.stringify([...S.chars, ...S.companions], null, 2)], {
               type: "application/json",
             }),
           );
@@ -2374,6 +3446,11 @@
       document.addEventListener("keydown", (e) => {
         if (e.key === "Enter" && e.target.dataset.open)
           go("sheet", e.target.dataset.open);
+        if (e.key === "Enter" && e.target.dataset.companionOpen) {
+          S.id = e.target.dataset.companionOpen;
+          S.view = "companion-sheet";
+          render();
+        }
         if (S.lb !== null && S.view === "sheet") {
           if (e.key === "Escape") {
             S.lb = null;
@@ -2385,11 +3462,40 @@
             $(`[data-act="${e.key === "ArrowRight" ? "lbn" : "lbp"}"]`).click();
         }
       });
-      document.addEventListener("change", (e) => {
+      document.addEventListener("change", async (e) => {
         if (e.target.dataset.cap !== undefined) Store.persist();
+        if (e.target.dataset.fieldToggle !== undefined) {
+          const record = S.view === "companion-edit" ? S.companionDraft : S.draft;
+          const hidden = new Set(record.hiddenFields || []);
+          e.target.checked ? hidden.delete(e.target.dataset.fieldToggle) : hidden.add(e.target.dataset.fieldToggle);
+          record.hiddenFields = [...hidden];
+          render(true);
+        }
         if (e.target.dataset.statToggle) {
           S.draft[e.target.dataset.statToggle] = e.target.checked;
           render(true);
+        }
+        if (e.target.dataset.companionHero !== undefined) {
+          const ids = new Set(S.companionDraft.heroIds || []);
+          e.target.checked ? ids.add(e.target.dataset.companionHero) : ids.delete(e.target.dataset.companionHero);
+          S.companionDraft.heroIds = [...ids];
+        }
+        if (e.target.dataset.contactOwner !== undefined) {
+          S.contactHeroId = e.target.value;
+        }
+        if (e.target.dataset.heroCompanion !== undefined) {
+          const companion = S.companions.find((x) => x.id === e.target.dataset.heroCompanion);
+          if (!companion) return;
+          const ids = new Set(companion.heroIds || []);
+          e.target.checked ? ids.add(S.id) : ids.delete(S.id);
+          companion.heroIds = [...ids];
+          try {
+            await Store.persist();
+            render(true);
+          } catch (error) {
+            console.error("Begleiter-Zuordnung konnte nicht gespeichert werden.", error);
+            toast("Begleiter-Zuordnung konnte nicht gespeichert werden.");
+          }
         }
       });
       document.addEventListener("input", (e) => {
@@ -2406,6 +3512,24 @@
         else if (d.v) S.draft[d.v] = +t.value;
         else if (d.s)
           S.draft.stats[d.s] = Math.max(1, Math.min(30, +t.value || 1));
+        else if (d.cf) S.companionDraft[d.cf] = t.value;
+        else if (d.contactField) S.contactEdit[d.contactField] = t.value;
+        else if (d.contactNoteField) S.contactNoteEdit[d.contactNoteField] = t.value;
+        else if (d.fieldLabel) {
+          const record = S.view === "companion-edit" ? S.companionDraft : S.draft;
+          record.fieldLabels = record.fieldLabels || {};
+          record.fieldLabels[d.fieldLabel] = t.value;
+        } else if (d.customLabel !== undefined) {
+          const record = d.customOwner === "companion" ? S.companionDraft : S.draft;
+          if (record?.customFields?.[d.customLabel]) record.customFields[d.customLabel].label = t.value;
+        } else if (d.customValue !== undefined) {
+          const record = d.customOwner === "companion" ? S.companionDraft : S.draft;
+          if (record?.customFields?.[d.customValue]) record.customFields[d.customValue].value = t.value;
+        } else if (d.customStatLabel !== undefined && S.draft.customStats?.[d.customStatLabel]) {
+          S.draft.customStats[d.customStatLabel].label = t.value;
+        } else if (d.customStat !== undefined && S.draft.customStats?.[d.customStat]) {
+          S.draft.customStats[d.customStat].value = Math.max(1, Math.min(30, +t.value || 1));
+        }
         else if (t.id === "ed") E().html = t.innerHTML;
         else if (d.de !== undefined) S.dEdit[d.de] = t.value;
         else if (d.cap !== undefined) cur().gallery[S.lb].cap = t.value;
@@ -2416,6 +3540,11 @@
           if (!Array.isArray(arr)) throw 0;
           arr.forEach((c) => {
             if (c && c.id && c.name) {
+              if (c.type === "companion") {
+                const i = S.companions.findIndex((x) => x.id === c.id);
+                i < 0 ? S.companions.push(c) : (S.companions[i] = c);
+                return;
+              }
               const i = S.chars.findIndex((x) => x.id === c.id);
               i < 0 ? S.chars.push(c) : (S.chars[i] = c);
             }
@@ -2487,6 +3616,30 @@
           render(true);
         } catch (x) {
           toast("Bild konnte nicht gelesen werden.");
+        }
+      });
+      $("#cfile").addEventListener("change", async (e) => {
+        const f = e.target.files[0];
+        e.target.value = "";
+        if (!f || !S.companionDraft) return;
+        try {
+          S.companionDraft.portrait = await shrink(f, 600, 0.85);
+          render(true);
+        } catch (error) {
+          console.error("Begleiterbild konnte nicht gelesen werden.", error);
+          toast("Begleiterbild konnte nicht gelesen werden.");
+        }
+      });
+      $("#contact-file").addEventListener("change", async (e) => {
+        const f = e.target.files[0];
+        e.target.value = "";
+        if (!f || !S.contactEdit) return;
+        try {
+          S.contactEdit.portrait = await shrink(f, 600, 0.85);
+          render(true);
+        } catch (error) {
+          console.error("Kontaktporträt konnte nicht gelesen werden.", error);
+          toast("Kontaktporträt konnte nicht gelesen werden.");
         }
       });
       $("#gfile").addEventListener("change", async (e) => {

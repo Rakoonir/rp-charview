@@ -53,26 +53,247 @@ function legacySettingsPath() {
   return path.join(app.getPath("userData"), "settings.json");
 }
 
-async function dataPath() {
-  const settings = await readSettings();
-  const targetedPath = path.join(settingsDirectoryFor(settings.dataDirectory), "characters.json");
-  const legacyPath = path.join(settings.dataDirectory, "characters.json");
+const COLLECTION_DIRECTORIES = ["companion-diaries", "contacts", "diaries", "gallery", "notes"];
+const cloneWithout = (value, keys) => {
+  const copy = { ...value };
+  keys.forEach((key) => delete copy[key]);
+  return copy;
+};
+const storageKey = (id) => Buffer.from(String(id), "utf8").toString("hex") || "empty";
 
+function recordId(record, collection) {
+  if (!record || (typeof record.id !== "string" && typeof record.id !== "number") || !String(record.id)) {
+    throw new TypeError(`Ein Eintrag in „${collection}“ benötigt eine gültige ID.`);
+  }
+  return String(record.id);
+}
+
+async function readJsonRecords(directory) {
+  const records = [];
+  async function visit(currentDirectory) {
+    let entries;
+    try {
+      entries = await fs.readdir(currentDirectory, { withFileTypes: true });
+    } catch (error) {
+      if (error.code === "ENOENT") return;
+      throw error;
+    }
+    for (const entry of entries) {
+      const filePath = path.join(currentDirectory, entry.name);
+      if (entry.isDirectory()) await visit(filePath);
+      else if (entry.isFile() && entry.name.toLowerCase().endsWith(".json")) {
+        const record = JSON.parse(await fs.readFile(filePath, "utf8"));
+        if (!record || typeof record !== "object" || Array.isArray(record)) {
+          throw new TypeError(`Ungültiger Datensatz in ${filePath}`);
+        }
+        records.push(record);
+      }
+    }
+  }
+  await visit(directory);
+  return records;
+}
+
+async function collectJsonPaths(directory) {
+  const paths = [];
+  async function visit(currentDirectory) {
+    let entries;
+    try {
+      entries = await fs.readdir(currentDirectory, { withFileTypes: true });
+    } catch (error) {
+      if (error.code === "ENOENT") return;
+      throw error;
+    }
+    for (const entry of entries) {
+      const filePath = path.join(currentDirectory, entry.name);
+      if (entry.isDirectory()) await visit(filePath);
+      else if (entry.isFile() && entry.name.toLowerCase().endsWith(".json")) paths.push(filePath);
+    }
+  }
+  await visit(directory);
+  return paths;
+}
+
+async function fileExists(filePath) {
   try {
-    await fs.access(targetedPath);
-    return targetedPath;
+    await fs.access(filePath);
+    return true;
   } catch (error) {
-    if (error.code !== "ENOENT") throw error;
+    if (error.code === "ENOENT") return false;
+    throw error;
+  }
+}
+
+function mergeById(...collections) {
+  const merged = new Map();
+  for (const collection of collections) {
+    for (const entry of collection || []) {
+      if (entry && (typeof entry.id === "string" || typeof entry.id === "number")) {
+        merged.set(String(entry.id), entry);
+      }
+    }
+  }
+  return [...merged.values()];
+}
+
+async function readChronicleStore(storeDirectory, legacyDirectory = null) {
+  const charactersPath = path.join(storeDirectory, "characters.json");
+  let characters = await readChronicle(charactersPath);
+  let legacySource = false;
+  if (characters === null && legacyDirectory) {
+    const legacyPath = path.join(legacyDirectory, "characters.json");
+    characters = await readChronicle(legacyPath);
+    legacySource = characters !== null;
   }
 
-  try {
-    await fs.access(legacyPath);
-    return legacyPath;
-  } catch (error) {
-    if (error.code !== "ENOENT") throw error;
+  const companionsPath = path.join(storeDirectory, "companions.json");
+  const savedCompanions = await readChronicle(companionsPath);
+  const [galleryRecords, diaryRecords, companionDiaryRecords, contactRecords, noteRecords] = await Promise.all([
+    readJsonRecords(path.join(storeDirectory, "gallery")),
+    readJsonRecords(path.join(storeDirectory, "diaries")),
+    readJsonRecords(path.join(storeDirectory, "companion-diaries")),
+    readJsonRecords(path.join(storeDirectory, "contacts")),
+    readJsonRecords(path.join(storeDirectory, "notes")),
+  ]);
+  const allRecordsExist = characters !== null || savedCompanions !== null ||
+    galleryRecords.length > 0 || diaryRecords.length > 0 || companionDiaryRecords.length > 0 ||
+    contactRecords.length > 0 || noteRecords.length > 0;
+  if (!allRecordsExist) return { data: null, hasData: false, needsMigration: false };
+  if (savedCompanions !== null && !Array.isArray(savedCompanions)) {
+    throw new TypeError(`Die Begleiter-Datei ist ungültig: ${companionsPath}`);
   }
 
-  return targetedPath;
+  const sourceEntries = characters || [];
+  const heroes = sourceEntries.filter((entry) => entry?.type !== "companion");
+  const legacyCompanions = sourceEntries.filter((entry) => entry?.type === "companion");
+  const companions = mergeById(legacyCompanions, savedCompanions || []).map((companion) => {
+    const legacyCompanion = legacyCompanions.find((entry) => String(entry.id) === String(companion.id));
+    return legacyCompanion?.diary?.length
+      ? { ...companion, diary: mergeById(legacyCompanion.diary, companion.diary || []) }
+      : companion;
+  });
+  const groupByHero = (records) => {
+    const grouped = new Map();
+    for (const record of records) {
+      if (record.heroId === undefined || record.heroId === null) continue;
+      const key = String(record.heroId);
+      if (!grouped.has(key)) grouped.set(key, []);
+      grouped.get(key).push(cloneWithout(record, ["heroId", "contactId"]));
+    }
+    return grouped;
+  };
+  const galleriesByHero = groupByHero(galleryRecords);
+  const diariesByHero = groupByHero(diaryRecords);
+  const diariesByCompanion = new Map();
+  for (const record of companionDiaryRecords) {
+    if (record.ownerId == null) continue;
+    const key = String(record.ownerId);
+    if (!diariesByCompanion.has(key)) diariesByCompanion.set(key, []);
+    diariesByCompanion.get(key).push(cloneWithout(record, ["ownerId", "ownerType"]));
+  }
+  const contactsByHero = groupByHero(contactRecords);
+  const notesByContact = new Map();
+  for (const record of noteRecords) {
+    if (record.heroId == null || record.contactId == null) continue;
+    const key = `${record.heroId}\0${record.contactId}`;
+    if (!notesByContact.has(key)) notesByContact.set(key, []);
+    notesByContact.get(key).push(cloneWithout(record, ["heroId", "contactId"]));
+  }
+
+  const embeddedCollections = heroes.some((hero) =>
+    ["gallery", "diary", "contacts"].some((key) => Array.isArray(hero[key]) && hero[key].length > 0),
+  );
+  const embeddedCompanionDiaries = companions.some((companion) =>
+    Array.isArray(companion.diary) && companion.diary.length > 0,
+  );
+  for (const hero of heroes) {
+    const heroId = String(hero.id);
+    hero.gallery = mergeById(hero.gallery || [], galleriesByHero.get(heroId) || []);
+    hero.diary = mergeById(hero.diary || [], diariesByHero.get(heroId) || []);
+    const externalContacts = contactsByHero.get(heroId) || [];
+    hero.contacts = mergeById(hero.contacts || [], externalContacts).map((contact) => {
+      const savedNotes = notesByContact.get(`${heroId}\0${contact.id}`) || [];
+      return {
+        ...contact,
+        entries: mergeById(contact.entries || [], savedNotes),
+      };
+    });
+  }
+  for (const companion of companions) {
+    companion.diary = mergeById(
+      companion.diary || [],
+      diariesByCompanion.get(String(companion.id)) || [],
+    );
+  }
+
+  return {
+    data: [...heroes, ...companions],
+    hasData: true,
+    needsMigration:
+      legacySource ||
+      savedCompanions === null ||
+      legacyCompanions.length > 0 ||
+      embeddedCollections ||
+      embeddedCompanionDiaries ||
+      !await fileExists(charactersPath),
+  };
+}
+
+async function saveChronicleStore(storeDirectory, data) {
+  if (!Array.isArray(data)) throw new TypeError("Die Chronik muss eine Liste sein.");
+  const heroes = data.filter((entry) => entry?.type !== "companion");
+  const companions = data.filter((entry) => entry?.type === "companion");
+  const files = new Map();
+  files.set(path.join(storeDirectory, "characters.json"), heroes.map((hero) => {
+    recordId(hero, "characters");
+    return cloneWithout(hero, ["gallery", "diary", "contacts"]);
+  }));
+  files.set(path.join(storeDirectory, "companions.json"), companions.map((companion) => {
+    recordId(companion, "companions");
+    return cloneWithout(companion, ["diary"]);
+  }));
+
+  const addRecord = (collection, relativeDirectory, hero, record, extra = {}) => {
+    const heroId = recordId(hero, "characters");
+    const itemId = recordId(record, collection);
+    const segments = [storageKey(heroId)];
+    if (extra.contactId !== undefined) segments.push(storageKey(extra.contactId));
+    segments.push(`${storageKey(itemId)}.json`);
+    files.set(
+      path.join(storeDirectory, relativeDirectory, ...segments),
+      { ...record, heroId, ...(extra.contactId === undefined ? {} : { contactId: String(extra.contactId) }) },
+    );
+  };
+  for (const hero of heroes) {
+    recordId(hero, "characters");
+    for (const item of hero.gallery || []) addRecord("gallery", "gallery", hero, item);
+    for (const item of hero.diary || []) addRecord("diaries", "diaries", hero, item);
+    for (const contact of hero.contacts || []) {
+      const contactId = recordId(contact, "contacts");
+      addRecord("contacts", "contacts", hero, cloneWithout(contact, ["entries"]), {});
+      for (const note of contact.entries || []) {
+        addRecord("notes", "notes", hero, note, { contactId });
+      }
+    }
+  }
+  for (const companion of companions) {
+    const companionId = recordId(companion, "companions");
+    for (const item of companion.diary || []) {
+      const itemId = recordId(item, "companion diaries");
+      files.set(
+        path.join(storeDirectory, "companion-diaries", storageKey(companionId), `${storageKey(itemId)}.json`),
+        { ...item, ownerId: companionId, ownerType: "companion" },
+      );
+    }
+  }
+
+  await Promise.all([...files].map(([filePath, value]) => writeJsonAtomically(filePath, value)));
+  const expected = new Set(files.keys());
+  for (const directory of COLLECTION_DIRECTORIES) {
+    const collectionRoot = path.join(storeDirectory, directory);
+    const existing = await collectJsonPaths(collectionRoot);
+    await Promise.all(existing.filter((filePath) => !expected.has(filePath)).map((filePath) => fs.rm(filePath)));
+  }
 }
 
 function normalizeTheme(theme) {
@@ -292,19 +513,92 @@ autoUpdater.on("error", (error) =>
 );
 
 ipcMain.handle("data:load", async () => {
-  return readChronicle(await dataPath());
+  const settings = await readSettings();
+  const storeDirectory = settingsDirectoryFor(settings.dataDirectory);
+  const chronicle = await readChronicleStore(storeDirectory, settings.dataDirectory);
+  if (!chronicle.hasData) return null;
+  if (chronicle.needsMigration) {
+    await saveChronicleStore(storeDirectory, chronicle.data);
+    const legacyPath = path.join(settings.dataDirectory, "characters.json");
+    if (legacyPath !== path.join(storeDirectory, "characters.json")) {
+      await fs.rm(legacyPath, { force: true });
+    }
+  }
+  return chronicle.data;
 });
 
 ipcMain.handle("data:save", async (_event, data) => {
-  if (!Array.isArray(data)) throw new TypeError("Die Chronik muss eine Liste sein.");
   const settings = await readSettings();
-  const targetPath = path.join(settingsDirectoryFor(settings.dataDirectory), "characters.json");
+  const storeDirectory = settingsDirectoryFor(settings.dataDirectory);
   const legacyPath = path.join(settings.dataDirectory, "characters.json");
-  await fs.mkdir(path.dirname(targetPath), { recursive: true });
-  await writeJsonAtomically(targetPath, data);
-  if (legacyPath !== targetPath) {
+  await saveChronicleStore(storeDirectory, data);
+  if (legacyPath !== path.join(storeDirectory, "characters.json")) {
     await fs.rm(legacyPath, { force: true });
   }
+});
+
+ipcMain.handle("profile-options:load", async () => {
+  const filePath = path.join(settingsDirectoryFor(), "profile-options.json");
+  try {
+    const options = JSON.parse(await fs.readFile(filePath, "utf8"));
+    if (!options || typeof options !== "object" || Array.isArray(options)) {
+      throw new TypeError(`Profiloptionen sind ungültig: ${filePath}`);
+    }
+    const standard = options.standard && typeof options.standard === "object" && !Array.isArray(options.standard)
+      ? options.standard
+      : {};
+    return {
+      arten: Array.isArray(options.arten) ? options.arten.filter((value) => typeof value === "string") : [],
+      klassen: Array.isArray(options.klassen) ? options.klassen.filter((value) => typeof value === "string") : [],
+      standard: {
+        arten: standard.arten && typeof standard.arten === "object" && !Array.isArray(standard.arten) ? standard.arten : {},
+        klassen: standard.klassen && typeof standard.klassen === "object" && !Array.isArray(standard.klassen) ? standard.klassen : {},
+      },
+    };
+  } catch (error) {
+    if (error.code === "ENOENT") return { arten: [], klassen: [] };
+    throw error;
+  }
+});
+
+ipcMain.handle("profile-options:save", async (_event, options) => {
+  if (
+    !options ||
+    !Array.isArray(options.arten) ||
+    !Array.isArray(options.klassen) ||
+    [...options.arten, ...options.klassen].some((value) => typeof value !== "string")
+  ) {
+    throw new TypeError("Ungültige Arten- oder Klassenoptionen.");
+  }
+  const standard = options.standard ?? {};
+  if (!standard || typeof standard !== "object" || Array.isArray(standard)) {
+    throw new TypeError("Ungültige Standardvorgaben.");
+  }
+  for (const key of ["arten", "klassen"]) {
+    const overrides = standard[key] ?? {};
+    if (!overrides || typeof overrides !== "object" || Array.isArray(overrides)) {
+      throw new TypeError("Ungültige Standardvorgaben.");
+    }
+    for (const override of Object.values(overrides)) {
+      if (
+        !override ||
+        typeof override !== "object" ||
+        Array.isArray(override) ||
+        (override.label !== undefined && typeof override.label !== "string") ||
+        (override.hidden !== undefined && typeof override.hidden !== "boolean")
+      ) {
+        throw new TypeError("Ungültige Standardvorgaben.");
+      }
+    }
+  }
+  await writeJsonAtomically(path.join(settingsDirectoryFor(), "profile-options.json"), {
+    arten: [...new Set(options.arten.map((value) => value.trim()).filter(Boolean))],
+    klassen: [...new Set(options.klassen.map((value) => value.trim()).filter(Boolean))],
+    standard: {
+      arten: standard.arten ?? {},
+      klassen: standard.klassen ?? {},
+    },
+  });
 });
 
 ipcMain.handle("settings:get", async () => {
@@ -361,25 +655,25 @@ ipcMain.handle("data:choose-directory", async () => {
   }
 
   await fs.mkdir(destinationDirectory, { recursive: true });
-  const currentFile = path.join(settingsDirectoryFor(currentDirectory), "characters.json");
-  const destinationFile = path.join(settingsDirectoryFor(destinationDirectory), "characters.json");
+  const currentStoreDirectory = settingsDirectoryFor(currentDirectory);
+  const destinationStoreDirectory = settingsDirectoryFor(destinationDirectory);
   const [currentChronicle, destinationChronicle] = await Promise.all([
-    readChronicle(currentFile),
-    readChronicle(destinationFile),
+    readChronicleStore(currentStoreDirectory, currentDirectory),
+    readChronicleStore(destinationStoreDirectory, destinationDirectory),
   ]);
   let useDestinationChronicle = false;
 
-  if (destinationChronicle !== null) {
-    const hasCurrentChronicle = currentChronicle !== null;
+  if (destinationChronicle.hasData) {
+    const hasCurrentChronicle = currentChronicle.hasData;
     const { response } = await dialog.showMessageBox(mainWindow, {
       type: "question",
       title: "Chronik im Zielordner gefunden",
       message: hasCurrentChronicle
         ? "Der ausgewählte Ordner enthält bereits eine Chronik. Welche Daten möchtest du verwenden?"
-        : "Der ausgewählte Ordner enthält bereits eine Chronik. Möchtest du diese verwenden?",
+        : "Der ausgewählte Ordner enthält bereits Chronikdaten. Möchtest du diese verwenden?",
       detail: hasCurrentChronicle
-        ? "Beim Übernehmen der aktuellen Chronik wird die vorhandene Datei zuvor als Sicherung im Zielordner gespeichert."
-        : "Die Chronik im bisherigen Ordner bleibt unverändert.",
+        ? "Beim Übernehmen der aktuellen Chronik wird der vorhandene Datenordner zuvor vollständig als Sicherung kopiert."
+        : "Die Daten im bisherigen Ordner bleiben unverändert.",
       buttons: hasCurrentChronicle
         ? ["Abbrechen", "Vorhandene Chronik verwenden", "Aktuelle Chronik übernehmen"]
         : ["Abbrechen", "Vorhandene Chronik verwenden"],
@@ -390,15 +684,33 @@ ipcMain.handle("data:choose-directory", async () => {
     useDestinationChronicle = response === 1;
   }
 
-  if (!useDestinationChronicle && currentChronicle !== null) {
-    if (destinationChronicle !== null) {
+  if (!useDestinationChronicle && currentChronicle.hasData) {
+    if (destinationChronicle.hasData) {
       const backupPath = path.join(
         destinationDirectory,
-        `characters.backup-${new Date().toISOString().replace(/[:.]/g, "-")}.json`,
+        `chronik-backup-${new Date().toISOString().replace(/[:.]/g, "-")}`,
       );
-      await fs.copyFile(destinationFile, backupPath);
+      await fs.mkdir(backupPath, { recursive: true });
+      if (await fileExists(destinationStoreDirectory)) {
+        await fs.cp(destinationStoreDirectory, path.join(backupPath, "settings"), {
+          recursive: true,
+          errorOnExist: true,
+        });
+      }
+      const legacyPath = path.join(destinationDirectory, "characters.json");
+      if (await fileExists(legacyPath)) {
+        await fs.copyFile(legacyPath, path.join(backupPath, "characters.json"));
+      }
     }
-    await writeJsonAtomically(destinationFile, currentChronicle);
+    await saveChronicleStore(destinationStoreDirectory, currentChronicle.data);
+  } else if (useDestinationChronicle) {
+    await saveChronicleStore(destinationStoreDirectory, destinationChronicle.data);
+  } else {
+    await saveChronicleStore(destinationStoreDirectory, []);
+  }
+  const destinationLegacyPath = path.join(destinationDirectory, "characters.json");
+  if (destinationLegacyPath !== path.join(destinationStoreDirectory, "characters.json")) {
+    await fs.rm(destinationLegacyPath, { force: true });
   }
 
   const updatedSettings = {

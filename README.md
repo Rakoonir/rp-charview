@@ -37,6 +37,8 @@ Lege Charaktere an, schreibe ihre Geschichte, sammle Bilder und führe ein Tageb
 **Heldenverwaltung**
 - Charaktere anlegen, bearbeiten, ansehen und löschen
 - Heldenliste mit Porträt, Volk, Klasse, Stufe und Lebensbalken sowie Suche
+- Begleiter unabhängig verwalten und beliebig vielen Helden zuordnen
+- Kontaktprofile pro Held mit persönlichen Informationen und einzelnen RP-Notizen führen; zentrale Übersicht aller Kontakte
 - Export und Import der gesamten Chronik als JSON-Datei
 
 **Charakterblatt**
@@ -44,12 +46,16 @@ Lege Charaktere an, schreibe ihre Geschichte, sammle Bilder und führe ein Tageb
 - Charakter-Porträt direkt im Bereich **Aussehen** anzeigen, hinzufügen, ändern und entfernen
 - Lebenspunkte und Mana pro Charakter optional ein-/ausblenden; deaktivierte Werte bleiben gespeichert
 - Obere Reiter: **Charakterblatt**, **Galerie**, **Tagebuch**
+- Weitere Charakterblatt-Reiter: **Begleiter** zum Zuordnen und **Kontakte** zum Verwalten heldbezogener Personenprofile
 - Seitenleiste im Charakterblatt: **Aussehen**, **Über den Charakter**, **Geschichte**, **Fähigkeiten**, **Attribute**, **Wesen**
-- Sechs Attribute mit Modifikatoren, Lebenskraft, Gesinnung, Erscheinung, Herkunft, Familie, Persönlichkeit, Ideale, Bindungen, Makel, Ausrüstung, Verbündete, Feinde, Ziele und Notizen
+- Sechs Standardattribute mit Modifikatoren sowie eigene numerische Attribute mit Modifikator
+- Profilfelder je Held individuell ergänzen; Standardfelder umbenennen oder ausblenden
+- Eigene Arten/Rassen und Klassen/Berufe werden als wiederverwendbare Auswahloptionen gespeichert
 
 **Geschichte & Tagebuch**
 - Rich-Text-Editor mit Überschriften, **fett**, *kursiv*, unterstrichen, durchgestrichen, Listen, Zitaten, Trennlinien und eingebetteten Bildern
 - Eigene Leseansicht für Tagebucheinträge ohne Bedienelemente im Text, mit Blättern zum älteren und neueren Eintrag
+- Begleiter besitzen eine eigene Hintergrundgeschichte und ein eigenes Tagebuch
 - Eingebauter HTML-Sanitizer: Gespeicherte und importierte Inhalte können keinen Schadcode enthalten
 
 **Galerie & Porträt**
@@ -91,6 +97,21 @@ Beide Installer und das Update-Manifest liegen anschließend unter `%TEMP%\rp-ch
 | Neuen Helden erschaffen | **Neuer Held** oben rechts |
 | Held ansehen | Karte in der Heldenliste anklicken |
 | Held bearbeiten | **Bearbeiten** im Charakterblatt |
+| Profilfelder eines Helden ergänzen | Held bearbeiten → **Profilfeld hinzufügen** |
+| Standard-Profilfelder anpassen | Held bearbeiten → **Felder umbenennen / ausblenden** |
+| Eigenes Attribut anlegen | Held bearbeiten → **Eigenes Attribut** |
+| Eigene Art oder Klasse speichern | Beim Bearbeiten in **Art / Volk** bzw. **Klasse / Beruf** eintragen; danach wiederverwendbar |
+| Begleiter verwalten | **Begleiter** in der Navigation → **Neuer Begleiter** oder Karte anklicken |
+| Begleiter einem Helden zuordnen | Held öffnen → Reiter **Begleiter**; alternativ im Begleiter-Editor mehrere Helden auswählen |
+| Begleiter-Profilfelder ergänzen | Begleiter bearbeiten → **Profilfeld hinzufügen** |
+| Begleiter-Geschichte oder -Tagebuch pflegen | Begleiter öffnen → **Hintergrundgeschichte** oder **Tagebuch** |
+| Alle Kontakte ansehen | **Kontakte** in der Navigation |
+| Kontaktprofil öffnen | **Kontakte** in der Navigation oder Held öffnen → Reiter **Kontakte** → Kontaktkarte anklicken |
+| RP-Kontakt festhalten | Kontaktübersicht oder heldbezogener Reiter **Kontakte** → **Kontakt hinzufügen** |
+| RP-Notiz zu einer Person speichern | Kontaktprofil → **Notiz hinzufügen** |
+| Chronik importieren/exportieren | Kopfzeile → **Mehr** → **Importieren** / **Exportieren** |
+| Einstellungen öffnen | Kopfzeile → **Mehr** → **Einstellungen** |
+| Eigene Arten/Rassen und Klassen/Berufe verwalten | Kopfzeile → **Mehr** → **Vorgaben** |
 | Geschichte schreiben | Seitenleiste → **Geschichte** → **Bearbeiten** |
 | Tagebucheintrag lesen | Reiter **Tagebuch** → **Anzeigen** |
 | Bilder hinzufügen | Reiter **Galerie** → **Bilder hinzufügen** |
@@ -103,7 +124,7 @@ Beide Installer und das Update-Manifest liegen anschließend unter `%TEMP%\rp-ch
 
 ## Datenmodell
 
-Die Chronik ist ein JSON-Array. Jeder Held ist ein Objekt:
+Die Chronik ist ein JSON-Array aus Helden und optionalen Begleiter-Einträgen. Kontakte liegen direkt am jeweiligen Helden; die Navigation **Kontakte** zeigt eine gemeinsame Übersicht aller Kontakte. Jedes Kontaktprofil kann persönliche Felder und eine Sammlung einzelner Notizen enthalten. Begleiter sind eigenständige Einträge und verweisen über `heroIds` auf einen oder mehrere Helden:
 
 ```jsonc
 {
@@ -124,15 +145,30 @@ Die Chronik ist ein JSON-Array. Jeder Held ist ein Objekt:
   "faehigkeiten": "…", "ausruestung": "…",
   "verbuendete": "…", "feinde": "…", "ziele": "…", "notizen": "…",
   "stats": { "st": 17, "ge": 9, "ko": 16, "in": 11, "we": 14, "ch": 13 },
+  "customStats": [{ "id": "st2", "label": "Glaube", "value": 15 }],
+  "customFields": [{ "id": "pf1", "label": "Orden", "value": "Silberne Flamme" }],
+  "fieldLabels": { "herkunft": "Geburtsort" },
+  "hiddenFields": ["besonderheiten"],
   "lp": 68, "lpMax": 84, "mp": 22, "mpMax": 30,
   "crest": "shield",                     // Wappen-Icon
   "portrait": "data:image/jpeg;base64,…",
   "gallery": [{ "id": "g1", "src": "data:image/jpeg;…", "cap": "Am Nordtor" }],
-  "diary":   [{ "id": "d1", "date": "2026-10-02", "title": "…", "html": "<p>…</p>", "text": "…" }]
+  "diary":   [{ "id": "d1", "date": "2026-10-02", "title": "…", "html": "<p>…</p>", "text": "…" }],
+  "contacts": [{
+    "id": "n1", "name": "Meisterin Sylva", "relation": "Heilerin",
+    "role": "Kräuterkundige", "species": "Mensch", "age": "42",
+    "location": "Eisenhall", "appearance": "Kupferne Brosche",
+    "personality": "Ruhig und aufmerksam", "notes": "Alte Verbündete.",
+    "entries": [{ "id": "cn1", "date": "2026-10-25", "title": "Erstes Treffen", "text": "…" }]
+  }]
 }
 ```
 
-Neue Felder lassen sich an einer Stelle ergänzen: Editor und Charakterblatt werden aus der deklarativen Konstante `SECTIONS` erzeugt.
+Ein Begleiter-Eintrag verwendet `"type": "companion"` und enthält unter anderem `name`, `species`, `description`, `notes`, `portrait`, `heroIds`, `customFields`, `geschichteHtml` und `diary`. Eigene Profilfelder und Attribute werden je Profil gespeichert; umbenannte und ausgeblendete Standardfelder gelten ebenfalls nur für das jeweilige Profil.
+
+In der installierten Windows-App wird dieses Exportformat im `settings/`-Ordner des gewählten Datenverzeichnisses aufgeteilt: `characters.json` enthält die Heldenprofile, `companions.json` die Begleiter. Galeriebilder, Tagebucheinträge und Kontaktprofile liegen einzeln als JSON-Dateien in den Unterordnern `gallery/`, `diaries/` und `contacts/`; Begleiter-Tagebucheinträge liegen in `companion-diaries/` und einzelne Kontakt-RP-Notizen unter `notes/`. Eigene Arten und Klassen/Berufe sowie Umbenennungen und ausgeblendete Standardvorgaben werden über **Mehr → Vorgaben** verwaltet und im App-Einstellungsordner in `profile-options.json` gespeichert. Änderungen an Vorgaben gelten für neue Vorschläge; bereits gespeicherte Figurenwerte bleiben unverändert. Import und Export bleiben ein vollständiges gemeinsames JSON-Array. Der Browser-Fallback speichert weiterhin in IndexedDB beziehungsweise localStorage.
+
+Die eingebauten Heldenfelder werden aus der deklarativen Konstante `SECTIONS` erzeugt. Zusätzliche Profilfelder, Umbenennungen und ausgeblendete Felder werden je Held oder Begleiter gespeichert und benötigen keine Codeänderung.
 
 ## Architektur
 
@@ -159,7 +195,7 @@ Die HTML-Datei enthält Schema, Store und UI; `main.js` und `preload.js` ergänz
 
 ## Als Windows-Desktop-App
 
-Die App verwendet Electron mit aktiviertem Context Isolation, deaktiviertem Node-Zugriff im Renderer und einer eingeschränkten Preload-Bridge. Charaktere und eingebettete Bilder werden gemeinsam in `characters.json` gespeichert. In den Einstellungen lässt sich der Datenordner auswählen; beim Wechsel wird die aktuelle Chronik übernommen, und die bisherige Datei bleibt als lokale Sicherung erhalten. Enthält der Zielordner bereits eine Chronik, kannst du zwischen dieser und den aktuellen Daten wählen. Beim Ersetzen wird die vorhandene Zieldatei vorher als Sicherung kopiert.
+Die App verwendet Electron mit aktiviertem Context Isolation, deaktiviertem Node-Zugriff im Renderer und einer eingeschränkten Preload-Bridge. Charaktere und Begleiter sowie Galerie-, Tagebuch- und Kontaktdaten werden als getrennte JSON-Dateien im `settings/`-Ordner des gewählten Datenverzeichnisses gespeichert. Ältere Chronikdateien werden beim Laden in diese Struktur überführt. In den Einstellungen lässt sich der Datenordner auswählen; beim Wechsel wird die aktuelle Chronik übernommen. Enthält der Zielordner bereits Daten, kannst du zwischen diesen und den aktuellen Daten wählen; beim Ersetzen wird der vorhandene Datenordner zuvor als Sicherung kopiert.
 
 ### Entwicklung und Installer
 
