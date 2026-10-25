@@ -41,7 +41,7 @@ Lege Charaktere an, schreibe ihre Geschichte, sammle Bilder und führe ein Tageb
 - Begleiter unabhängig verwalten und beliebig vielen Helden zuordnen
 - Begleiter direkt im Heldenprofil aus einer Liste vorhandener Begleiter zuordnen
 - Kontaktprofile pro Held mit persönlichen Informationen und einzelnen RP-Notizen führen; zentrale Übersicht aller Kontakte
-- Zentrales Beziehungsnetz zwischen Helden, Begleitern und Kontakten, direkt in Profilen verwaltbar; jeder Held hat zusätzlich einen verzweigten Stammbaum mit eigenständigen Personen ohne vollständiges Profil
+- Zentrales Beziehungsnetz zwischen Helden, Begleitern und Kontakten, direkt in Profilen verwaltbar; unter **Netzwerk → Stammbäume** lassen sich benannte Stammbäume mit bestehenden Profilen und eigenständigen Personen anlegen und als Generationen mit Abzweigungen anzeigen
 - Export und Import der gesamten Chronik als JSON-Datei
 
 **Charakterblatt**
@@ -49,7 +49,7 @@ Lege Charaktere an, schreibe ihre Geschichte, sammle Bilder und führe ein Tageb
 - Charakter-Porträt direkt im Bereich **Aussehen** anzeigen, hinzufügen, ändern und entfernen
 - Lebenspunkte und Mana pro Charakter optional ein-/ausblenden; deaktivierte Werte bleiben gespeichert
 - Obere Reiter: **Charakterblatt**, **Galerie**, **Tagebuch**
-- Weitere Charakterblatt-Reiter: **Begleiter**, **Kontakte**, **Beziehungen** zum direkten Verwalten des gemeinsamen Netzes und **Stammbaum** mit generationenweiser Familienansicht
+- Weitere Charakterblatt-Reiter: **Begleiter**, **Kontakte**, **Beziehungen** zum direkten Verwalten des gemeinsamen Netzes und **Stammbaum** zum Öffnen der Stammbäume, an denen der Held beteiligt ist
 - Begleiter- und Kontaktprofile bieten ebenfalls einen eigenen **Beziehungen**-Bereich; Änderungen sind direkt im gemeinsamen Netzwerk sichtbar
 - Seitenleiste im Charakterblatt mit gemeinsamer **Charakterübersicht** für Identität, Aussehen, Hintergrund und Beziehungen sowie **Geschichte**, **Fähigkeiten**, **Attribute** und **Wesen**
 - Sechs Standardattribute mit Modifikatoren sowie eigene numerische Attribute mit Modifikator

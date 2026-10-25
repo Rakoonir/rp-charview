@@ -1892,9 +1892,11 @@
         companionStoryEdit: null,
         fieldManagerOpen: false,
         fieldSectionsOpen: {},
-        network: { type: "chronicle-network", id: "chronicle-network", relationships: [], familyLinks: [], familyMembers: [] },
+        network: { type: "chronicle-network", id: "chronicle-network", relationships: [], familyTrees: [] },
         networkTab: "relationships",
-        familyAddOpen: false,
+        familyTreeId: null,
+        familyCreateOpen: false,
+        familyMemberOpen: false,
         customOptions: normalizeProfileOptions(),
         contactEdit: null,
         contactHeroId: null,
@@ -1905,6 +1907,27 @@
         contactReturnView: "contacts",
         contactEditCancelView: "contacts",
       };
+      function familyTreesFromNetwork(network) {
+        if (Array.isArray(network?.familyTrees)) return network.familyTrees;
+        const people = Array.isArray(network?.familyMembers) ? network.familyMembers : [];
+        const links = Array.isArray(network?.familyLinks) ? network.familyLinks : [];
+        if (!people.length && !links.length) return [];
+        return [{
+          id: "family-legacy",
+          name: "Bisheriger Stammbaum",
+          members: [...new Set([
+            ...links.flatMap((edge) => [edge.from, edge.to]),
+            ...people.map((person) => `family:${person.id}`),
+          ])],
+          people,
+          links: links.map((edge) => ({
+            id: edge.id,
+            from: edge.from,
+            to: edge.to,
+            relation: edge.label === "Elternteil von" ? "parent" : edge.label === "Kind von" ? "child" : edge.label === "Geschwister" ? "sibling" : edge.label === "Partner/in" ? "partner" : "relative",
+          })),
+        }];
+      }
       const Store = {
         async init() {
           const d = await Storage.load();
@@ -1915,8 +1938,7 @@
             type: "chronicle-network",
             id: "chronicle-network",
             relationships: Array.isArray(network?.relationships) ? network.relationships : [],
-            familyLinks: Array.isArray(network?.familyLinks) ? network.familyLinks : [],
-            familyMembers: Array.isArray(network?.familyMembers) ? network.familyMembers : [],
+            familyTrees: familyTreesFromNetwork(network),
           };
           S.customOptions = await this.loadProfileOptions();
         },
@@ -1974,9 +1996,12 @@
         S.network.relationships = (S.network.relationships || []).filter(
           (edge) => edge.from !== key && edge.to !== key,
         );
-        S.network.familyLinks = (S.network.familyLinks || []).filter(
-          (edge) => edge.from !== key && edge.to !== key,
-        );
+        S.network.familyTrees.forEach((tree) => {
+          tree.members = tree.members.filter((memberKey) => memberKey !== key);
+          tree.links = tree.links.filter((edge) => edge.from !== key && edge.to !== key);
+          if (key.startsWith("family:")) tree.people = tree.people.filter((person) => `family:${person.id}` !== key);
+        });
+        S.network.familyTrees = S.network.familyTrees.filter((tree) => tree.members.length > 0);
       }
       async function persistNetworkMutation(mutate) {
         const previous = JSON.stringify(S.network);
@@ -2004,11 +2029,11 @@
           name: contact.name || "Unbenannter Kontakt", detail: contact.relation || contact.role || `Kontakt von ${hero.name}`,
           portrait: contact.portrait,
         })),
-        ...(S.network.familyMembers || []).map((member) => ({
+        ...S.network.familyTrees.flatMap((tree) => tree.people.map((member) => ({
           key: `family:${member.id}`, type: "family", id: member.id, name: member.name || "Unbenannte Person",
           detail: member.notes || "Stammbaum-Person", portrait: "",
-        })),
-      ];
+        }))),
+      ].filter((entity, index, entities) => entities.findIndex((item) => item.key === entity.key) === index);
       const networkNode = (key) => networkEntities().find((entity) => entity.key === key);
 
       /* ---------- 4. ui ---------- */
@@ -2884,7 +2909,7 @@
           ["companions", "Begleiter", "paw-print", S.companions.filter((x) => (x.heroIds || []).includes(c.id)).length],
           ["contacts", "Kontakte", "users", (c.contacts || []).length],
           ["network", "Beziehungen", "share-2", S.network.relationships.filter((edge) => edge.from === `hero:${c.id}` || edge.to === `hero:${c.id}`).length],
-          ["family", "Stammbaum", "git-branch", S.network.familyLinks.filter((edge) => edge.from === `hero:${c.id}` || edge.to === `hero:${c.id}`).length],
+          ["family", "Stammbaum", "git-branch", S.network.familyTrees.filter((tree) => tree.members.includes(`hero:${c.id}`)).length],
         ];
         const resources = [
           showLp(c)
@@ -3063,6 +3088,14 @@
           ${entity.portrait ? `<img src="${esc(entity.portrait)}" alt="">` : `<span class="network-entity-icon">${ic(entity.type === "hero" ? "shield" : entity.type === "companion" ? "paw-print" : entity.type === "contact" ? "user-round" : "users", "w-5 h-5")}</span>`}
           <span class="min-w-0"><span class="block truncate font-semibold" style="color:var(--highlight)">${esc(entity.name)}</span><span class="block truncate text-sm" style="color:var(--mute)">${esc(entity.detail || "Chronik")}</span></span>
         </${entity.type === "family" ? "div" : "button"}>`;
+      const familyRoleLabels = {
+          mother: "Mutter", father: "Vater", grandmother: "Großmutter", grandfather: "Großvater",
+          aunt: "Tante", uncle: "Onkel", parent: "Elternteil",
+          sister: "Schwester", brother: "Bruder", sibling: "Geschwister",
+          daughter: "Tochter", son: "Sohn", granddaughter: "Enkelin", grandson: "Enkel",
+          niece: "Nichte", nephew: "Neffe", child: "Kind",
+          cousin: "Cousin/Cousine", partner: "Partner/in", relative: "Sonstige Verwandtschaft",
+      };
       function vNetwork() {
         const entities = networkEntities();
         const relationshipNodes = new Set((S.network.relationships || []).flatMap((edge) => [edge.from, edge.to]));
@@ -3071,17 +3104,11 @@
           if (!from || !to) return "";
           return `<article class="network-link-card">${networkEntityButton(from)}<div class="network-connector">${esc(edge.label || "verbunden")}</div>${networkEntityButton(to)}<button type="button" class="btn dng" data-relationship-delete="${esc(edge.id)}" aria-label="Verbindung löschen">${ic("trash-2", "w-4 h-4")}</button></article>`;
         }).filter(Boolean).join("");
-        const familyCards = (S.network.familyLinks || []).map((edge) => {
-          const from = networkNode(edge.from), to = networkNode(edge.to);
-          if (!from || !to) return "";
-          return `<article class="network-link-card">${networkEntityButton(from)}<div class="network-connector">${esc(edge.label || "verwandt")}</div>${networkEntityButton(to)}<button type="button" class="btn dng" data-family-link-delete="${esc(edge.id)}" aria-label="Familienverbindung löschen">${ic("trash-2", "w-4 h-4")}</button></article>`;
-        }).filter(Boolean).join("");
-        const familyMembers = entities.filter((entity) => entity.type === "family");
         const unconnected = entities.filter((entity) => !relationshipNodes.has(entity.key));
         return `<div class="mb-6"><p class="cz text-xs uppercase tracking-[.2em]" style="color:var(--gold)">Chronik · Beziehungen</p><h1 class="text-3xl sm:text-4xl" style="color:var(--highlight)">Netzwerk &amp; Stammbaum</h1><p class="mt-1" style="color:var(--mute)">Verknüpfe Helden, Begleiter und Kontakte und entdecke, wie deine Figuren miteinander verbunden sind.</p></div>
         <nav class="flex flex-wrap gap-2 mb-5" aria-label="Netzwerkbereiche">
           <button class="btn ${S.networkTab === "relationships" ? "pri" : ""}" data-network-tab="relationships">${ic("share-2", "w-4 h-4")}Beziehungsnetz (${S.network.relationships.length})</button>
-          <button class="btn ${S.networkTab === "family" ? "pri" : ""}" data-network-tab="family">${ic("git-branch", "w-4 h-4")}Stammbaum (${S.network.familyLinks.length})</button>
+          <button class="btn ${S.networkTab === "family" ? "pri" : ""}" data-network-tab="family">${ic("git-branch", "w-4 h-4")}Stammbäume (${S.network.familyTrees.length})</button>
         </nav>
         ${S.networkTab === "relationships" ? `<section class="panel mb-5"><h2 class="ph">${ic("share-2")}Verbindung anlegen</h2>
           ${entities.length >= 2 ? `<div class="grid gap-3 sm:grid-cols-2"><label><span class="l">Von</span><select id="network-from" class="inp"><option value="">Person auswählen …</option>${networkEntityOptions()}</select></label><label><span class="l">Zu</span><select id="network-to" class="inp"><option value="">Person auswählen …</option>${networkEntityOptions()}</select></label>
@@ -3091,16 +3118,68 @@
         <section class="panel"><h2 class="ph">${ic("share-2")}Verknüpfungen (${relationshipCards ? S.network.relationships.length : 0})</h2>
           ${relationshipCards ? `<div class="space-y-3">${relationshipCards}</div>` : `<p class="py-5 text-center" style="color:var(--mute)">Noch keine Verbindungen angelegt.</p>`}
           ${unconnected.length ? `<details class="mt-5 border-t pt-4" style="border-color:var(--line)"><summary class="cursor-pointer" style="color:var(--gold)">Noch nicht vernetzt (${unconnected.length})</summary><div class="mt-4 grid gap-3 sm:grid-cols-2">${unconnected.map(networkEntityButton).join("")}</div></details>` : ""}
-        </section>` : `<section class="panel mb-5"><div class="flex flex-wrap items-start justify-between gap-3"><div><h2 class="ph">${ic("git-branch")}Familienbeziehungen</h2><p class="text-sm" style="color:var(--mute)">Ergänze vorhandene Profile oder erfasse eigenständige Personen wie Vorfahren ohne vollständige Charakterkarte.</p></div><button class="btn" type="button" data-act="family-add-toggle">${ic("user-plus", "w-4 h-4")}${S.familyAddOpen ? "Abbrechen" : "Person hinzufügen"}</button></div>
-          <div class="mt-4 grid gap-3 sm:grid-cols-2"><label><span class="l">Person A</span><select id="family-from" class="inp"><option value="">Person auswählen …</option>${networkEntityOptions()}</select></label><label><span class="l">Person B</span><select id="family-to" class="inp"><option value="">Person auswählen …</option>${networkEntityOptions()}</select></label>
-          <label><span class="l">Verbindung</span><select id="family-label" class="inp"><option value="Elternteil von">Elternteil von</option><option value="Kind von">Kind von</option><option value="Geschwister">Geschwister</option><option value="Partner/in">Partner/in</option><option value="Verwandt">Verwandt</option></select></label></div>
-          <button class="btn pri mt-4" type="button" data-act="family-link-add">${ic("plus", "w-4 h-4")}Familienverbindung hinzufügen</button>
-          ${S.familyAddOpen ? `<div class="mt-5 border-t pt-5" style="border-color:var(--line)"><h3 class="mb-3 font-semibold" style="color:var(--highlight)">Eigenständige Person anlegen und verbinden</h3><div class="grid gap-3 sm:grid-cols-2"><label><span class="l">Name</span><input id="family-name" class="inp" maxlength="80" placeholder="Name des Familienmitglieds"></label><label><span class="l">Verbinden mit</span><select id="family-anchor" class="inp"><option value="">Profil wählen …</option>${networkEntityOptions()}</select></label><label><span class="l">Diese Person ist</span><select id="family-role" class="inp"><option value="parent">Elternteil der ausgewählten Person</option><option value="child">Kind der ausgewählten Person</option><option value="sibling">Geschwister der ausgewählten Person</option><option value="partner">Partner/in der ausgewählten Person</option><option value="relative">Verwandt mit der ausgewählten Person</option></select></label><label><span class="l">Notiz (optional)</span><input id="family-notes" class="inp" maxlength="240" placeholder="z. B. unbekannt, verschollen"></label></div><button class="btn pri mt-4" type="button" data-act="family-member-add">${ic("user-plus", "w-4 h-4")}Person anlegen</button></div>` : ""}
+        </section>` : vFamilyTreeDirectory()}`;
+      }
+      function vFamilyTreeDirectory() {
+        const trees = S.network.familyTrees || [];
+        const selected = trees.find((tree) => tree.id === S.familyTreeId);
+        if (selected) return vNamedFamilyTree(selected);
+        return `<section class="panel mb-5"><div class="flex flex-wrap items-start justify-between gap-3"><div><h2 class="ph">${ic("git-branch")}Deine Stammbäume</h2><p class="text-sm" style="color:var(--mute)">Lege für jede Familie oder Abstammungslinie einen eigenen Stammbaum an.</p></div><button class="btn pri" type="button" data-act="family-tree-create-toggle">${ic("plus", "w-4 h-4")}Stammbaum anlegen</button></div>
+          ${S.familyCreateOpen ? `<div class="mt-5 grid gap-3 border-t pt-5 sm:grid-cols-2" style="border-color:var(--line)"><label><span class="l">Name des Stammbaums</span><input class="inp" id="family-tree-name" maxlength="100" placeholder="z. B. Haus Sturmwacht"></label><label><span class="l">Erste Person</span><select class="inp" id="family-tree-root"><option value="">Profil auswählen …</option>${networkEntityOptions()}</select></label><div class="sm:col-span-2"><button class="btn pri" type="button" data-act="family-tree-create">${ic("git-branch", "w-4 h-4")}Stammbaum erstellen</button><button class="btn ml-2" type="button" data-act="family-tree-create-toggle">Abbrechen</button></div></div>` : ""}
         </section>
-        <section class="panel"><h2 class="ph">${ic("git-branch")}Stammbaum-Ansicht</h2>
-          ${familyCards ? `<div class="space-y-3">${familyCards}</div>` : `<p class="py-5 text-center" style="color:var(--mute)">Noch keine Familienverbindungen. Wähle zwei vorhandene Profile oder füge eine eigenständige Person hinzu.</p>`}
-          ${familyMembers.length ? `<div class="mt-5 border-t pt-4" style="border-color:var(--line)"><h3 class="mb-3 font-semibold" style="color:var(--gold)">Eigenständige Stammbaum-Personen</h3><div class="grid gap-3 sm:grid-cols-2">${familyMembers.map((entity) => `<div class="network-member-card">${networkEntityButton(entity)}<button type="button" class="btn dng" data-family-member-delete="${esc(entity.id)}" aria-label="${esc(entity.name)} aus dem Stammbaum löschen">${ic("trash-2", "w-4 h-4")}</button></div>`).join("")}</div></div>` : ""}
-        </section>`}`;
+        ${trees.length ? `<section class="grid gap-4 sm:grid-cols-2">${trees.map((tree) => `<article class="panel"><div class="ph">${ic("git-branch")}${esc(tree.name)}</div><p style="color:var(--mute)">${tree.members.length} Personen · ${tree.links.length} Familienverbindungen</p><div class="mt-4 flex gap-2"><button class="btn pri" type="button" data-family-tree-open="${esc(tree.id)}">${ic("eye", "w-4 h-4")}Stammbaum ansehen</button><button class="btn dng" type="button" data-family-tree-delete="${esc(tree.id)}" aria-label="${esc(tree.name)} löschen">${ic("trash-2", "w-4 h-4")}</button></div></article>`).join("")}</section>` : `<section class="panel py-8 text-center"><p style="color:var(--mute)">Noch keine Stammbäume angelegt.</p></section>`}`;
+      }
+      function vNamedFamilyTree(tree) {
+        const members = tree.members.map((key) => networkNode(key)).filter(Boolean);
+        const root = members[0];
+        const rootKey = root?.key;
+        const generationOffsets = {
+          mother: -1, father: -1, aunt: -1, uncle: -1, grandmother: -2, grandfather: -2, parent: -1,
+          daughter: 1, son: 1, niece: 1, nephew: 1, granddaughter: 2, grandson: 2, child: 1,
+        };
+        const generations = new Map();
+        const offsets = new Map(rootKey ? [[rootKey, 0]] : []);
+        let changed = true;
+        while (changed) {
+          changed = false;
+          for (const edge of tree.links) {
+            const fromOffset = offsets.get(edge.from), toOffset = offsets.get(edge.to);
+            const offset = generationOffsets[edge.relation] ?? 0;
+            if (fromOffset !== undefined && toOffset === undefined) {
+              offsets.set(edge.to, fromOffset - offset);
+              changed = true;
+            } else if (toOffset !== undefined && fromOffset === undefined) {
+              offsets.set(edge.from, toOffset + offset);
+              changed = true;
+            }
+          }
+        }
+        for (const key of tree.members) {
+          const generation = offsets.get(key) ?? 0;
+          if (!generations.has(generation)) generations.set(generation, []);
+          generations.get(generation).push(key);
+        }
+        const generationValues = [...generations.keys()].sort((a, b) => a - b);
+        const familyEdges = tree.links.map((edge) => {
+          const person = networkNode(edge.from), anchor = networkNode(edge.to);
+          if (!person || !anchor) return "";
+          return `<article class="network-link-card">${networkEntityButton(person)}<div class="network-connector">${esc(familyRoleLabels[edge.relation] || "Verwandt mit")}<br><span style="color:var(--mute)">von</span></div>${networkEntityButton(anchor)}<button type="button" class="btn dng" data-family-link-delete="${esc(edge.id)}" data-family-tree-id="${esc(tree.id)}" aria-label="Familienverbindung löschen">${ic("trash-2", "w-4 h-4")}</button></article>`;
+        }).filter(Boolean).join("");
+        const choices = tree.members.map((key) => {
+          const entity = networkNode(key);
+          return entity ? `<option value="${esc(key)}">${esc(networkEntityLabel(entity))}</option>` : "";
+        }).join("");
+        return `<div class="mb-5 flex flex-wrap items-center justify-between gap-3"><div><p class="cz text-xs uppercase tracking-[.2em]" style="color:var(--gold)">Familienchronik</p><h2 class="text-3xl" style="color:var(--highlight)">${esc(tree.name)}</h2></div><button class="btn" type="button" data-act="family-tree-back">${ic("arrow-left", "w-4 h-4")}${S.view === "sheet" ? "Zur Stammbaum-Übersicht" : "Alle Stammbäume"}</button></div>
+          <section class="panel mb-5"><div class="flex flex-wrap items-start justify-between gap-3"><div><h3 class="ph">${ic("user-plus")}Person hinzufügen</h3><p class="text-sm" style="color:var(--mute)">Wähle ein bestehendes Profil oder erstelle eine Person ohne Profil und ordne sie einer Person in diesem Stammbaum zu.</p></div><button class="btn" type="button" data-act="family-member-toggle">${S.familyMemberOpen ? "Abbrechen" : "Person hinzufügen"}</button></div>
+          ${S.familyMemberOpen ? `<div class="mt-4 grid gap-3 border-t pt-4 sm:grid-cols-2" style="border-color:var(--line)"><label><span class="l">Person im Stammbaum</span><select class="inp" id="family-member-existing"><option value="">Neue Person anlegen …</option>${networkEntityOptions()}</select></label><label><span class="l">Name (für neue Person)</span><input class="inp" id="family-member-name" maxlength="80" placeholder="Name der Person"></label><label><span class="l">Bezugsperson im Stammbaum</span><select class="inp" id="family-member-anchor"><option value="">Person auswählen …</option>${choices}</select></label><label><span class="l">Familienrolle zur Bezugsperson</span><select class="inp" id="family-member-role"><option value="mother">Mutter</option><option value="father">Vater</option><option value="grandmother">Großmutter</option><option value="grandfather">Großvater</option><option value="aunt">Tante</option><option value="uncle">Onkel</option><option value="sister">Schwester</option><option value="brother">Bruder</option><option value="daughter">Tochter</option><option value="son">Sohn</option><option value="niece">Nichte</option><option value="nephew">Neffe</option><option value="granddaughter">Enkelin</option><option value="grandson">Enkel</option><option value="cousin">Cousin/Cousine</option><option value="partner">Partner/in</option><option value="relative">Sonstige Verwandtschaft</option></select></label><div class="sm:col-span-2"><button class="btn pri" type="button" data-act="family-tree-member-add" data-family-tree-id="${esc(tree.id)}">${ic("plus", "w-4 h-4")}Person und Verbindung speichern</button></div></div>` : ""}
+          </section>
+          <section class="panel mb-5"><h3 class="ph">${ic("git-branch")}Generationen &amp; Abzweigungen</h3><div class="family-tree mt-5">${generationValues.map((generation, index) => `<section class="family-tree-generation ${index === 0 ? "first" : ""} ${index === generationValues.length - 1 ? "last" : ""}"><h4 class="family-tree-label">${generation === 0 ? "Ausgangspunkt" : generation < 0 ? `${Math.abs(generation)} Generation${generation < -1 ? "en" : ""} darüber` : `${generation} Generation${generation > 1 ? "en" : ""} darunter`}</h4><div class="family-tree-nodes">${generations.get(generation).map((key) => {
+            const entity = networkNode(key);
+            return entity ? `<div class="family-tree-node">${networkEntityButton(entity)}</div>` : "";
+          }).join("")}</div></section>`).join("")}</div>
+          ${familyEdges ? `<div class="mt-6 border-t pt-5" style="border-color:var(--line)"><h4 class="ph">${ic("share-2")}Familienverbindungen</h4><div class="space-y-3">${familyEdges}</div></div>` : ""}
+          <div class="mt-5 border-t pt-4" style="border-color:var(--line)"><h4 class="mb-3 font-semibold" style="color:var(--gold)">Personen in diesem Stammbaum (${members.length})</h4><div class="grid gap-2 sm:grid-cols-2">${members.map((entity, index) => `<div class="network-member-card">${networkEntityButton(entity)}${index ? `<button type="button" class="btn dng" data-family-tree-member-delete="${esc(tree.id)}" data-family-member-key="${esc(entity.key)}" aria-label="${esc(entity.name)} aus diesem Stammbaum entfernen">${ic("trash-2", "w-4 h-4")}</button>` : ""}</div>`).join("")}</div></div>
+          </section>`;
       }
       function vProfileRelationships(ownerKey) {
         const owner = networkNode(ownerKey);
@@ -3123,64 +3202,13 @@
       function vHeroFamilyTree(rootKey) {
         const root = networkNode(rootKey);
         if (!root) return `<section class="panel"><p style="color:var(--mute)">Dieses Profil ist nicht mehr verfügbar.</p></section>`;
-        const parentEdges = S.network.familyLinks.flatMap((edge) =>
-          edge.label === "Kind von"
-            ? [{ parent: edge.to, child: edge.from, edge }]
-            : edge.label === "Elternteil von"
-              ? [{ parent: edge.from, child: edge.to, edge }]
-              : [],
-        );
-        const findGeneration = (starting, direction, blocked) => {
-          const found = [];
-          let frontier = [starting];
-          const visited = new Set(blocked);
-          while (frontier.length) {
-            const next = new Set();
-            for (const key of frontier) {
-              for (const edge of parentEdges) {
-                const candidate = direction === "up"
-                  ? edge.child === key ? edge.parent : null
-                  : edge.parent === key ? edge.child : null;
-                if (candidate && !visited.has(candidate) && networkNode(candidate)) next.add(candidate);
-              }
-            }
-            if (!next.size) break;
-            const generation = [...next];
-            generation.forEach((key) => visited.add(key));
-            found.push(generation);
-            frontier = generation;
-          }
-          return found;
-        };
-        const ancestors = findGeneration(rootKey, "up", [rootKey]);
-        const blockedDescendants = [rootKey, ...ancestors.flat()];
-        const descendants = findGeneration(rootKey, "down", blockedDescendants);
-        const generations = [
-          ...ancestors.slice().reverse().map((nodes, index) => ({
-            label: `Vorfahren · Generation ${ancestors.length - index}`,
-            nodes,
-          })),
-          { label: "Ausgangspunkt", nodes: [rootKey] },
-          ...descendants.map((nodes, index) => ({
-            label: `Nachkommen · Generation ${index + 1}`,
-            nodes,
-          })),
-        ];
-        const familyCards = S.network.familyLinks
-          .filter((edge) => (edge.from === rootKey || edge.to === rootKey) && !parentEdges.some((item) => item.edge === edge))
-          .map((edge) => {
-            const from = networkNode(edge.from), to = networkNode(edge.to);
-            if (!from || !to) return "";
-            return `<article class="network-link-card">${networkEntityButton(from)}<div class="network-connector">${esc(edge.label || "verwandt")}</div>${networkEntityButton(to)}<button type="button" class="btn dng" data-family-link-delete="${esc(edge.id)}" aria-label="Familienverbindung löschen">${ic("trash-2", "w-4 h-4")}</button></article>`;
-          }).filter(Boolean).join("");
-        return `<section class="panel mb-5"><div class="ph">${ic("git-branch")}Stammbaum von ${esc(root.name)}</div><p style="color:var(--mute)">Eltern stehen oberhalb, Kinder darunter. Jede Generation kann sich in mehrere Familienzweige auffächern.</p>
-          <div class="family-tree mt-5">${generations.map((generation, index) => `<section class="family-tree-generation ${index === 0 ? "first" : ""} ${index === generations.length - 1 ? "last" : ""}"><h3 class="family-tree-label">${esc(generation.label)}</h3><div class="family-tree-nodes">${generation.nodes.map((key) => {
-            const entity = networkNode(key);
-            return entity ? `<div class="family-tree-node">${networkEntityButton(entity)}</div>` : "";
-          }).join("")}</div></section>`).join("")}</div>
-          ${familyCards ? `<div class="mt-6 border-t pt-5" style="border-color:var(--line)"><h3 class="ph">${ic("users")}Weitere Familienverbindungen</h3><div class="space-y-3">${familyCards}</div></div>` : ""}
-          ${!S.network.familyLinks.some((edge) => edge.from === rootKey || edge.to === rootKey) ? `<p class="mt-5 border-t pt-4 text-sm" style="border-color:var(--line);color:var(--mute)">Für diesen Helden sind noch keine Familienverbindungen angelegt. Du kannst sie im zentralen Netzwerk erstellen.</p>` : ""}
-        </section>`;
+        const trees = S.network.familyTrees.filter((tree) => tree.members.includes(rootKey));
+        const selected = trees.find((tree) => tree.id === S.familyTreeId);
+        return selected
+          ? vNamedFamilyTree(selected)
+          : `<section class="panel"><div class="ph">${ic("git-branch")}Stammbäume mit ${esc(root.name)}</div>
+            ${trees.length ? `<div class="grid gap-4 sm:grid-cols-2">${trees.map((tree) => `<article class="rounded border p-4" style="border-color:var(--line)"><h3 class="text-xl" style="color:var(--highlight)">${esc(tree.name)}</h3><p style="color:var(--mute)">${tree.members.length} Personen · ${tree.links.length} Verbindungen</p><button class="btn pri mt-3" type="button" data-family-tree-open="${esc(tree.id)}">${ic("eye", "w-4 h-4")}Stammbaum öffnen</button></article>`).join("")}</div>` : `<p style="color:var(--mute)">Dieser Held ist noch keinem Stammbaum zugeordnet. Lege unter Netzwerk → Stammbäume einen an oder füge ihn dort hinzu.</p>`}
+          </section>`;
       }
       function vContactEdit() {
         const c = S.contactEdit;
@@ -3507,9 +3535,50 @@
         } else if (d.networkTab) {
           if (!["relationships", "family"].includes(d.networkTab)) return;
           S.networkTab = d.networkTab;
+          S.familyTreeId = null;
           render(true);
-        } else if (d.act === "family-add-toggle") {
-          S.familyAddOpen = !S.familyAddOpen;
+        } else if (d.act === "family-tree-create-toggle") {
+          S.familyCreateOpen = !S.familyCreateOpen;
+          render(true);
+        } else if (d.act === "family-tree-create") {
+          const name = $("#family-tree-name")?.value.trim();
+          const root = $("#family-tree-root")?.value;
+          if (!name || !root || !networkNode(root)) {
+            toast("Gib einen Namen ein und wähle eine erste Person für den Stammbaum.");
+            return;
+          }
+          const tree = {
+            id: "tree" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+            name: name.slice(0, 100),
+            members: [root],
+            people: [],
+            links: [],
+          };
+          if (!(await persistNetworkMutation(() => S.network.familyTrees.push(tree)))) return;
+          S.familyTreeId = tree.id;
+          S.familyCreateOpen = false;
+          toast("Stammbaum angelegt.");
+          render(true);
+        } else if (d.familyTreeOpen) {
+          if (!S.network.familyTrees.some((tree) => tree.id === d.familyTreeOpen)) return;
+          S.familyTreeId = d.familyTreeOpen;
+          S.familyMemberOpen = false;
+          render(true);
+        } else if (d.act === "family-tree-back") {
+          S.familyTreeId = null;
+          S.familyMemberOpen = false;
+          render(true);
+        } else if (d.act === "family-member-toggle") {
+          S.familyMemberOpen = !S.familyMemberOpen;
+          render(true);
+        } else if (d.familyTreeDelete) {
+          const tree = S.network.familyTrees.find((item) => item.id === d.familyTreeDelete);
+          if (!tree || !(await askConfirmation(`Den Stammbaum „${tree.name}“ mit allen darin angelegten Verbindungen löschen? Profile und Personen in anderen Stammbäumen bleiben erhalten.`))) return;
+          if (!(await persistNetworkMutation(() => {
+            S.network.familyTrees = S.network.familyTrees.filter((item) => item.id !== tree.id);
+          }))) return;
+          S.familyTreeId = null;
+          toast("Stammbaum gelöscht.");
           render(true);
         } else if (d.act === "relationship-add") {
           const from = $("#network-from")?.value;
@@ -3548,80 +3617,72 @@
             S.network.relationships = S.network.relationships.filter((item) => item.id !== edge.id);
           }))) return;
           render(true);
-        } else if (d.act === "family-link-add") {
-          const from = $("#family-from")?.value;
-          const to = $("#family-to")?.value;
-          const selectedLabel = $("#family-label")?.value;
-          if (!from || !to || from === to || !networkNode(from) || !networkNode(to)) {
-            toast("Wähle zwei verschiedene Personen für die Familienverbindung.");
+        } else if (d.act === "family-tree-member-add") {
+          const tree = S.network.familyTrees.find((item) => item.id === d.familyTreeId);
+          const anchor = $("#family-member-anchor")?.value;
+          const existingKey = $("#family-member-existing")?.value;
+          const name = $("#family-member-name")?.value.trim();
+          const role = $("#family-member-role")?.value;
+          if (!tree || !anchor || !tree.members.includes(anchor) || (existingKey && !networkNode(existingKey)) || (!existingKey && !name)) {
+            toast("Wähle eine Bezugsperson und ein Profil oder gib einen Namen für eine neue Person ein.");
             return;
           }
-          const familyLabels = ["Elternteil von", "Kind von", "Geschwister", "Partner/in", "Verwandt"];
-          if (!familyLabels.includes(selectedLabel)) {
-            toast("Wähle eine gültige Familienverbindung.");
+          if (existingKey && tree.members.includes(existingKey)) {
+            toast("Diese Person gehört bereits zu diesem Stammbaum.");
             return;
           }
-          const [parent, child, label] = selectedLabel === "Kind von"
-            ? [to, from, "Elternteil von"]
-            : [from, to, selectedLabel];
-          const saved = await persistNetworkMutation(() => S.network.familyLinks.push({
-            id: "fam" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
-            from: parent, to: child, label,
-          }));
-          if (!saved) return;
-          S.networkTab = "family";
-          toast("Familienverbindung hinzugefügt.");
+          const validRoles = ["mother", "father", "grandmother", "grandfather", "aunt", "uncle", "sister", "brother", "daughter", "son", "niece", "nephew", "granddaughter", "grandson", "cousin", "partner", "relative"];
+          if (!validRoles.includes(role)) {
+            toast("Wähle eine gültige Familienrolle.");
+            return;
+          }
+          const personKey = existingKey || `family:fm${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
+          const person = existingKey ? null : {
+            id: personKey.slice("family:".length),
+            name: name.slice(0, 80),
+            notes: "",
+          };
+          if (!(await persistNetworkMutation(() => {
+            if (person) tree.people.push(person);
+            else if (existingKey.startsWith("family:") && !tree.people.some((item) => `family:${item.id}` === existingKey)) {
+              const existingPerson = networkNode(existingKey);
+              tree.people.push({
+                id: existingKey.slice("family:".length),
+                name: existingPerson?.name || "Unbenannte Person",
+                notes: existingPerson?.detail === "Stammbaum-Person" ? "" : existingPerson?.detail || "",
+              });
+            }
+            tree.members.push(personKey);
+            tree.links.push({
+              id: "fam" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+              from: personKey,
+              to: anchor,
+              relation: role,
+            });
+          }))) return;
+          S.familyMemberOpen = false;
+          toast("Person und Familienverbindung gespeichert.");
           render(true);
         } else if (d.familyLinkDelete) {
-          const edge = S.network.familyLinks.find((item) => item.id === d.familyLinkDelete);
-          if (!edge || !(await askConfirmation("Diese Familienverbindung löschen?"))) return;
+          const tree = S.network.familyTrees.find((item) => item.id === d.familyTreeId);
+          if (!tree || !(await askConfirmation("Diese Familienverbindung löschen?"))) return;
           if (!(await persistNetworkMutation(() => {
-            S.network.familyLinks = S.network.familyLinks.filter((item) => item.id !== edge.id);
+            tree.links = tree.links.filter((item) => item.id !== d.familyLinkDelete);
           }))) return;
           render(true);
-        } else if (d.act === "family-member-add") {
-          const name = $("#family-name")?.value.trim();
-          const anchor = $("#family-anchor")?.value;
-          const role = $("#family-role")?.value;
-          if (!name || !anchor || !networkNode(anchor)) {
-            toast("Gib einen Namen ein und wähle ein Profil zum Verbinden.");
+        } else if (d.familyTreeMemberDelete) {
+          const tree = S.network.familyTrees.find((item) => item.id === d.familyTreeMemberDelete);
+          const memberKey = d.familyMemberKey;
+          if (!tree || !tree.members.includes(memberKey) || tree.members[0] === memberKey) {
+            toast("Die erste Person eines Stammbaums kann nicht entfernt werden.");
             return;
           }
-          const member = {
-            id: "fm" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
-            name: name.slice(0, 80),
-            notes: ($("#family-notes")?.value || "").trim().slice(0, 240),
-          };
-          const memberKey = `family:${member.id}`;
-          const roleData = {
-            parent: [memberKey, anchor, "Elternteil von"],
-            child: [anchor, memberKey, "Elternteil von"],
-            sibling: [memberKey, anchor, "Geschwister"],
-            partner: [memberKey, anchor, "Partner/in"],
-            relative: [memberKey, anchor, "Verwandt"],
-          }[role];
-          if (!roleData) {
-            toast("Diese Familienrolle ist ungültig.");
-            return;
-          }
-          const saved = await persistNetworkMutation(() => {
-            S.network.familyMembers.push(member);
-            S.network.familyLinks.push({
-              id: "fam" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
-              from: roleData[0], to: roleData[1], label: roleData[2],
-            });
-          });
-          if (!saved) return;
-          S.networkTab = "family";
-          S.familyAddOpen = false;
-          toast("Familienmitglied hinzugefügt.");
-          render(true);
-        } else if (d.familyMemberDelete) {
-          const member = S.network.familyMembers.find((item) => item.id === d.familyMemberDelete);
-          if (!member || !(await askConfirmation(`„${member.name}“ aus dem Stammbaum entfernen? Verbindungen zu dieser Person werden ebenfalls gelöscht.`))) return;
+          const member = networkNode(memberKey);
+          if (!(await askConfirmation(`„${member?.name || "Diese Person"}“ aus dem Stammbaum „${tree.name}“ entfernen? Zugehörige Verbindungen in diesem Stammbaum werden ebenfalls gelöscht.`))) return;
           if (!(await persistNetworkMutation(() => {
-            S.network.familyMembers = S.network.familyMembers.filter((item) => item.id !== member.id);
-            removeNetworkNode(`family:${member.id}`);
+            tree.members = tree.members.filter((key) => key !== memberKey);
+            tree.links = tree.links.filter((edge) => edge.from !== memberKey && edge.to !== memberKey);
+            if (memberKey.startsWith("family:")) tree.people = tree.people.filter((person) => `family:${person.id}` !== memberKey);
           }))) return;
           render(true);
         } else if (d.networkOpen) {
@@ -4538,10 +4599,26 @@
               item && typeof item.id === "string" && typeof item.from === "string" &&
               typeof item.to === "string" && typeof item.label === "string",
             );
-            const validMembers = Array.isArray(importedNetwork.familyMembers) && importedNetwork.familyMembers.every((item) =>
+            const validMembers = (items) => Array.isArray(items) && items.every((item) =>
               item && typeof item.id === "string" && typeof item.name === "string",
             );
-            if (!validRelationships(importedNetwork.relationships) || !validRelationships(importedNetwork.familyLinks) || !validMembers) throw 0;
+            const validTrees = (items) => Array.isArray(items) && items.every((tree) =>
+              tree && typeof tree.id === "string" && typeof tree.name === "string" &&
+              Array.isArray(tree.members) && tree.members.every((key) => typeof key === "string") &&
+              validMembers(tree.people) &&
+              Array.isArray(tree.links) && tree.links.every((edge) =>
+                edge && typeof edge.id === "string" && typeof edge.from === "string" &&
+                typeof edge.to === "string" && typeof edge.relation === "string",
+              ),
+            );
+            const hasNewTrees = importedNetwork.familyTrees !== undefined;
+            const validLegacyTrees = importedNetwork.familyLinks === undefined && importedNetwork.familyMembers === undefined
+              ? true
+              : validRelationships(importedNetwork.familyLinks) && validMembers(importedNetwork.familyMembers);
+            if (
+              !validRelationships(importedNetwork.relationships) ||
+              (hasNewTrees ? !validTrees(importedNetwork.familyTrees) : !validLegacyTrees)
+            ) throw 0;
           }
           arr.forEach((c) => {
             if (c?.type === "chronicle-network") {
@@ -4549,8 +4626,7 @@
                 type: "chronicle-network",
                 id: "chronicle-network",
                 relationships: c.relationships,
-                familyLinks: c.familyLinks,
-                familyMembers: c.familyMembers,
+                familyTrees: familyTreesFromNetwork(c),
               };
               return;
             }
