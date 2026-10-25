@@ -28,6 +28,7 @@ Lege Charaktere an, schreibe ihre Geschichte, sammle Bilder und führe ein Tageb
 - [Architektur](#architektur)
 - [Als Windows-Desktop-App](#als-windows-desktop-app)
 - [Offline-Betrieb](#offline-betrieb)
+- [Support-Feedback einrichten](#support-feedback-einrichten)
 - [Roadmap](#roadmap)
 - [Mitwirken](#mitwirken)
 - [Lizenz & Danksagung](#lizenz--danksagung)
@@ -223,6 +224,17 @@ Die App sucht standardmäßig beim Start nach Updates, lädt sie automatisch her
 ## Offline-Betrieb
 
 Oberflächen-Styles und Schriften werden lokal mit der App ausgeliefert; für Charakterverwaltung, Galerie, Tagebuch und Import/Export ist keine Internetverbindung nötig. Nur die Update-Prüfung benötigt Internetzugriff.
+
+## Support-Feedback einrichten
+
+Der Support-Dialog kann Feedback, Fehlerberichte und Feature-Wünsche über einen Cloudflare Worker an Discord weiterleiten. Discord-Webhook-URLs dürfen nicht in die Desktop-App oder das Repository eingetragen werden, da Nutzer sie aus der App auslesen könnten.
+
+1. Im Ordner `support-worker` mit `npx wrangler login` bei Cloudflare anmelden.
+2. Dort `npx wrangler secret put BUG_WEBHOOK_URL` und `npx wrangler secret put WISH_WEBHOOK_URL` ausführen und jeweils einen neu erstellten Discord-Webhook eintragen.
+3. Mit `npx wrangler deploy` den Worker veröffentlichen.
+4. Die Worker-URL als Wert von `SUPPORT_API_URL` in `main.js` eintragen und die App neu bauen.
+
+Der Worker begrenzt Einsendungen pro IP-Adresse auf fünf pro Stunde. Für die Kontaktaufnahme ist die Angabe einer E-Mail optional. Der Discord-Server-Einladungslink kann später im Support-Dialog ergänzt werden.
 
 ## Roadmap
 

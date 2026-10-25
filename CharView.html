@@ -352,6 +352,57 @@
       #action-dialog {
         width: min(calc(100% - 2rem), 30rem);
       }
+      #support-dialog {
+        width: min(calc(100% - 1.5rem), 62rem);
+        padding: 0.75rem;
+      }
+      .support-panel {
+        max-height: calc(100dvh - 3.5rem);
+        overflow-y: auto;
+        padding: clamp(1rem, 3vw, 2rem);
+        background:
+          radial-gradient(ellipse at 12% 0, color-mix(in srgb, var(--gold) 14%, transparent), transparent 34%),
+          linear-gradient(160deg, var(--panel), var(--bg2));
+      }
+      .support-tab {
+        justify-content: center;
+        min-width: 8.5rem;
+        flex: 1 1 auto;
+        border-color: color-mix(in srgb, var(--gold2) 72%, transparent);
+        background: color-mix(in srgb, var(--bg2) 84%, transparent);
+      }
+      .support-tab[aria-selected="true"] {
+        border-color: var(--gold);
+        background: linear-gradient(135deg, color-mix(in srgb, var(--gold) 28%, var(--panel)), var(--panel));
+        color: var(--highlight);
+        box-shadow: 0 0 18px color-mix(in srgb, var(--gold) 16%, transparent);
+      }
+      .support-card {
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: color-mix(in srgb, var(--panel) 76%, transparent);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+      }
+      .roadmap-item {
+        transition: border-color 0.18s ease, transform 0.18s ease, background 0.18s ease;
+      }
+      .roadmap-item:hover {
+        transform: translateY(-2px);
+        border-color: var(--gold);
+        background: color-mix(in srgb, var(--gold) 7%, var(--panel));
+      }
+      .roadmap-item summary {
+        cursor: pointer;
+        list-style: none;
+      }
+      .roadmap-item summary::-webkit-details-marker {
+        display: none;
+      }
+      .roadmap-item summary:focus-visible,
+      .support-tab:focus-visible {
+        outline: 2px solid var(--gold);
+        outline-offset: 2px;
+      }
       #defaults-dialog {
         box-sizing: border-box;
         width: min(calc(100% - 2rem), 70rem);
@@ -978,6 +1029,7 @@
         <button class="btn main-nav-link" data-act="heroes"><span data-ic="shield" data-c="w-4 h-4"></span>Helden</button>
         <button class="btn main-nav-link" data-act="companions"><span data-ic="paw-print" data-c="w-4 h-4"></span>Begleiter</button>
         <button class="btn main-nav-link" data-act="contacts"><span data-ic="users" data-c="w-4 h-4"></span>Kontakte</button>
+        <button class="btn main-nav-link" data-act="support-open"><span data-ic="life-buoy" data-c="w-4 h-4"></span>Support</button>
       </nav>
       <input type="file" id="ifile" accept="image/*" class="hidden" /><input
         type="file"
@@ -1001,6 +1053,102 @@
       class="fixed left-1/2 -translate-x-1/2 bottom-6 btn pri hidden"
       role="status"
     ></div>
+    <dialog id="support-dialog" aria-labelledby="support-title">
+      <section class="panel support-panel">
+        <div class="flex items-start justify-between gap-4">
+          <div class="flex items-center gap-4">
+            <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border" style="color:var(--gold);border-color:var(--line);background:var(--field-surface)">
+              <span data-ic="life-buoy" data-c="w-6 h-6"></span>
+            </span>
+            <div>
+              <h2 id="support-title" class="text-2xl" style="color: var(--gold)">Support &amp; Feedback</h2>
+              <p class="mt-1" style="color: var(--mute)">Wir entwickeln die Chronik gemeinsam weiter.</p>
+            </div>
+          </div>
+          <button class="btn" data-act="support-close" aria-label="Support schließen">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <nav class="mt-6 flex flex-wrap gap-2 border-b pb-4" style="border-color:var(--line)" aria-label="Support-Bereiche" role="tablist">
+          <button class="btn support-tab" id="support-tab-feedback" type="button" role="tab" aria-selected="true" aria-controls="support-panel-submit" tabindex="0" data-support-tab="feedback"><span data-ic="message-square" data-c="w-4 h-4"></span>Feedback</button>
+          <button class="btn support-tab" id="support-tab-bug" type="button" role="tab" aria-selected="false" aria-controls="support-panel-submit" tabindex="-1" data-support-tab="bug"><span data-ic="bug" data-c="w-4 h-4"></span>Fehler melden</button>
+          <button class="btn support-tab" id="support-tab-wish" type="button" role="tab" aria-selected="false" aria-controls="support-panel-submit" tabindex="-1" data-support-tab="wish"><span data-ic="lightbulb" data-c="w-4 h-4"></span>Wunsch einreichen</button>
+          <button class="btn support-tab" id="support-tab-roadmap" type="button" role="tab" aria-selected="false" aria-controls="support-panel-roadmap" tabindex="-1" data-support-tab="roadmap"><span data-ic="map" data-c="w-4 h-4"></span>Roadmap</button>
+          <button class="btn support-tab" id="support-tab-contact" type="button" role="tab" aria-selected="false" aria-controls="support-panel-contact" tabindex="-1" data-support-tab="contact"><span data-ic="mail" data-c="w-4 h-4"></span>Kontakt</button>
+        </nav>
+        <section id="support-panel-submit" class="mt-6" role="tabpanel" aria-labelledby="support-tab-feedback" data-support-panel="submit">
+          <div class="support-card mb-5 flex items-start gap-3 p-4">
+            <span id="support-intro-icon" style="color:var(--gold)"><span data-ic="message-square" data-c="w-5 h-5"></span></span>
+            <div>
+              <h3 id="support-form-title" class="font-bold" style="color:var(--gold)">Teile dein Feedback</h3>
+              <p id="support-form-description" class="text-sm" style="color:var(--mute)">Was gefällt dir, und was können wir noch besser machen?</p>
+            </div>
+          </div>
+          <form id="support-form" class="space-y-4">
+            <input id="support-category" type="hidden" value="feedback" />
+            <label class="block">
+              <span class="mb-2 block text-sm" style="color: var(--mute)">Betreff</span>
+              <input id="support-title-input" class="inp w-full" maxlength="120" required placeholder="Kurze Zusammenfassung" />
+            </label>
+            <label class="block">
+              <span class="mb-2 block text-sm" style="color: var(--mute)">Nachricht</span>
+              <textarea id="support-message" class="inp w-full" rows="6" maxlength="3000" required placeholder="Schreib uns, was du mitteilen möchtest."></textarea>
+              <span class="mt-1 block text-right text-xs" style="color:var(--mute)"><span id="support-message-count">0</span>/3000</span>
+            </label>
+            <label class="block">
+              <span class="mb-2 block text-sm" style="color: var(--mute)">E-Mail/Discordname für Rückfragen (optional)</span>
+              <input id="support-contact" class="inp w-full" type="email" maxlength="200" placeholder="name@beispiel.de" />
+            </label>
+            <div class="support-card space-y-2 p-4">
+              <p class="text-sm" style="color: var(--mute)">Deine Nachricht wird an den Discord-Support weitergeleitet. Bitte keine Passwörter oder vertraulichen Daten senden.</p>
+              <p id="support-setup-notice" class="text-sm" role="status" style="color: var(--ember)">Der Feedbackversand wird nach Einrichtung des Cloudflare-Workers verfügbar.</p>
+            </div>
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <span class="text-sm" style="color:var(--mute)">Vielen Dank, dass du mithilfst! <span aria-hidden="true">✦</span></span>
+              <button class="btn pri" type="button" data-act="support-send"><span data-ic="send" data-c="w-4 h-4"></span>Nachricht senden</button>
+            </div>
+          </form>
+        </section>
+        <section id="support-panel-roadmap" class="mt-6 hidden" role="tabpanel" aria-labelledby="support-tab-roadmap" data-support-panel="roadmap" hidden>
+          <div class="mb-5 flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <h3 class="text-xl" style="color:var(--gold)">Was als Nächstes kommt</h3>
+              <p class="mt-1 text-sm" style="color:var(--mute)">Öffne einen Eintrag für mehr Details. Die Reihenfolge ist noch nicht festgelegt.</p>
+            </div>
+            <span class="rounded-full border px-3 py-1 text-xs" style="color:var(--gold);border-color:var(--line)">Zukunftspläne</span>
+          </div>
+          <div class="grid gap-3 sm:grid-cols-2">
+            <details class="support-card roadmap-item p-4"><summary class="flex items-start justify-between gap-3"><span class="flex items-center gap-3"><span style="color:var(--gold)"><span data-ic="dices" data-c="w-5 h-5"></span></span><span class="font-bold">Würfler mit Attributs-Modifikatoren</span></span><span class="rounded-full border px-2 py-1 text-xs" style="color:var(--mute);border-color:var(--line)">Geplant</span></summary><p class="mt-3 border-t pt-3 text-sm" style="color:var(--mute);border-color:var(--line)">Würfelproben direkt aus dem Charakterblatt mit passenden Attributs-Modifikatoren berechnen.</p></details>
+            <details class="support-card roadmap-item p-4"><summary class="flex items-start justify-between gap-3"><span class="flex items-center gap-3"><span style="color:var(--gold)"><span data-ic="list-checks" data-c="w-5 h-5"></span></span><span class="font-bold">Fertigkeitslisten mit Übungsboni</span></span><span class="rounded-full border px-2 py-1 text-xs" style="color:var(--mute);border-color:var(--line)">Geplant</span></summary><p class="mt-3 border-t pt-3 text-sm" style="color:var(--mute);border-color:var(--line)">Fertigkeiten und Übungsboni pro Charakter übersichtlich festhalten und beim Würfeln berücksichtigen.</p></details>
+            <details class="support-card roadmap-item p-4"><summary class="flex items-start justify-between gap-3"><span class="flex items-center gap-3"><span style="color:var(--gold)"><span data-ic="book-open" data-c="w-5 h-5"></span></span><span class="font-bold">Vollbild-Leseansicht</span></span><span class="rounded-full border px-2 py-1 text-xs" style="color:var(--mute);border-color:var(--line)">Geplant</span></summary><p class="mt-3 border-t pt-3 text-sm" style="color:var(--mute);border-color:var(--line)">Geschichten in einer ablenkungsfreien, gut lesbaren Vollbildansicht genießen.</p></details>
+            <details class="support-card roadmap-item p-4"><summary class="flex items-start justify-between gap-3"><span class="flex items-center gap-3"><span style="color:var(--gold)"><span data-ic="heart" data-c="w-5 h-5"></span></span><span class="font-bold">Beziehungen zwischen Charakteren</span></span><span class="rounded-full border px-2 py-1 text-xs" style="color:var(--mute);border-color:var(--line)">Geplant</span></summary><p class="mt-3 border-t pt-3 text-sm" style="color:var(--mute);border-color:var(--line)">Verbindungen und Beziehungen zwischen Figuren einer Chronik darstellen.</p></details>
+            <details class="support-card roadmap-item p-4"><summary class="flex items-start justify-between gap-3"><span class="flex items-center gap-3"><span style="color:var(--gold)"><span data-ic="scroll-text" data-c="w-5 h-5"></span></span><span class="font-bold">Druck- und PDF-Ansicht</span></span><span class="rounded-full border px-2 py-1 text-xs" style="color:var(--mute);border-color:var(--line)">Geplant</span></summary><p class="mt-3 border-t pt-3 text-sm" style="color:var(--mute);border-color:var(--line)">Charakterblätter für den Ausdruck oder als PDF vorbereiten.</p></details>
+            <details class="support-card roadmap-item p-4"><summary class="flex items-start justify-between gap-3"><span class="flex items-center gap-3"><span style="color:var(--gold)"><span data-ic="layers" data-c="w-5 h-5"></span></span><span class="font-bold">Mehrere Chroniken</span></span><span class="rounded-full border px-2 py-1 text-xs" style="color:var(--mute);border-color:var(--line)">Geplant</span></summary><p class="mt-3 border-t pt-3 text-sm" style="color:var(--mute);border-color:var(--line)">Kampagnen und ihre Charaktere getrennt voneinander verwalten.</p></details>
+            <details class="support-card roadmap-item p-4 sm:col-span-2"><summary class="flex items-start justify-between gap-3"><span class="flex items-center gap-3"><span style="color:var(--gold)"><span data-ic="blocks" data-c="w-5 h-5"></span></span><span class="font-bold">Aufteilung in ES-Module und Vite-Build</span></span><span class="rounded-full border px-2 py-1 text-xs" style="color:var(--mute);border-color:var(--line)">Idee</span></summary><p class="mt-3 border-t pt-3 text-sm" style="color:var(--mute);border-color:var(--line)">Die Codebasis schrittweise modularisieren, um Wartung und Weiterentwicklung zu erleichtern.</p></details>
+          </div>
+          <button class="btn mt-5" type="button" data-support-tab="wish"><span data-ic="lightbulb" data-c="w-4 h-4"></span>Eigene Idee einreichen</button>
+        </section>
+        <section id="support-panel-contact" class="mt-6 hidden" role="tabpanel" aria-labelledby="support-tab-contact" data-support-panel="contact" hidden>
+          <h3 class="text-xl" style="color:var(--gold)">Du brauchst persönliche Hilfe?</h3>
+          <p class="mt-1" style="color:var(--mute)">Schreib mir gern – ich helfe dir so bald wie möglich weiter.</p>
+          <div class="mt-5 grid gap-3 sm:grid-cols-2">
+            <a class="support-card flex items-center gap-4 p-5 transition hover:-translate-y-1" href="mailto:mail@rakoonir.me">
+              <span style="color:var(--gold)"><span data-ic="mail" data-c="w-6 h-6"></span></span>
+              <span><strong class="block">E-Mail</strong><span class="text-sm" style="color:var(--mute)">mail@rakoonir.me</span></span>
+            </a>
+            <div class="support-card flex items-center gap-4 p-5">
+              <span style="color:var(--gold)"><span data-ic="message-circle" data-c="w-6 h-6"></span></span>
+              <span><strong class="block">Discord</strong><span class="text-sm" style="color:var(--mute)">Rakoonir</span></span>
+            </div>
+            <div class="support-card flex items-center gap-4 p-5 sm:col-span-2">
+              <span style="color:var(--gold)"><span data-ic="users" data-c="w-6 h-6"></span></span>
+              <span><strong class="block">Discord-Server</strong><span class="text-sm" style="color:var(--mute)">https://discord.gg/eUMUn6aWKr</span></span>
+            </div>
+          </div>
+          <button class="btn mt-5" type="button" data-support-tab="bug"><span data-ic="bug" data-c="w-4 h-4"></span>Ein Problem melden</button>
+        </section>
+      </section>
+    </dialog>
     <dialog id="settings-dialog" aria-labelledby="settings-title">
       <section class="panel max-h-[88vh] overflow-y-auto">
         <div class="flex items-start justify-between gap-4">
@@ -1674,6 +1822,28 @@
           '<path d="M4 7V4h16v3" /> <path d="M5 20h6" /> <path d="M13 4 8 20" /> <path d="m15 15 5 5" /> <path d="m20 15-5 5" />',
         "wand-2":
           '<path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72" /> <path d="m14 7 3 3" /> <path d="M5 6v4" /> <path d="M19 14v4" /> <path d="M10 2v2" /> <path d="M7 8H3" /> <path d="M21 16h-4" /> <path d="M11 3H9" />',
+        "life-buoy":
+          '<circle cx="12" cy="12" r="10" /> <circle cx="12" cy="12" r="4" /> <path d="m4.93 4.93 4.24 4.24" /> <path d="m14.83 14.83 4.24 4.24" /> <path d="m14.83 9.17 4.24-4.24" /> <path d="m9.17 14.83-4.24 4.24" />',
+        "message-square":
+          '<path d="M21 15a4 4 0 0 1-4 4H7l-4 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z" />',
+        bug:
+          '<path d="m8 2 1.88 1.88" /> <path d="M14.12 3.88 16 2" /> <path d="M9 7.13v-.5a3 3 0 0 1 6 0v.5" /> <path d="M12 20v-6" /> <path d="M6 12H2" /> <path d="M22 12h-4" /> <path d="M6 8H2" /> <path d="M22 8h-4" /> <path d="M6 16H2" /> <path d="M22 16h-4" /> <path d="M18 10.5a6 6 0 0 0-12 0V16a6 6 0 0 0 12 0z" />',
+        lightbulb:
+          '<path d="M9 18h6" /> <path d="M10 22h4" /> <path d="M15.09 14a6 6 0 1 0-6.18 0c.56.35.91.96.91 1.62V17h4v-1.38c0-.66.35-1.27.91-1.62" />',
+        send:
+          '<path d="m22 2-7 20-4-9-9-4Z" /> <path d="M22 2 11 13" />',
+        mail:
+          '<rect x="2" y="4" width="20" height="16" rx="2" /> <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />',
+        "message-circle":
+          '<path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />',
+        dices:
+          '<rect x="3" y="3" width="8" height="8" rx="2" /> <rect x="13" y="13" width="8" height="8" rx="2" /> <path d="M7 7h.01" /> <path d="M17 17h.01" /> <path d="M17 14h.01" /> <path d="M14 17h.01" /> <path d="M20 17h.01" /> <path d="M17 20h.01" />',
+        "list-checks":
+          '<path d="m3 6 2 2 4-4" /> <path d="M13 6h8" /> <path d="m3 16 2 2 4-4" /> <path d="M13 16h8" />',
+        layers:
+          '<path d="m12 2 8 4-8 4-8-4 8-4Z" /> <path d="m4 12 8 4 8-4" /> <path d="m4 16 8 4 8-4" />',
+        blocks:
+          '<rect x="3" y="3" width="7" height="7" rx="1" /> <rect x="14" y="3" width="7" height="7" rx="1" /> <rect x="14" y="14" width="7" height="7" rx="1" /> <rect x="3" y="14" width="7" height="7" rx="1" />',
       };
       const ic = (n, c = "w-5 h-5") =>
         `<svg class="${c}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[n] || ""}</svg>`;
@@ -2128,6 +2298,90 @@
         } catch (error) {
           console.error("Einstellungen konnten nicht geladen werden.", error);
           toast("Einstellungen konnten nicht geladen werden.");
+        }
+      };
+      const setSupportTab = (tab) => {
+        const tabButton = $(`#support-tab-${tab}`);
+        if (!tabButton) return;
+        for (const button of document.querySelectorAll('#support-dialog [role="tab"]')) {
+          const selected = button === tabButton;
+          button.setAttribute("aria-selected", String(selected));
+          button.tabIndex = selected ? 0 : -1;
+        }
+        const submit = ["feedback", "bug", "wish"].includes(tab);
+        $("#support-panel-submit").hidden = !submit;
+        $("#support-panel-submit").classList.toggle("hidden", !submit);
+        $("#support-panel-submit").setAttribute("aria-labelledby", `support-tab-${tab}`);
+        $("#support-panel-roadmap").hidden = tab !== "roadmap";
+        $("#support-panel-roadmap").classList.toggle("hidden", tab !== "roadmap");
+        $("#support-panel-contact").hidden = tab !== "contact";
+        $("#support-panel-contact").classList.toggle("hidden", tab !== "contact");
+        if (!submit) return;
+        const copy = {
+          feedback: {
+            title: "Teile dein Feedback",
+            description: "Was gefällt dir, und was können wir noch besser machen?",
+            icon: "message-square",
+            subject: "Kurze Zusammenfassung",
+            message: "Schreib uns, was du mitteilen möchtest.",
+          },
+          bug: {
+            title: "Einen Fehler melden",
+            description: "Hilf uns mit einer genauen Beschreibung, das Problem nachzuvollziehen.",
+            icon: "bug",
+            subject: "Worum geht es bei dem Fehler?",
+            message: "Was hast du gemacht, was ist passiert und was hättest du erwartet?",
+          },
+          wish: {
+            title: "Deine Idee für die Chronik",
+            description: "Welche Funktion würde deine Charakterverwaltung noch besser machen?",
+            icon: "lightbulb",
+            subject: "Wie soll die Funktion heißen?",
+            message: "Beschreibe deine Idee und wobei sie dir helfen würde.",
+          },
+        }[tab];
+        $("#support-category").value = tab;
+        $("#support-form-title").textContent = copy.title;
+        $("#support-form-description").textContent = copy.description;
+        $("#support-intro-icon").innerHTML = ic(copy.icon, "w-5 h-5");
+        $("#support-title-input").placeholder = copy.subject;
+        $("#support-message").placeholder = copy.message;
+      };
+      const openSupport = async () => {
+        setSupportTab("feedback");
+        $("#support-dialog").showModal();
+        try {
+          const configured = await window.desktop?.isSupportConfigured();
+          $("#support-setup-notice").classList.toggle("hidden", Boolean(configured));
+        } catch (error) {
+          console.error("Support-Status konnte nicht geladen werden.", error);
+          $("#support-setup-notice").classList.remove("hidden");
+        }
+      };
+      const sendSupportRequest = async () => {
+        const form = $("#support-form");
+        if (!form.reportValidity()) return;
+        if (!window.desktop?.sendSupportRequest) {
+          toast("Feedback kann nur aus der installierten App gesendet werden.");
+          return;
+        }
+        const submitButton = form.querySelector('[data-act="support-send"]');
+        submitButton.disabled = true;
+        try {
+          await window.desktop.sendSupportRequest({
+            category: $("#support-category").value,
+            title: $("#support-title-input").value.trim(),
+            message: $("#support-message").value.trim(),
+            contact: $("#support-contact").value.trim(),
+          });
+          form.reset();
+          $("#support-dialog").close();
+          toast("Nachricht wurde an den Support gesendet.");
+        } catch (error) {
+          console.error("Support-Nachricht konnte nicht gesendet werden.", error);
+          toast(error.message || "Support-Nachricht konnte nicht gesendet werden.");
+        } finally {
+          submitButton.disabled = false;
         }
       };
       const standardProfileOptions = (key) =>
@@ -3353,7 +3607,13 @@
           if (window.desktop?.windowControls?.[d.windowControl]) {
             await window.desktop.windowControls[d.windowControl]();
           }
-        } else if (d.act === "settings") await openSettings();
+        } else if (d.supportTab) {
+          setSupportTab(d.supportTab);
+          if (t.getAttribute("role") === "tab") t.focus();
+        } else if (d.act === "support-open") openSupport();
+        else if (d.act === "support-close") $("#support-dialog").close();
+        else if (d.act === "support-send") await sendSupportRequest();
+        else if (d.act === "settings") await openSettings();
         else if (d.act === "settings-close") $("#settings-dialog").close();
         else if (d.act === "settings-save") {
           if (!window.desktop) {
@@ -3406,6 +3666,9 @@
       window.desktop?.onUpdateStatus(updateStatus);
       document.addEventListener("input", (e) => {
         const target = e.target;
+        if (target instanceof HTMLTextAreaElement && target.id === "support-message") {
+          $("#support-message-count").textContent = String(target.value.length);
+        }
         if (!(target instanceof HTMLInputElement)) return;
         if (target.dataset.themeColor) {
           const nextTheme = getThemeFromControls();
@@ -3444,6 +3707,20 @@
         }).catch(() => undefined);
       }
       document.addEventListener("keydown", (e) => {
+        if (e.target.matches('#support-dialog [role="tab"]')) {
+          const tabs = [...document.querySelectorAll('#support-dialog [role="tab"]')];
+          const index = tabs.indexOf(e.target);
+          let nextIndex;
+          if (e.key === "ArrowRight") nextIndex = (index + 1) % tabs.length;
+          else if (e.key === "ArrowLeft") nextIndex = (index - 1 + tabs.length) % tabs.length;
+          else if (e.key === "Home") nextIndex = 0;
+          else if (e.key === "End") nextIndex = tabs.length - 1;
+          if (nextIndex !== undefined) {
+            e.preventDefault();
+            setSupportTab(tabs[nextIndex].dataset.supportTab);
+            tabs[nextIndex].focus();
+          }
+        }
         if (e.key === "Enter" && e.target.dataset.open)
           go("sheet", e.target.dataset.open);
         if (e.key === "Enter" && e.target.dataset.companionOpen) {

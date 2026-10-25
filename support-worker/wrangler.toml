@@ -1,0 +1,12 @@
+name = "rp-charview-support"
+main = "src/index.js"
+compatibility_date = "2025-01-01"
+workers_dev = true
+
+[[durable_objects.bindings]]
+name = "SUPPORT_RATE_LIMITER"
+class_name = "SupportRateLimiter"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["SupportRateLimiter"]

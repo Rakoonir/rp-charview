@@ -8,6 +8,8 @@ contextBridge.exposeInMainWorld("desktop", {
   chooseDataDirectory: () => ipcRenderer.invoke("data:choose-directory"),
   getSettings: () => ipcRenderer.invoke("settings:get"),
   saveSettings: (settings) => ipcRenderer.invoke("settings:save", settings),
+  isSupportConfigured: () => ipcRenderer.invoke("support:configured"),
+  sendSupportRequest: (submission) => ipcRenderer.invoke("support:submit", submission),
   checkForUpdates: () => ipcRenderer.invoke("updates:check"),
   getUpdateStatus: () => ipcRenderer.invoke("updates:status"),
   installUpdate: () => ipcRenderer.invoke("updates:install"),

@@ -5,6 +5,7 @@ const path = require("node:path");
 const { pathToFileURL } = require("node:url");
 
 const APP_URL = pathToFileURL(path.join(__dirname, "CharView.html")).href;
+const SUPPORT_API_URL = "https://rp-charview-support.kjano-privat.workers.dev";
 const defaultTheme = {
   preset: "royal-dark",
   background: "#0d0a11",
@@ -418,7 +419,9 @@ function createWindow() {
   mainWindow.setMenuBarVisibility(false);
   mainWindow.once("ready-to-show", () => mainWindow.show());
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
-    if (url.startsWith("https://github.com/")) shell.openExternal(url);
+    if (url.startsWith("https://github.com/") || url === "mailto:mail@rakoonir.me") {
+      shell.openExternal(url);
+    }
     return { action: "deny" };
   });
   mainWindow.webContents.on("will-navigate", (event, url) => {
@@ -629,6 +632,56 @@ ipcMain.handle("settings:save", async (_event, settings) => {
   await writeJsonAtomically(settingsPath(currentSettings.dataDirectory), saved);
   setLaunchAtStartup(saved.launchAtStartup);
   return saved;
+});
+
+ipcMain.handle("support:configured", () => Boolean(SUPPORT_API_URL));
+
+ipcMain.handle("support:submit", async (event, submission) => {
+  if (!mainWindow || event.sender !== mainWindow.webContents) {
+    throw new Error("Ungültige Support-Anfrage.");
+  }
+  if (!SUPPORT_API_URL) {
+    throw new Error("Der Feedbackversand ist noch nicht eingerichtet.");
+  }
+  const endpoint = new URL(SUPPORT_API_URL);
+  if (endpoint.protocol !== "https:") {
+    throw new Error("Der Support-Endpunkt muss HTTPS verwenden.");
+  }
+  const categories = new Set(["feedback", "bug", "wish"]);
+  if (
+    !submission ||
+    typeof submission !== "object" ||
+    !categories.has(submission.category) ||
+    typeof submission.title !== "string" ||
+    typeof submission.message !== "string" ||
+    (submission.contact !== undefined && typeof submission.contact !== "string")
+  ) {
+    throw new TypeError("Ungültige Support-Nachricht.");
+  }
+  const payload = {
+    category: submission.category,
+    title: submission.title.trim(),
+    message: submission.message.trim(),
+    contact: submission.contact?.trim() || "",
+  };
+  if (
+    payload.title.length < 1 ||
+    payload.title.length > 120 ||
+    payload.message.length < 1 ||
+    payload.message.length > 3000 ||
+    payload.contact.length > 200
+  ) {
+    throw new TypeError("Bitte prüfe Betreff, Nachricht und Kontaktangabe.");
+  }
+  const response = await fetch(SUPPORT_API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+    signal: AbortSignal.timeout(10000),
+  });
+  if (!response.ok) {
+    throw new Error(`Feedback konnte nicht gesendet werden (HTTP ${response.status}).`);
+  }
 });
 
 ipcMain.handle("data:choose-directory", async () => {
