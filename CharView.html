@@ -542,6 +542,22 @@
       .custom-profile-editor + .custom-profile-editor {
         margin-top: 0.75rem;
       }
+      .custom-profile-inline-editor {
+        align-items: end;
+      }
+      .custom-profile-inline-editor label {
+        display: grid;
+        grid-template-rows: 1.4rem 3rem;
+        gap: 0.2rem;
+      }
+      .custom-profile-inline-editor .inp {
+        box-sizing: border-box;
+        height: 3rem;
+        min-height: 3rem;
+      }
+      .custom-profile-inline-editor textarea.inp {
+        resize: vertical;
+      }
       @media (max-width: 760px) {
         .defaults-lists {
           grid-template-columns: minmax(0, 1fr);
@@ -682,21 +698,35 @@
       .hero-profile-banner {
         overflow: hidden;
         position: relative;
-        padding: clamp(1rem, 3vw, 2rem);
+        padding: clamp(1rem, 2.5vw, 1.75rem);
+        border: 1px solid color-mix(in srgb, var(--gold2) 70%, var(--line));
+        border-radius: 12px;
+        box-shadow: 0 18px 48px rgba(0, 0, 0, 0.34);
         background:
           radial-gradient(ellipse at 10% 0, color-mix(in srgb, var(--gold) 18%, transparent), transparent 42%),
           radial-gradient(ellipse at 95% 100%, color-mix(in srgb, var(--ember) 12%, transparent), transparent 36%),
           linear-gradient(145deg, var(--panel-strong), var(--panel) 56%, var(--bg));
       }
+      .hero-profile-banner::before {
+        display: none;
+      }
       .hero-profile-banner::after {
         content: "✦";
         position: absolute;
-        right: 1.2rem;
-        top: 0.3rem;
-        color: color-mix(in srgb, var(--gold) 14%, transparent);
-        font-size: clamp(5rem, 12vw, 9rem);
+        right: 1.5rem;
+        bottom: -2rem;
+        color: color-mix(in srgb, var(--gold) 8%, transparent);
+        font-size: clamp(5rem, 10vw, 8rem);
         line-height: 1;
         pointer-events: none;
+      }
+      .hero-profile-header {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        grid-template-columns: 10rem minmax(0, 1fr);
+        align-items: center;
+        gap: clamp(1rem, 2.5vw, 2rem);
       }
       .hero-profile-meta {
         display: flex;
@@ -710,6 +740,252 @@
         background: color-mix(in srgb, var(--bg) 48%, transparent);
         color: var(--ink);
         font-size: 0.88rem;
+      }
+      .hero-profile-portrait-wrap {
+        display: flex;
+        flex: none;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.65rem;
+      }
+      .hero-profile-portrait {
+        width: 100%;
+        aspect-ratio: 4 / 5;
+        object-fit: cover;
+        border: 1px solid color-mix(in srgb, var(--gold) 55%, var(--line));
+        border-radius: 8px;
+        background: var(--bg2);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.38);
+      }
+      .hero-profile-facts {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr));
+        gap: 0.75rem;
+      }
+      .hero-profile-fact {
+        padding: 0.8rem 1rem;
+        border: 1px solid var(--line);
+        border-radius: 5px;
+        background: linear-gradient(145deg, color-mix(in srgb, var(--panel) 82%, transparent), color-mix(in srgb, var(--bg) 65%, transparent));
+      }
+      .hero-profile-fact dt {
+        margin-bottom: 0.25rem;
+        font-family: "Cinzel", serif;
+        font-size: 0.75rem;
+        color: var(--gold);
+      }
+      .hero-profile-fact dd {
+        color: var(--ink);
+        overflow-wrap: anywhere;
+      }
+      .hero-profile-name {
+        margin: 0;
+        color: var(--highlight);
+        font-family: var(--font-heading);
+        font-size: clamp(2rem, 4vw, 3.25rem);
+        font-weight: 700;
+        line-height: 1.05;
+        overflow-wrap: anywhere;
+      }
+      .hero-profile-resources {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+        gap: 1rem;
+        width: min(100%, 34rem);
+        margin-top: 1.25rem;
+        padding: 1rem;
+        border: 1px solid color-mix(in srgb, var(--line) 90%, transparent);
+        border-radius: 8px;
+        background: color-mix(in srgb, var(--bg) 58%, transparent);
+        backdrop-filter: blur(8px);
+      }
+      .profile-content-card {
+        border: 1px solid var(--line);
+        border-radius: 5px;
+        padding: clamp(1rem, 2vw, 1.5rem);
+        background: linear-gradient(150deg, color-mix(in srgb, var(--panel) 94%, var(--gold) 6%), var(--bg2));
+      }
+      .profile-content-card > .ph {
+        margin-bottom: 0.85rem;
+      }
+      .profile-section {
+        padding: clamp(1rem, 2vw, 1.5rem);
+        border: 1px solid var(--line);
+        border-radius: 5px;
+        background: linear-gradient(150deg, color-mix(in srgb, var(--panel) 94%, var(--gold) 6%), var(--bg2));
+      }
+      .profile-section-heading {
+        padding-bottom: 0.65rem;
+        border-bottom: 1px solid color-mix(in srgb, var(--line) 75%, transparent);
+      }
+      .hero-overview-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        column-gap: clamp(1rem, 3vw, 2.5rem);
+      }
+      .hero-overview-item {
+        min-width: 0;
+        padding: 0.85rem 0;
+        border-bottom: 1px solid color-mix(in srgb, var(--line) 65%, transparent);
+      }
+      .hero-overview-item.is-long {
+        grid-column: 1 / -1;
+      }
+      .hero-overview-item dt {
+        margin-bottom: 0.2rem;
+        color: var(--mute);
+        font-size: 0.82rem;
+      }
+      .hero-overview-item dd {
+        color: var(--ink);
+        font-size: 1.05rem;
+      }
+      .hero-overview {
+        padding: clamp(1.15rem, 2.5vw, 2rem);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: linear-gradient(155deg, color-mix(in srgb, var(--panel) 96%, white 4%), var(--bg2));
+        box-shadow: 0 14px 34px rgba(0, 0, 0, 0.2);
+      }
+      .hero-overview-heading {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: 0.5rem;
+      }
+      .hero-sheet-nav {
+        display: flex;
+        gap: 0.45rem;
+        overflow-x: auto;
+        margin-bottom: 1.25rem;
+        padding: 0.4rem;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: color-mix(in srgb, var(--panel) 84%, var(--bg));
+      }
+      .hero-sheet-layout {
+        display: grid;
+        grid-template-columns: minmax(12rem, 15rem) minmax(0, 1fr);
+        align-items: start;
+        gap: 1.25rem;
+      }
+      .hero-sheet-subnav {
+        position: sticky;
+        top: 1rem;
+        display: grid;
+        gap: 0.35rem;
+        padding: 0.55rem;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: color-mix(in srgb, var(--panel) 90%, var(--bg));
+      }
+      .hero-sheet-subnav .hero-sheet-tab {
+        justify-content: flex-start;
+        text-align: left;
+      }
+      .hero-overview-content {
+        display: grid;
+        grid-template-columns: minmax(9rem, 0.32fr) minmax(0, 1fr);
+        align-items: start;
+        gap: clamp(1.25rem, 3vw, 2.5rem);
+      }
+      .hero-overview-portrait {
+        display: grid;
+        justify-items: center;
+        gap: 0.75rem;
+      }
+      .hero-overview-portrait img,
+      .hero-overview-portrait-placeholder {
+        width: min(100%, 13rem);
+        aspect-ratio: 4 / 5;
+        object-fit: cover;
+        border: 1px solid color-mix(in srgb, var(--gold) 48%, var(--line));
+        border-radius: 8px;
+        background:
+          radial-gradient(circle at 50% 35%, color-mix(in srgb, var(--gold2) 60%, var(--ember) 40%), transparent 68%),
+          linear-gradient(160deg, var(--panel), var(--bg));
+      }
+      .hero-overview-portrait-placeholder {
+        display: grid;
+        place-items: center;
+        color: var(--gold);
+      }
+      .hero-overview-fields {
+        min-width: 0;
+      }
+      .hero-sheet-tab {
+        display: inline-flex;
+        flex: 1 0 auto;
+        align-items: center;
+        justify-content: center;
+        gap: 0.55rem;
+        min-height: 2.7rem;
+        padding: 0.55rem 0.85rem;
+        border: 1px solid transparent;
+        border-radius: 6px;
+        color: var(--mute);
+        font-family: var(--font-heading);
+        font-size: 0.9rem;
+        transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+      }
+      .hero-sheet-tab:hover {
+        color: var(--ink);
+        background: color-mix(in srgb, var(--gold) 8%, transparent);
+      }
+      .hero-sheet-tab[aria-current="page"] {
+        border-color: color-mix(in srgb, var(--gold2) 75%, transparent);
+        color: var(--highlight);
+        background: linear-gradient(135deg, color-mix(in srgb, var(--gold) 16%, var(--panel)), var(--panel));
+      }
+      @media (max-width: 850px) {
+        .hero-profile-header {
+          grid-template-columns: 8rem minmax(0, 1fr);
+        }
+      }
+      @media (max-width: 560px) {
+        .hero-profile-header {
+          grid-template-columns: 1fr;
+          justify-items: center;
+          text-align: center;
+        }
+        .hero-profile-portrait-wrap {
+          width: min(10rem, 60vw);
+        }
+        .hero-profile-meta {
+          justify-content: center;
+        }
+        .hero-profile-resources {
+          width: 100%;
+          text-align: left;
+        }
+        .hero-overview-grid {
+          grid-template-columns: 1fr;
+        }
+        .hero-overview-item.is-long {
+          grid-column: auto;
+        }
+      }
+      @media (max-width: 760px) {
+        .hero-sheet-layout {
+          grid-template-columns: minmax(0, 1fr);
+        }
+        .hero-sheet-subnav {
+          position: static;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+      @media (max-width: 520px) {
+        .hero-overview-content {
+          grid-template-columns: minmax(0, 1fr);
+        }
+        .hero-overview-portrait img,
+        .hero-overview-portrait-placeholder {
+          width: min(10rem, 60vw);
+        }
+        .hero-sheet-subnav {
+          grid-template-columns: minmax(0, 1fr);
+        }
       }
       .hero-edit-tabs {
         display: flex;
@@ -781,55 +1057,189 @@
         justify-self: end;
         gap: 0.5rem;
       }
-      .family-tree {
-        display: grid;
-        gap: 1.5rem;
+      .family-tree-toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+        margin-bottom: 0.75rem;
       }
-      .family-tree-generation {
+      .family-tree-viewport {
+        max-height: min(72vh, 52rem);
+        overflow: auto;
+        scrollbar-width: none;
+        cursor: grab;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background:
+          radial-gradient(circle, color-mix(in srgb, var(--gold2) 30%, transparent) 1px, transparent 1px)
+          0 0 / 22px 22px,
+          color-mix(in srgb, var(--bg) 60%, transparent);
+        overscroll-behavior: contain;
+      }
+      .family-tree-viewport::-webkit-scrollbar {
+        display: none;
+      }
+      .family-tree-viewport.is-panning {
+        cursor: grabbing;
+        user-select: none;
+      }
+      .family-tree-viewport.is-panning .family-tree-canvas-node {
+        pointer-events: none;
+      }
+      .family-tree-stage {
         position: relative;
-        padding: 0.9rem 0.75rem 0;
-      }
-      .family-tree-generation:not(.first)::before {
-        position: absolute;
+        left: 0;
         top: 0;
-        left: 50%;
-        width: 1px;
-        height: 0.65rem;
-        background: var(--gold2);
-        content: "";
+        transform-origin: top left;
+        transition: transform 0.15s ease;
       }
-      .family-tree-label {
-        margin-bottom: 0.85rem;
+      .family-tree-lines {
+        position: absolute;
+        inset: 0;
+        overflow: visible;
+        pointer-events: none;
+      }
+      .family-tree-line {
+        fill: none;
+        stroke: var(--gold2);
+        stroke-width: 2;
+        vector-effect: non-scaling-stroke;
+      }
+      .family-tree-line.inferred {
+        stroke: var(--mute);
+        stroke-dasharray: 6 5;
+      }
+      .family-tree-line-label {
+        fill: var(--highlight);
+        font-family: var(--font-body);
+        font-size: 14px;
+        font-weight: 700;
+        paint-order: stroke;
+        stroke: color-mix(in srgb, var(--panel) 92%, var(--bg));
+        stroke-width: 6px;
+        stroke-linejoin: round;
+        text-anchor: middle;
+      }
+      .family-tree-line-badge {
+        fill: color-mix(in srgb, var(--panel) 94%, var(--bg));
+        stroke: color-mix(in srgb, var(--gold2) 80%, transparent);
+        stroke-width: 1;
+        vector-effect: non-scaling-stroke;
+      }
+      .family-tree-line-label tspan {
+        fill: var(--mute);
+        font-size: 10px;
+        font-weight: 500;
+      }
+      .family-tree-row-label {
+        position: absolute;
+        right: 0;
+        left: 0;
+        display: flex;
+        justify-content: center;
+        pointer-events: none;
+      }
+      .family-tree-row-label span {
+        display: inline-flex;
+        align-items: center;
+        min-height: 1.6rem;
+        padding: 0.2rem 0.75rem;
+        border: 1px solid color-mix(in srgb, var(--gold2) 75%, transparent);
+        border-radius: 999px;
+        background: color-mix(in srgb, var(--panel) 94%, var(--bg));
+        box-shadow: 0 3px 12px rgba(0, 0, 0, 0.24);
         color: var(--gold);
-        text-align: center;
         font-family: var(--font-heading);
-        font-size: 0.8rem;
-        letter-spacing: 0.08em;
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.06em;
         text-transform: uppercase;
       }
-      .family-tree-nodes {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 21rem));
-        justify-content: center;
-        gap: 0.75rem;
-      }
-      .family-tree-node {
-        position: relative;
-        min-width: 0;
+      .family-tree-canvas-node {
+        position: absolute;
+        width: 220px;
+        min-height: 82px;
         padding: 0.75rem;
         border: 1px solid var(--line);
         border-radius: 6px;
         background: linear-gradient(145deg, var(--panel), var(--bg2));
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.24);
       }
-      .family-tree-node .network-entity {
+      .family-tree-canvas-node.is-root {
+        border-color: var(--gold);
+        box-shadow: 0 0 18px var(--card-glow);
+      }
+      .family-tree-crest {
+        display: grid;
+        width: 3.5rem;
+        height: 3.5rem;
+        flex: none;
+        place-items: center;
+        overflow: hidden;
+        border: 1px solid var(--gold2);
+        border-radius: 50%;
+        background: color-mix(in srgb, var(--gold) 12%, var(--bg));
+        color: var(--gold);
+      }
+      .family-tree-crest img {
         width: 100%;
+        height: 100%;
+        object-fit: cover;
       }
-      .family-tree-node .network-entity > span:last-child {
+      .family-tree-crest-options {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+      .family-connection-list {
+        display: grid;
+        gap: 0.75rem;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 25rem), 1fr));
+      }
+      .family-connection-card {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 0.75rem;
+        min-width: 0;
+        padding: 0.85rem;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: linear-gradient(145deg, var(--panel), var(--bg2));
+      }
+      .family-connection-card.is-inferred {
+        border-style: dashed;
+        border-color: color-mix(in srgb, var(--mute) 60%, transparent);
+      }
+      .family-connection-card.is-editing {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .family-connection-card.is-editing > div {
         min-width: 0;
       }
-      .family-tree-node.is-root {
-        border-color: var(--gold2);
-        box-shadow: 0 0 18px var(--card-glow);
+      .family-connection-role {
+        display: grid;
+        justify-items: center;
+        gap: 0.2rem;
+        min-width: 6rem;
+        color: var(--gold);
+        text-align: center;
+        font-family: var(--font-heading);
+        font-size: 0.82rem;
+      }
+      .family-connection-role::before,
+      .family-connection-role::after {
+        width: 100%;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, var(--gold2), transparent);
+        content: "";
+      }
+      .family-connection-origin {
+        color: var(--mute);
+        font-family: var(--font-body);
+        font-size: 0.75rem;
       }
       .network-entity {
         display: flex;
@@ -870,6 +1280,28 @@
       @media (max-width: 560px) {
         .network-link-card {
           grid-template-columns: minmax(0, 1fr);
+        }
+        .family-connection-card {
+          grid-template-columns: minmax(0, 1fr);
+        }
+        .family-connection-card > .network-entity:first-child,
+        .family-connection-card > .network-entity:nth-child(3) {
+          grid-column: 1;
+        }
+        .family-connection-role {
+          grid-column: 1;
+          grid-row: auto;
+          display: flex;
+        }
+        .family-connection-role::before,
+        .family-connection-role::after {
+          width: auto;
+          flex: 1;
+        }
+        .family-connection-card > .family-connection-actions {
+          grid-column: 1;
+          grid-row: auto;
+          justify-self: end;
         }
         .network-connector {
           display: flex;
@@ -1266,6 +1698,8 @@
       <input type="file" id="file" accept="application/json" class="hidden" />
       <input type="file" id="cfile" accept="image/*" class="hidden" />
       <input type="file" id="contact-file" accept="image/*" class="hidden" />
+      <input type="file" id="family-tree-crest-file" accept="image/*" class="hidden" />
+      <input type="file" id="family-person-portrait-file" accept="image/*" class="hidden" />
     </header>
     <main id="app" class="max-w-6xl mx-auto px-4 py-8"></main>
     <div
@@ -1654,7 +2088,13 @@
       const COMPANION_PROFILE_FIELDS = [
         { k: "name", l: "Name" },
         { k: "species", l: "Art / Spezies" },
-        { k: "description", l: "Beschreibung" },
+        { k: "role", l: "Rolle / Titel" },
+        { k: "age", l: "Alter" },
+        { k: "origin", l: "Herkunft" },
+        { k: "description", l: "Kurzbeschreibung" },
+        { k: "appearance", l: "Erscheinung" },
+        { k: "personality", l: "Wesen & Persönlichkeit" },
+        { k: "goals", l: "Ziele & Eigenheiten" },
         { k: "notes", l: "Notizen" },
       ];
       const SECTIONS = [
@@ -1777,7 +2217,13 @@
         type: "companion",
         name: "",
         species: "",
+        role: "",
+        age: "",
+        origin: "",
         description: "",
+        appearance: "",
+        personality: "",
+        goals: "",
         notes: "",
         customFields: [],
         fieldLabels: {},
@@ -1919,6 +2365,9 @@
         familyLinkEditId: null,
         familyPersonEditId: null,
         familyMemberOpen: false,
+        familyTreeZoom: 1,
+        familyPersonPortraitId: null,
+        familyTreeCrestDraft: null,
         customOptions: normalizeProfileOptions(),
         contactEdit: null,
         contactHeroId: null,
@@ -2053,7 +2502,7 @@
         })),
         ...S.network.familyTrees.flatMap((tree) => tree.people.map((member) => ({
           key: `family:${member.id}`, type: "family", id: member.id, name: member.name || "Unbenannte Person",
-          detail: member.notes || "Stammbaum-Person", portrait: "",
+          detail: member.notes || "Stammbaum-Person", portrait: member.portrait || "",
         }))),
       ].filter((entity, index, entities) => entities.findIndex((item) => item.key === entity.key) === index);
       const networkNode = (key) => networkEntities().find((entity) => entity.key === key);
@@ -2293,9 +2742,9 @@
       const customFieldInput = (field, index, companion = false) => {
         const prefix = companion ? "companion" : "hero";
         if (!companion) {
-          return `<div class="grid items-end gap-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)_auto]">
+          return `<div class="custom-profile-inline-editor grid gap-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)_auto]">
             <label><span class="l">Bezeichnung</span><input class="inp" data-custom-label="${index}" data-custom-owner="${prefix}" value="${esc(field.label)}" placeholder="z. B. Zugehörigkeit"></label>
-            <label><span class="l">Information</span><textarea class="inp" data-custom-value="${index}" data-custom-owner="${prefix}" rows="1" placeholder="Information zu diesem Feld">${esc(field.value)}</textarea></label>
+            <label><span class="l">Wert</span><textarea class="inp" data-custom-value="${index}" data-custom-owner="${prefix}" rows="1" placeholder="Information zu diesem Feld">${esc(field.value)}</textarea></label>
             <button class="btn dng" type="button" data-custom-field-delete="${index}" aria-label="${esc(field.label || "Profilfeld")} entfernen" title="Feld entfernen">${ic("trash-2", "w-4 h-4")}</button>
           </div>`;
         }
@@ -2306,7 +2755,7 @@
           </div>
           <div class="grid gap-3 sm:grid-cols-[minmax(10rem,0.7fr)_1.3fr]">
             <label><span class="l">Bezeichnung</span><input class="inp" data-custom-label="${index}" data-custom-owner="${prefix}" value="${esc(field.label)}" placeholder="z. B. Zugehörigkeit"></label>
-            <label><span class="l">Information</span><textarea class="inp" data-custom-value="${index}" data-custom-owner="${prefix}" rows="2" placeholder="Information zu diesem Profilfeld">${esc(field.value)}</textarea></label>
+            <label><span class="l">Wert</span><textarea class="inp" data-custom-value="${index}" data-custom-owner="${prefix}" rows="2" placeholder="Information zu diesem Profilfeld">${esc(field.value)}</textarea></label>
           </div>
         </article>`;
       };
@@ -2869,6 +3318,7 @@
           : S.view === "contact-edit" ? vContactEdit()
           : vEdit();
         app.innerHTML = `<div class="${q ? "" : "fade"}">${content}</div>${S.view === "sheet" ? vLightbox() : ""}`;
+        if ($("[data-family-tree-viewport]")) updateFamilyTreeCanvas(true);
         const activeNavigation =
           S.view === "network"
             ? "network"
@@ -2953,13 +3403,14 @@
   <div class="flex gap-2"><button class="btn" data-edit="${c.id}">${ic("pencil", "w-4 h-4")}Profil bearbeiten</button>
   <button class="btn dng" data-del="${c.id}" aria-label="Held löschen">${ic("trash-2", "w-4 h-4")}Löschen</button></div></div>
  <section class="hero-profile-banner panel mb-6">
-  <div class="relative z-[1] flex flex-wrap items-center gap-6">${hexOf(c, true)}
-  <div class="min-w-[16rem] flex-1"><p class="cz mb-1 text-xs uppercase tracking-[.22em]" style="color:var(--gold)">Chronik der Helden</p>
-  <h1 class="logo text-4xl sm:text-5xl leading-tight">${esc(c.name) || "Namenlos"}</h1>
-  ${c.titel ? `<p class="mt-1 text-xl italic" style="color:var(--mute)">${esc(c.titel)}</p>` : ""}
-  ${meta.length ? `<div class="hero-profile-meta mt-4">${meta.map((item) => `<span class="hero-profile-chip">${esc(item)}</span>`).join("")}</div>` : ""}</div>
-  ${resources ? `<div class="w-full max-w-sm space-y-3 rounded border p-4 backdrop-blur-sm sm:w-64" style="border-color:var(--line);background:color-mix(in srgb, var(--bg) 65%, transparent)">${resources}</div>` : ""}</div></section>
- <nav class="flex flex-wrap gap-2 mb-6" aria-label="Bereiche">${T.map(([k, l, i, n]) => `<button class="btn ${S.tab === k ? "pri" : ""}" data-tab="${k}" aria-current="${S.tab === k ? "page" : "false"}">${ic(i, "w-4 h-4")}${l}${n ? ` (${n})` : ""}</button>`).join("")}</nav>
+  <div class="hero-profile-header"><div class="hero-profile-portrait-wrap">${c.portrait ? `<img class="hero-profile-portrait" src="${esc(c.portrait)}" alt="Porträt von ${esc(c.name)}">` : hexOf(c, true)}
+   <div class="flex flex-wrap justify-center gap-2"><button class="btn" data-act="portrait" aria-label="${c.portrait ? "Porträt ändern" : "Porträt hinzufügen"}">${ic("upload", "w-4 h-4")}${c.portrait ? "Porträt ändern" : "Porträt hinzufügen"}</button>${c.portrait ? `<button class="btn dng" data-act="portraitdel" aria-label="Porträt entfernen">${ic("trash-2", "w-4 h-4")}Entfernen</button>` : ""}</div></div>
+  <div class="min-w-0"><p class="cz mb-2 text-xs uppercase tracking-[.2em]" style="color:var(--gold)">Charakterprofil</p>
+  <h1 class="hero-profile-name">${esc(c.name) || "Namenlos"}</h1>
+  ${c.titel ? `<p class="mt-2 text-lg italic" style="color:var(--mute)">${esc(c.titel)}</p>` : ""}
+  ${meta.length ? `<div class="hero-profile-meta mt-4">${meta.map((item) => `<span class="hero-profile-chip">${esc(item)}</span>`).join("")}</div>` : ""}
+  ${resources ? `<div class="hero-profile-resources">${resources}</div>` : ""}</div></div></section>
+ <nav class="hero-sheet-nav" aria-label="Bereiche">${T.map(([k, l, i, n]) => `<button class="hero-sheet-tab" data-tab="${k}" aria-current="${S.tab === k ? "page" : "false"}">${ic(i, "w-4 h-4")}${l}${n ? ` (${n})` : ""}</button>`).join("")}</nav>
  ${S.tab === "gallery" ? tGallery(c) : S.tab === "diary" ? tDiary(c) : S.tab === "contacts" ? tContacts(c) : S.tab === "companions" ? tHeroCompanions(c) : S.tab === "network" ? vProfileRelationships(`hero:${c.id}`) : S.tab === "family" ? vHeroFamilyTree(`hero:${c.id}`) : tSheet(c)}`;
       }
 
@@ -2991,7 +3442,8 @@
       function vCompanions() {
         const q = S.q.toLowerCase();
         const list = S.companions.filter((x) =>
-          [x.name, x.species, x.description].join(" ").toLowerCase().includes(q),
+          [x.name, x.species, x.role, x.age, x.origin, x.description, x.appearance, x.personality, x.goals, x.notes]
+            .join(" ").toLowerCase().includes(q),
         );
         return `<div class="flex flex-wrap items-end justify-between gap-4 mb-8">
   <div><h1 class="text-3xl" style="color:var(--gold)">Begleiter-Galerie</h1><p style="color:var(--mute)">${S.companions.length} Begleiter in der Chronik</p></div>
@@ -3009,21 +3461,42 @@
 
       function vCompanionEdit() {
         const c = S.companionDraft;
+        const input = (key, placeholder, rows = 0) => {
+          const id = `cf_${key}`;
+          const value = esc(c[key] || "");
+          return `<label class="block"><span class="l">${esc(profileFieldLabel(c, COMPANION_PROFILE_FIELDS.find((item) => item.k === key)))}</span>${rows
+            ? `<textarea id="${id}" class="inp" data-cf="${key}" rows="${rows}" placeholder="${esc(placeholder)}">${value}</textarea>`
+            : `<input id="${id}" class="inp" data-cf="${key}" value="${value}" placeholder="${esc(placeholder)}">`}</label>`;
+        };
+        const visible = (key) => profileFieldVisible(c, COMPANION_PROFILE_FIELDS.find((item) => item.k === key));
+        const profileInputs = (keys) => keys.filter((key) => visible(key)).map((key) => {
+          const settings = {
+            species: ["Art oder Spezies", 0],
+            role: ["z. B. treuer Gefährte, Wächter, Vertrauter", 0],
+            age: ["z. B. 8 Jahre, uralt, unbekannt", 0],
+            origin: ["Herkunft, Rudel, Heimat oder Fundort", 0],
+            description: ["Ein kurzer Überblick für den Profilkopf", 3],
+            appearance: ["Aussehen, Farben, Narben oder besondere Merkmale", 4],
+            personality: ["Temperament, Vorlieben, Ängste und Verhalten", 4],
+            goals: ["Ziele, Eigenheiten, Fähigkeiten oder Wünsche", 4],
+            notes: ["Weitere Informationen und Spielnotizen", 4],
+          }[key];
+          return input(key, settings[0], settings[1]);
+        }).join("");
         return `<div class="flex flex-wrap gap-2 mb-6 justify-between">
-  <h1 class="text-3xl" style="color:var(--gold)">${c.id && S.companions.some((x) => x.id === c.id) ? "Begleiter bearbeiten" : "Neuen Begleiter erschaffen"}</h1>
+  <div><p class="cz text-xs uppercase tracking-[.2em]" style="color:var(--gold)">Chronik · Profilwerkstatt</p><h1 class="text-3xl sm:text-4xl" style="color:var(--highlight)">${c.id && S.companions.some((x) => x.id === c.id) ? "Begleiter bearbeiten" : "Neuen Begleiter erschaffen"}</h1><p class="mt-1" style="color:var(--mute)">Gestalte ein vollständiges Profil mit Bild, Herkunft und Persönlichkeit.</p></div>
   <div class="flex gap-2"><button class="btn" data-act="companion-cancel">Abbrechen</button><button class="btn pri" data-act="companion-save">${ic("save", "w-4 h-4")}Speichern</button></div></div>
-  <div class="grid gap-6 lg:grid-cols-2">
-    <section class="panel lg:col-span-2"><h3 class="ph">${ic("camera")}Begleiterbild</h3><div class="flex flex-wrap items-center gap-6">${hexOf(c, true)}<button class="btn" data-act="companion-portrait">${ic("upload", "w-4 h-4")}${c.portrait ? "Bild ändern" : "Bild hinzufügen"}</button>${c.portrait ? `<button class="btn dng" data-act="companion-portrait-delete">Entfernen</button>` : ""}</div></section>
-    <section class="panel">${profileFieldVisible(c, COMPANION_PROFILE_FIELDS[0]) ? `<label class="l" for="cf_name">${esc(profileFieldLabel(c, COMPANION_PROFILE_FIELDS[0]))}</label><input id="cf_name" class="inp" data-cf="name" value="${esc(c.name)}" placeholder="Name des Begleiters">` : ""}
-    ${profileFieldVisible(c, COMPANION_PROFILE_FIELDS[1]) ? `<label class="l mt-4" for="cf_species">${esc(profileFieldLabel(c, COMPANION_PROFILE_FIELDS[1]))}</label><input id="cf_species" class="inp" data-cf="species" value="${esc(c.species)}" placeholder="z. B. Rabe, Wolf, Vertrauter">` : ""}</section>
-    <section class="panel">${profileFieldVisible(c, COMPANION_PROFILE_FIELDS[2]) ? `<label class="l" for="cf_description">${esc(profileFieldLabel(c, COMPANION_PROFILE_FIELDS[2]))}</label><textarea id="cf_description" class="inp" data-cf="description" rows="4" placeholder="Aussehen, Persönlichkeit und besondere Merkmale">${esc(c.description)}</textarea>` : ""}
-    ${profileFieldVisible(c, COMPANION_PROFILE_FIELDS[3]) ? `<label class="l mt-4" for="cf_notes">${esc(profileFieldLabel(c, COMPANION_PROFILE_FIELDS[3]))}</label><textarea id="cf_notes" class="inp" data-cf="notes" rows="4" placeholder="Weitere Informationen">${esc(c.notes)}</textarea>` : ""}</section>
-    <section class="panel lg:col-span-2"><div class="ph justify-between"><span>${ic("list")}Eigene Profilfelder</span><button class="btn" type="button" data-act="custom-field-add">${ic("plus", "w-4 h-4")}Profilfeld hinzufügen</button></div>
+  <div class="space-y-5">
+    <section class="hero-profile-banner panel"><div class="relative z-[1] flex flex-wrap items-center gap-6">${c.portrait ? `<img class="h-32 w-32 rounded-full border-2 object-cover shadow-lg" style="border-color:var(--gold2)" src="${esc(c.portrait)}" alt="Porträt von ${esc(c.name)}">` : hexOf(c, true)}<div class="min-w-[14rem] flex-1"><p class="cz mb-1 text-xs uppercase tracking-[.2em]" style="color:var(--gold)">Profilbild & Identität</p><label class="block"><span class="l">Name</span><input id="cf_name" class="inp text-xl" data-cf="name" value="${esc(c.name)}" placeholder="Name des Begleiters"></label><div class="mt-3 grid gap-3 sm:grid-cols-2">${visible("species") ? input("species", "z. B. Rabe, Wolf, Vertrauter") : ""}${visible("role") ? input("role", "Rolle oder Titel") : ""}</div><div class="mt-4 flex flex-wrap gap-2"><button type="button" class="btn" data-act="companion-portrait">${ic("upload", "w-4 h-4")}${c.portrait ? "Bild ändern" : "Bild hinzufügen"}</button>${c.portrait ? `<button type="button" class="btn dng" data-act="companion-portrait-delete">${ic("trash-2", "w-4 h-4")}Entfernen</button>` : ""}</div><p class="mt-2 text-sm" style="color:var(--mute)">Ein Porträt macht den Begleiter direkt im Profil und in der Galerie wiedererkennbar.</p></div></div></section>
+    <section class="hero-edit-card panel"><h2 class="ph">${ic("user")}Identität & Herkunft</h2><div class="grid gap-4 sm:grid-cols-2">${profileInputs(["age", "origin"])}</div></section>
+    <section class="hero-edit-card panel"><h2 class="ph">${ic("eye")}Erscheinung & Wesen</h2><div class="grid gap-4 lg:grid-cols-2">${profileInputs(["description", "appearance", "personality", "goals"])}</div></section>
+    <section class="hero-edit-card panel"><h2 class="ph">${ic("scroll-text")}Hintergrund & Notizen</h2><div class="grid gap-4">${profileInputs(["notes"])}</div><p class="mt-3 text-sm" style="color:var(--mute)">Die ausführliche Hintergrundgeschichte und das Tagebuch kannst du nach dem Speichern im Begleiterprofil ergänzen.</p></section>
+    <section class="panel"><div class="ph justify-between"><span>${ic("list")}Eigene Profilfelder</span><button class="btn" type="button" data-act="custom-field-add">${ic("plus", "w-4 h-4")}Profilfeld hinzufügen</button></div>
     <p class="mb-4 text-sm" style="color:var(--mute)">Ergänze individuelle Informationen, die nur für diesen Begleiter gelten.</p>
-    ${(c.customFields || []).length ? `<div>${c.customFields.map((item, index) => customFieldInput(item, index, true)).join("")}</div>` : `<div class="rounded border p-5 text-center" style="border-color:var(--line);background:var(--field-surface)"><div class="mb-2" style="color:var(--gold)">${ic("list", "w-6 h-6")}</div><p class="text-sm" style="color:var(--mute)">Noch keine eigenen Profilfelder. Lege zum Beispiel Herkunft, Eigenheiten oder besondere Bindungen an.</p></div>`}</section>
-    <section class="panel lg:col-span-2"><div class="ph justify-between"><span>${ic("settings")}Profilfelder anpassen</span><button class="btn" type="button" data-act="field-manager-toggle">${S.fieldManagerOpen ? "Schließen" : "Felder umbenennen / ausblenden"}</button></div>
-    ${S.fieldManagerOpen ? `<div class="space-y-4">${COMPANION_PROFILE_FIELDS.filter((item) => item.k !== "name").map((item) => `<div class="grid items-center gap-3 sm:grid-cols-[auto_1fr_auto]"><label class="flex items-center gap-2"><input class="settings-check" type="checkbox" data-field-toggle="${item.k}" ${profileFieldVisible(c, item) ? "checked" : ""}><span>Aktiv</span></label><input class="inp" data-field-label="${item.k}" value="${esc(profileFieldLabel(c, item))}" aria-label="Bezeichnung von ${esc(item.l)}"><span class="text-sm" style="color:var(--mute)">${esc(item.l)}</span></div>`).join("")}</div><p class="mt-3 text-sm" style="color:var(--mute)">Deaktivierte Felder werden in diesem Profil ausgeblendet; Werte bleiben gespeichert. Der Name ist ein Pflichtfeld.</p>` : ""}</section>
-    <section class="panel lg:col-span-2"><h3 class="ph">${ic("users")}Zugeordnete Helden</h3>
+    ${(c.customFields || []).length ? `<div>${c.customFields.map((item, index) => customFieldInput(item, index, true)).join("")}</div>` : `<div class="rounded border p-5 text-center" style="border-color:var(--line);background:var(--field-surface)"><div class="mb-2" style="color:var(--gold)">${ic("list", "w-6 h-6")}</div><p class="text-sm" style="color:var(--mute)">Noch keine eigenen Profilfelder. Lege zum Beispiel besondere Bindungen oder Fähigkeiten an.</p></div>`}</section>
+    <section class="panel"><div class="ph justify-between"><span>${ic("settings")}Profilfelder anpassen</span><button class="btn" type="button" data-act="field-manager-toggle">${S.fieldManagerOpen ? "Schließen" : "Felder umbenennen / ausblenden"}</button></div>
+    ${S.fieldManagerOpen ? `<div class="space-y-4">${COMPANION_PROFILE_FIELDS.filter((item) => item.k !== "name").map((item) => `<div class="grid items-center gap-3 sm:grid-cols-[auto_1fr_auto]"><label class="flex items-center gap-2"><input class="settings-check" type="checkbox" data-field-toggle="${item.k}" ${profileFieldVisible(c, item) ? "checked" : ""}><span>Aktiv</span></label><input class="inp" data-field-label="${item.k}" value="${esc(profileFieldLabel(c, item))}" aria-label="Bezeichnung von ${esc(item.l)}"><span class="text-sm" style="color:var(--mute)">${esc(item.l)}</span></div>`).join("")}</div><p class="mt-3 text-sm" style="color:var(--mute)">Deaktivierte Felder werden ausgeblendet; Werte bleiben gespeichert. Der Name ist ein Pflichtfeld.</p>` : ""}</section>
+    <section class="panel"><h3 class="ph">${ic("users")}Zugeordnete Helden</h3>
     ${S.chars.length ? `<div class="grid gap-2 sm:grid-cols-2">${S.chars.map((hero) => `<label class="flex items-center gap-3"><input class="settings-check" type="checkbox" data-companion-hero="${esc(hero.id)}" ${(c.heroIds || []).includes(hero.id) ? "checked" : ""}><span>${esc(hero.name || "Namenlos")}</span></label>`).join("")}</div>` : `<p style="color:var(--mute)">Lege zuerst einen Helden an, um diesen Begleiter zuzuordnen.</p>`}</section>
   </div>`;
       }
@@ -3032,21 +3505,38 @@
         const c = S.companions.find((x) => x.id === S.id);
         if (!c) return vCompanions();
         const heroes = S.chars.filter((x) => (c.heroIds || []).includes(x.id));
+        const facts = ["species", "role", "age", "origin"]
+          .map((key) => COMPANION_PROFILE_FIELDS.find((field) => field.k === key))
+          .filter((field) => profileFieldVisible(c, field) && (c[field.k] || "").trim())
+          .map((field) => `<div class="hero-profile-fact"><dt>${esc(profileFieldLabel(c, field))}</dt><dd>${esc(c[field.k])}</dd></div>`)
+          .join("");
+        const profileCard = (key, icon, empty) => {
+          const field = COMPANION_PROFILE_FIELDS.find((item) => item.k === key);
+          if (!profileFieldVisible(c, field)) return "";
+          const value = (c[key] || "").trim();
+          return `<section class="profile-content-card"><h2 class="ph">${ic(icon)}${esc(profileFieldLabel(c, field))}</h2><p class="pre">${value ? esc(c[key]) : `<span style="color:var(--mute)">${empty}</span>`}</p></section>`;
+        };
         return `<div class="flex flex-wrap gap-2 mb-6 justify-between">
   <button class="btn" data-act="companions-back">${ic("arrow-left", "w-4 h-4")}Zur Begleiter-Galerie</button>
   <div class="flex gap-2"><button class="btn" data-companion-edit="${esc(c.id)}">${ic("pencil", "w-4 h-4")}Bearbeiten</button><button class="btn dng" data-companion-delete="${esc(c.id)}">${ic("trash-2", "w-4 h-4")}Löschen</button></div></div>
-  <section class="panel mb-6"><div class="flex flex-wrap items-center gap-6">${hexOf(c, true)}<div><h1 class="logo text-4xl">${esc(c.name) || "Namenlos"}</h1>${profileFieldVisible(c, COMPANION_PROFILE_FIELDS[1]) ? `<p class="text-xl italic" style="color:var(--mute)">${esc(profileFieldLabel(c, COMPANION_PROFILE_FIELDS[1]))}: ${esc(c.species)}</p>` : ""}</div></div></section>
+  <section class="hero-profile-banner panel mb-6"><div class="relative z-[1] flex flex-wrap items-center gap-6">${c.portrait ? `<img class="h-36 w-36 rounded-full border-2 object-cover shadow-lg" style="border-color:var(--gold2)" src="${esc(c.portrait)}" alt="Porträt von ${esc(c.name)}">` : hexOf(c, true)}
+    <div class="min-w-[16rem] flex-1"><p class="cz mb-1 text-xs uppercase tracking-[.22em]" style="color:var(--gold)">Chronik · Begleiterprofil</p>
+    <h1 class="logo text-4xl sm:text-5xl leading-tight">${esc(c.name) || "Namenlos"}</h1>
+    ${c.description && profileFieldVisible(c, COMPANION_PROFILE_FIELDS.find((field) => field.k === "description")) ? `<p class="mt-2 max-w-3xl text-lg" style="color:var(--mute)">${esc(c.description)}</p>` : `<p class="mt-2 text-lg italic" style="color:var(--mute)">Dieses Profil wartet darauf, erzählt zu werden.</p>`}
+    <div class="hero-profile-meta mt-4">${[c.species, c.role].filter((value, index) => value && profileFieldVisible(c, COMPANION_PROFILE_FIELDS.find((field) => field.k === (index ? "role" : "species")))).map((value) => `<span class="hero-profile-chip">${esc(value)}</span>`).join("")}</div>
+    ${heroes.length ? `<div class="mt-4 flex flex-wrap items-center gap-2"><span class="text-sm" style="color:var(--mute)">Verbunden mit</span>${heroes.map((hero) => `<button class="btn" data-open="${esc(hero.id)}">${esc(hero.name || "Namenlos")}</button>`).join("")}</div>` : ""}</div>
+    </div></section>
   <nav class="flex flex-wrap gap-2 mb-6" aria-label="Begleiterbereiche">
-    <button class="btn ${S.companionTab === "profile" ? "pri" : ""}" data-companion-tab="profile">${ic("user", "w-4 h-4")}Profil</button>
+    <button class="btn ${S.companionTab === "profile" ? "pri" : ""}" data-companion-tab="profile" aria-current="${S.companionTab === "profile" ? "page" : "false"}">${ic("user", "w-4 h-4")}Profil</button>
     <button class="btn ${S.companionTab === "story" ? "pri" : ""}" data-companion-tab="story">${ic("scroll-text", "w-4 h-4")}Hintergrundgeschichte</button>
     <button class="btn ${S.companionTab === "diary" ? "pri" : ""}" data-companion-tab="diary">${ic("book-open-text", "w-4 h-4")}Tagebuch (${(c.diary || []).length})</button>
     <button class="btn ${S.companionTab === "network" ? "pri" : ""}" data-companion-tab="network">${ic("share-2", "w-4 h-4")}Beziehungen (${S.network.relationships.filter((edge) => edge.from === `companion:${c.id}` || edge.to === `companion:${c.id}`).length})</button>
   </nav>
   ${S.companionTab === "story" ? pCompanionStory(c) : S.companionTab === "diary" ? S.read && (c.diary || []).some((entry) => entry.id === S.read) ? vRead(c) : tDiary(c, true) : S.companionTab === "network" ? vProfileRelationships(`companion:${c.id}`) :
-  `<div class="grid gap-6 lg:grid-cols-2">${profileFieldVisible(c, COMPANION_PROFILE_FIELDS[2]) ? `<section class="panel"><h2 class="ph">${esc(profileFieldLabel(c, COMPANION_PROFILE_FIELDS[2]))}</h2><p class="pre">${esc(c.description) || "Noch keine Beschreibung."}</p></section>` : ""}
-  ${profileFieldVisible(c, COMPANION_PROFILE_FIELDS[3]) ? `<section class="panel"><h2 class="ph">${esc(profileFieldLabel(c, COMPANION_PROFILE_FIELDS[3]))}</h2><p class="pre">${esc(c.notes) || "Noch keine Notizen."}</p></section>` : ""}
-  ${customProfileDisplay(c.customFields) ? `<section class="panel lg:col-span-2"><h2 class="ph">${ic("list")}Eigene Profilfelder</h2>${customProfileDisplay(c.customFields)}</section>` : ""}
-  <section class="panel lg:col-span-2"><h2 class="ph">Zugeordnete Helden</h2>${heroes.length ? `<div class="flex flex-wrap gap-2">${heroes.map((h) => `<button class="btn" data-open="${esc(h.id)}">${esc(h.name || "Namenlos")}</button>`).join("")}</div>` : `<p style="color:var(--mute)">Dieser Begleiter ist noch keinem Helden zugeordnet.</p>`}</section></div>`}`;
+  `<div class="space-y-6">${facts ? `<dl class="hero-profile-facts">${facts}</dl>` : ""}
+  <div class="grid gap-4 lg:grid-cols-2">${profileCard("appearance", "eye", "Noch keine Beschreibung der Erscheinung.")}${profileCard("personality", "heart", "Die Persönlichkeit ist noch nicht beschrieben.")}${profileCard("goals", "sparkles", "Noch keine Ziele oder besonderen Eigenheiten eingetragen.")}${profileCard("notes", "scroll-text", "Noch keine Notizen hinterlegt.")}</div>
+  ${customProfileDisplay(c.customFields) ? `<section class="panel"><h2 class="ph">${ic("list")}Eigene Profilfelder</h2>${customProfileDisplay(c.customFields)}</section>` : ""}
+  <section class="panel"><div class="ph justify-between"><span>${ic("users")}Zugeordnete Helden</span><button class="btn" data-companion-edit="${esc(c.id)}">${ic("pencil", "w-4 h-4")}Zuordnung bearbeiten</button></div>${heroes.length ? `<div class="flex flex-wrap gap-2">${heroes.map((hero) => `<button class="btn" data-open="${esc(hero.id)}">${esc(hero.name || "Namenlos")}</button>`).join("")}</div>` : `<p style="color:var(--mute)">Dieser Begleiter ist noch keinem Helden zugeordnet.</p>`}</section></div>`}`;
       }
 
       function pCompanionStory(companion) {
@@ -3118,18 +3608,61 @@
           niece: "Nichte", nephew: "Neffe", child: "Kind",
           cousin: "Cousin/Cousine", partner: "Partner/in", relative: "Sonstige Verwandtschaft",
       };
+      const familyRoleLabel = (role) => ({
+        auntUncle: "Onkel/Tante",
+        nieceNephew: "Nichte/Neffe",
+      }[role] || familyRoleLabels[role] || "Verwandt");
       const familyRoleInverse = {
        mother: "child", father: "child", grandmother: "grandchild", grandfather: "grandchild",
        aunt: "niece", uncle: "nephew", parent: "child",
        sister: "sibling", brother: "sibling", sibling: "sibling",
        daughter: "parent", son: "parent", granddaughter: "grandparent", grandson: "grandparent",
        niece: "aunt", nephew: "uncle", child: "parent",
-       cousin: "cousin", partner: "partner", relative: "relative",
+       cousin: "cousin", partner: "partner", relative: "relative", auntUncle: "nieceNephew",
       };
       function familyRoleOptions(selected = "") {
         return Object.entries(familyRoleLabels)
           .map(([role, label]) => `<option value="${role}" ${role === selected ? "selected" : ""}>${esc(label)}</option>`)
           .join("");
+      }
+      function familyLinksForTree(tree) {
+        const familyLinks = tree.links.map((edge) => ({ ...edge, inferred: false }));
+        const childrenByParent = new Map();
+        const siblingLinks = [];
+        const addParent = (parent, child) => {
+          if (!childrenByParent.has(parent)) childrenByParent.set(parent, new Set());
+          childrenByParent.get(parent).add(child);
+        };
+        for (const edge of tree.links) {
+          if (["mother", "father", "parent"].includes(edge.relation)) addParent(edge.from, edge.to);
+          else if (["daughter", "son", "child"].includes(edge.relation)) addParent(edge.to, edge.from);
+          if (["brother", "sister", "sibling"].includes(edge.relation)) siblingLinks.push(edge);
+        }
+        const connectedPairs = new Set(tree.links.map((edge) => [edge.from, edge.to].sort().join("|")));
+        for (const sibling of siblingLinks) {
+          const role = sibling.relation === "brother" ? "uncle"
+            : sibling.relation === "sister" ? "aunt" : "auntUncle";
+          const siblingRelations = [
+            { person: sibling.from, parent: sibling.to, relation: role },
+            { person: sibling.to, parent: sibling.from, relation: "auntUncle" },
+          ];
+          for (const { person, parent, relation } of siblingRelations) {
+            for (const child of childrenByParent.get(parent) || []) {
+              const pair = [person, child].sort().join("|");
+              if (person !== child && !connectedPairs.has(pair)) {
+                familyLinks.push({
+                  id: `inferred:${sibling.id}:${person}:${child}`,
+                  from: person,
+                  to: child,
+                  relation,
+                  inferred: true,
+                });
+                connectedPairs.add(pair);
+              }
+            }
+          }
+        }
+        return familyLinks;
       }
       function vNetwork() {
         const entities = networkEntities();
@@ -3162,22 +3695,24 @@
         return `<section class="panel mb-5"><div class="flex flex-wrap items-start justify-between gap-3"><div><h2 class="ph">${ic("git-branch")}Deine Stammbäume</h2><p class="text-sm" style="color:var(--mute)">Lege für jede Familie oder Abstammungslinie einen eigenen Stammbaum an.</p></div><button class="btn pri" type="button" data-act="family-tree-create-toggle">${ic("plus", "w-4 h-4")}Stammbaum anlegen</button></div>
           ${S.familyCreateOpen ? `<div class="mt-5 grid gap-3 border-t pt-5 sm:grid-cols-2" style="border-color:var(--line)"><label><span class="l">Name des Stammbaums</span><input class="inp" id="family-tree-name" maxlength="100" placeholder="z. B. Haus Sturmwacht"></label><label><span class="l">Erste Person</span><select class="inp" id="family-tree-root"><option value="">Profil auswählen …</option>${networkEntityOptions()}</select></label><div class="sm:col-span-2"><button class="btn pri" type="button" data-act="family-tree-create">${ic("git-branch", "w-4 h-4")}Stammbaum erstellen</button><button class="btn ml-2" type="button" data-act="family-tree-create-toggle">Abbrechen</button></div></div>` : ""}
         </section>
-        ${trees.length ? `<section class="grid gap-4 sm:grid-cols-2">${trees.map((tree) => `<article class="panel"><div class="ph">${ic("git-branch")}${esc(tree.name)}</div><p style="color:var(--mute)">${tree.members.length} Personen · ${tree.links.length} Familienverbindungen</p><div class="mt-4 flex gap-2"><button class="btn pri" type="button" data-family-tree-open="${esc(tree.id)}">${ic("eye", "w-4 h-4")}Stammbaum ansehen</button><button class="btn dng" type="button" data-family-tree-delete="${esc(tree.id)}" aria-label="${esc(tree.name)} löschen">${ic("trash-2", "w-4 h-4")}</button></div></article>`).join("")}</section>` : `<section class="panel py-8 text-center"><p style="color:var(--mute)">Noch keine Stammbäume angelegt.</p></section>`}`;
+        ${trees.length ? `<section class="grid gap-4 sm:grid-cols-2">${trees.map((tree) => `<article class="panel"><div class="flex items-center gap-3"><span class="family-tree-crest">${tree.crestImage ? `<img src="${esc(tree.crestImage)}" alt="Wappen von ${esc(tree.name)}">` : ic(CRESTS.includes(tree.crest) ? tree.crest : "shield", "w-7 h-7")}</span><div class="min-w-0 flex-1"><h3 class="ph mb-1">${esc(tree.name)}</h3><p class="text-sm" style="color:var(--mute)">${tree.members.length} Personen · ${familyLinksForTree(tree).length} Familienverbindungen</p></div></div><div class="mt-4 flex gap-2"><button class="btn pri" type="button" data-family-tree-open="${esc(tree.id)}">${ic("eye", "w-4 h-4")}Stammbaum ansehen</button><button class="btn dng" type="button" data-family-tree-delete="${esc(tree.id)}" aria-label="${esc(tree.name)} löschen">${ic("trash-2", "w-4 h-4")}</button></div></article>`).join("")}</section>` : `<section class="panel py-8 text-center"><p style="color:var(--mute)">Noch keine Stammbäume angelegt.</p></section>`}`;
       }
       function vNamedFamilyTree(tree) {
         const members = tree.members.map((key) => networkNode(key)).filter(Boolean);
-        const root = members[0];
-        const rootKey = root?.key;
+        const rootKey = members[0]?.key;
+        const familyLinks = familyLinksForTree(tree);
         const generationOffsets = {
-          mother: -1, father: -1, aunt: -1, uncle: -1, grandmother: -2, grandfather: -2, parent: -1,
-          daughter: 1, son: 1, niece: 1, nephew: 1, granddaughter: 2, grandson: 2, child: 1,
+          mother: -1, father: -1, aunt: -1, uncle: -1, auntUncle: -1,
+          grandmother: -2, grandfather: -2, parent: -1,
+          daughter: 1, son: 1, niece: 1, nephew: 1, granddaughter: 2,
+          grandson: 2, child: 1, grandparent: -2, grandchild: 2,
         };
         const generations = new Map();
         const offsets = new Map(rootKey ? [[rootKey, 0]] : []);
         let changed = true;
         while (changed) {
           changed = false;
-          for (const edge of tree.links) {
+          for (const edge of familyLinks) {
             const fromOffset = offsets.get(edge.from), toOffset = offsets.get(edge.to);
             const offset = generationOffsets[edge.relation] ?? 0;
             if (fromOffset !== undefined && toOffset === undefined) {
@@ -3195,25 +3730,64 @@
           generations.get(generation).push(key);
         }
         const generationValues = [...generations.keys()].sort((a, b) => a - b);
+        const positions = new Map();
+        const cardWidth = 220, cardHeight = 82, columnGap = 54, rowGap = 82;
+        const canvasWidth = Math.max(760, ...[...generations.values()].map((row) => row.length * (cardWidth + columnGap) - columnGap + 72));
+        const canvasHeight = Math.max(220, generationValues.length * (cardHeight + rowGap) + 56);
+        generationValues.forEach((generation, rowIndex) => {
+          const row = generations.get(generation);
+          const rowWidth = row.length * (cardWidth + columnGap) - columnGap;
+          const startX = Math.max(36, (canvasWidth - rowWidth) / 2);
+          row.forEach((key, columnIndex) => {
+            positions.set(key, {
+              x: startX + columnIndex * (cardWidth + columnGap),
+              y: 28 + rowIndex * (cardHeight + rowGap),
+            });
+          });
+        });
+        const lineMarkup = familyLinks.map((edge) => {
+          const from = positions.get(edge.from), to = positions.get(edge.to);
+          if (!from || !to) return "";
+          let path, labelX, labelY;
+          if (from.y === to.y) {
+            const leftToRight = from.x < to.x;
+            const x1 = from.x + (leftToRight ? cardWidth : 0);
+            const x2 = to.x + (leftToRight ? 0 : cardWidth);
+            const y = from.y + cardHeight / 2;
+            const curve = Math.max(28, Math.abs(x2 - x1) / 3);
+            path = `M ${x1} ${y} C ${x1 + (leftToRight ? curve : -curve)} ${y}, ${x2 - (leftToRight ? curve : -curve)} ${y}, ${x2} ${y}`;
+            labelX = (x1 + x2) / 2;
+            labelY = y - 9;
+          } else {
+            const x1 = from.x + cardWidth / 2, x2 = to.x + cardWidth / 2;
+            const y1 = from.y + (from.y <= to.y ? cardHeight : 0);
+            const y2 = to.y + (from.y <= to.y ? 0 : cardHeight);
+            const curve = Math.max(24, Math.abs(y2 - y1) / 2);
+            path = `M ${x1} ${y1} C ${x1} ${y1 + curve}, ${x2} ${y2 - curve}, ${x2} ${y2}`;
+            labelX = (x1 + x2) / 2;
+            labelY = (y1 + y2) / 2 - 5;
+          }
+          const label = familyRoleLabel(edge.relation);
+          const labelWidth = Math.max(64, label.length * 7.5 + 24);
+          const labelHeight = edge.inferred ? 35 : 25;
+          return `<g><path class="family-tree-line ${edge.inferred ? "inferred" : ""}" d="${path}"></path><rect class="family-tree-line-badge" x="${labelX - labelWidth / 2}" y="${labelY - labelHeight / 2 - 3}" width="${labelWidth}" height="${labelHeight}" rx="${labelHeight / 2}"></rect><text class="family-tree-line-label" x="${labelX}" y="${labelY}">${esc(label)}${edge.inferred ? `<tspan x="${labelX}" dy="12">abgeleitet</tspan>` : ""}</text></g>`;
+        }).join("");
         const familyTreeEntity = (entity) => {
-          if (entity.type !== "family") return entity;
-          const roles = [...new Set(tree.links
+          const roles = [...new Set(familyLinks
             .filter((edge) => edge.from === entity.key || edge.to === entity.key)
-            .map((edge) => edge.from === entity.key
-              ? edge.relation
-              : familyRoleInverse[edge.relation] || "relative")
-            .map((role) => familyRoleLabels[role] || "Verwandt"))];
-          const notes = entity.detail === "Stammbaum-Person" ? "" : entity.detail;
+            .map((edge) => edge.from === entity.key ? edge.relation : familyRoleInverse[edge.relation] || "relative")
+            .map(familyRoleLabel))];
+          const notes = entity.type === "family" && entity.detail === "Stammbaum-Person" ? "" : entity.detail;
           return {
             ...entity,
-            detail: [...roles, notes].filter(Boolean).join(" · ") || "Familienmitglied",
+            detail: [...roles, notes].filter(Boolean).join(" · ") || (entity.type === "family" ? "Familienmitglied" : "Chronik"),
           };
         };
-        const familyEdges = tree.links.map((edge) => {
+        const familyEdges = familyLinks.map((edge) => {
           const person = networkNode(edge.from), anchor = networkNode(edge.to);
           if (!person || !anchor) return "";
-          const editing = S.familyLinkEditId === edge.id;
-          return `<article class="network-link-card">${editing
+          const editing = !edge.inferred && S.familyLinkEditId === edge.id;
+          return `<article class="family-connection-card ${edge.inferred ? "is-inferred" : ""} ${editing ? "is-editing" : ""}">${editing
             ? `<div class="grid w-full gap-3 sm:grid-cols-2"><label><span class="l">Person</span><select class="inp" id="family-link-person">${tree.members.map((key) => {
               const entity = networkNode(key);
               return entity ? `<option value="${esc(key)}" ${edge.from === key ? "selected" : ""}>${esc(networkEntityLabel(entity))}</option>` : "";
@@ -3221,28 +3795,38 @@
               const entity = networkNode(key);
               return entity ? `<option value="${esc(key)}" ${edge.to === key ? "selected" : ""}>${esc(networkEntityLabel(entity))}</option>` : "";
             }).join("")}</select></label><label class="sm:col-span-2"><span class="l">Familienrolle</span><select class="inp" id="family-link-role">${familyRoleOptions(edge.relation)}</select></label><div class="flex gap-2 sm:col-span-2"><button type="button" class="btn pri" data-act="family-link-update" data-family-tree-id="${esc(tree.id)}" data-family-link-id="${esc(edge.id)}">${ic("save", "w-4 h-4")}Änderungen speichern</button><button type="button" class="btn" data-family-link-edit="${esc(edge.id)}">Abbrechen</button></div></div>`
-            : `${networkEntityButton(person)}<div class="network-connector">${esc(familyRoleLabels[edge.relation] || "Verwandt mit")}<br><span style="color:var(--mute)">von</span></div>${networkEntityButton(anchor)}<div class="network-link-actions"><button type="button" class="btn" data-family-link-edit="${esc(edge.id)}" aria-label="Familienverbindung bearbeiten">${ic("pencil", "w-4 h-4")}</button><button type="button" class="btn dng" data-family-link-delete="${esc(edge.id)}" data-family-tree-id="${esc(tree.id)}" aria-label="Familienverbindung löschen">${ic("trash-2", "w-4 h-4")}</button></div>`}</article>`;
+            : `${networkEntityButton(person)}<div class="family-connection-role"><span>${esc(familyRoleLabel(edge.relation))}</span><span class="family-connection-origin">${edge.inferred ? "automatisch abgeleitet" : "Verbindung"}</span></div>${networkEntityButton(anchor)}<div class="family-connection-actions flex items-center gap-2">${edge.inferred ? `<span class="text-xs" style="color:var(--mute)">Abgeleitet</span>` : `<button type="button" class="btn" data-family-link-edit="${esc(edge.id)}" aria-label="Familienverbindung bearbeiten">${ic("pencil", "w-4 h-4")}</button><button type="button" class="btn dng" data-family-link-delete="${esc(edge.id)}" data-family-tree-id="${esc(tree.id)}" aria-label="Familienverbindung löschen">${ic("trash-2", "w-4 h-4")}</button>`}</div>`}</article>`;
         }).filter(Boolean).join("");
         const choices = tree.members.map((key) => {
           const entity = networkNode(key);
           return entity ? `<option value="${esc(key)}">${esc(networkEntityLabel(entity))}</option>` : "";
         }).join("");
-        return `<div class="mb-5 flex flex-wrap items-center justify-between gap-3"><div><p class="cz text-xs uppercase tracking-[.2em]" style="color:var(--gold)">Familienchronik</p><h2 class="text-3xl" style="color:var(--highlight)">${esc(tree.name)}</h2></div><div class="flex flex-wrap gap-2"><button class="btn" type="button" data-act="family-tree-edit-toggle">${ic("pencil", "w-4 h-4")}${S.familyTreeEditOpen ? "Bearbeitung schließen" : "Stammbaum bearbeiten"}</button><button class="btn" type="button" data-act="family-tree-back">${ic("arrow-left", "w-4 h-4")}${S.view === "sheet" ? "Zur Stammbaum-Übersicht" : "Alle Stammbäume"}</button></div></div>
-          ${S.familyTreeEditOpen ? `<section class="panel mb-5"><h3 class="ph">${ic("settings")}Stammbaum bearbeiten</h3><div class="grid gap-3 sm:grid-cols-2"><label><span class="l">Name</span><input class="inp" id="family-tree-edit-name" maxlength="100" value="${esc(tree.name)}"></label><label><span class="l">Ausgangspunkt</span><select class="inp" id="family-tree-edit-root">${choices}</select></label><div class="flex gap-2 sm:col-span-2"><button class="btn pri" type="button" data-act="family-tree-update" data-family-tree-id="${esc(tree.id)}">${ic("save", "w-4 h-4")}Änderungen speichern</button><button class="btn" type="button" data-act="family-tree-edit-toggle">Abbrechen</button></div></div></section>` : ""}
+        return `<div class="mb-5 flex flex-wrap items-center justify-between gap-3"><div class="flex items-center gap-4"><span class="family-tree-crest h-16 w-16">${tree.crestImage ? `<img src="${esc(tree.crestImage)}" alt="Wappen von ${esc(tree.name)}">` : ic(CRESTS.includes(tree.crest) ? tree.crest : "shield", "w-8 h-8")}</span><div><p class="cz text-xs uppercase tracking-[.2em]" style="color:var(--gold)">Familienchronik</p><h2 class="text-3xl" style="color:var(--highlight)">${esc(tree.name)}</h2><p class="text-sm" style="color:var(--mute)">${members.length} Mitglieder · ${familyLinks.length} Verbindungen</p></div></div><div class="flex flex-wrap gap-2"><button class="btn" type="button" data-act="family-tree-edit-toggle">${ic("pencil", "w-4 h-4")}${S.familyTreeEditOpen ? "Bearbeitung schließen" : "Stammbaum bearbeiten"}</button><button class="btn" type="button" data-act="family-tree-back">${ic("arrow-left", "w-4 h-4")}${S.view === "sheet" ? "Zur Stammbaum-Übersicht" : "Alle Stammbäume"}</button></div></div>
+          ${S.familyTreeEditOpen ? `<section class="panel mb-5"><h3 class="ph">${ic("settings")}Stammbaum bearbeiten</h3><div class="grid gap-4 sm:grid-cols-2"><label><span class="l">Name</span><input class="inp" id="family-tree-edit-name" maxlength="100" value="${esc(tree.name)}"></label><label><span class="l">Ausgangspunkt</span><select class="inp" id="family-tree-edit-root">${choices}</select></label><div class="sm:col-span-2"><span class="l">Haus- oder Stammeswappen</span><div class="flex flex-wrap items-center gap-3"><span class="family-tree-crest" data-family-tree-crest-preview>${tree.crestImage ? `<img src="${esc(tree.crestImage)}" alt="Aktuelles Wappen">` : ic(CRESTS.includes(S.familyTreeCrestDraft) ? S.familyTreeCrestDraft : "shield", "w-7 h-7")}</span><button type="button" class="btn" data-act="family-tree-crest-upload">${ic("upload", "w-4 h-4")}${tree.crestImage ? "Wappenbild ändern" : "Wappenbild hochladen"}</button>${tree.crestImage ? `<button type="button" class="btn dng" data-act="family-tree-crest-delete">${ic("trash-2", "w-4 h-4")}Bild entfernen</button>` : ""}</div><div class="family-tree-crest-options mt-3">${CRESTS.map((crest) => `<button type="button" class="crest" data-family-tree-crest="${crest}" aria-pressed="${(S.familyTreeCrestDraft || tree.crest || "shield") === crest}" aria-label="Wappen: ${crest}" title="${crest}">${ic(crest, "w-6 h-6")}</button>`).join("")}</div></div><div class="flex gap-2 sm:col-span-2"><button class="btn pri" type="button" data-act="family-tree-update" data-family-tree-id="${esc(tree.id)}">${ic("save", "w-4 h-4")}Änderungen speichern</button><button class="btn" type="button" data-act="family-tree-edit-toggle">Abbrechen</button></div></div></section>` : ""}
           <section class="panel mb-5"><div class="flex flex-wrap items-start justify-between gap-3"><div><h3 class="ph">${ic("user-plus")}Person hinzufügen</h3><p class="text-sm" style="color:var(--mute)">Wähle ein bestehendes Profil oder erstelle eine Person ohne Profil und ordne sie einer Person in diesem Stammbaum zu.</p></div><button class="btn" type="button" data-act="family-member-toggle">${S.familyMemberOpen ? "Abbrechen" : "Person hinzufügen"}</button></div>
           ${S.familyMemberOpen ? `<div class="mt-4 grid gap-3 border-t pt-4 sm:grid-cols-2" style="border-color:var(--line)"><label><span class="l">Person im Stammbaum</span><select class="inp" id="family-member-existing"><option value="">Neue Person anlegen …</option>${networkEntityOptions()}</select></label><label><span class="l">Name (für neue Person)</span><input class="inp" id="family-member-name" maxlength="80" placeholder="Name der Person"></label><label><span class="l">Bezugsperson im Stammbaum</span><select class="inp" id="family-member-anchor"><option value="">Person auswählen …</option>${choices}</select></label><label><span class="l">Familienrolle zur Bezugsperson</span><select class="inp" id="family-member-role">${familyRoleOptions()}</select></label><div class="sm:col-span-2"><button class="btn pri" type="button" data-act="family-tree-member-add" data-family-tree-id="${esc(tree.id)}">${ic("plus", "w-4 h-4")}Person und Verbindung speichern</button></div></div>` : ""}
           </section>
-          <section class="panel mb-5"><h3 class="ph">${ic("git-branch")}Generationen &amp; Abzweigungen</h3><div class="family-tree mt-5">${generationValues.map((generation, index) => `<section class="family-tree-generation ${index === 0 ? "first" : ""} ${index === generationValues.length - 1 ? "last" : ""}"><h4 class="family-tree-label">${generation === 0 ? "Ausgangspunkt" : generation < 0 ? `${Math.abs(generation)} Generation${generation < -1 ? "en" : ""} darüber` : `${generation} Generation${generation > 1 ? "en" : ""} darunter`}</h4><div class="family-tree-nodes">${generations.get(generation).map((key) => {
-            const source = networkNode(key);
-            const entity = source ? familyTreeEntity(source) : null;
-            return entity ? `<div class="family-tree-node ${key === rootKey ? "is-root" : ""}">${networkEntityButton(entity)}</div>` : "";
-          }).join("")}</div></section>`).join("")}</div>
+          <section class="panel mb-5"><h3 class="ph">${ic("git-branch")}Generationen &amp; Abzweigungen</h3><div class="family-tree-toolbar"><p class="text-sm" style="color:var(--mute)">Mausrad zum Zoomen · Linksklick halten und ziehen zum Verschieben</p><div class="flex items-center gap-2"><button type="button" class="btn" data-family-zoom="out" aria-label="Stammbaum verkleinern">−</button><span id="family-tree-zoom-label" class="min-w-12 text-center text-sm" style="color:var(--gold)">${Math.round(S.familyTreeZoom * 100)}%</span><button type="button" class="btn" data-family-zoom="in" aria-label="Stammbaum vergrößern">+</button><button type="button" class="btn" data-family-zoom="reset">Zurücksetzen</button></div></div><div class="family-tree-viewport" data-family-tree-viewport><div class="family-tree-scaled" data-family-tree-scaled><div class="family-tree-stage" data-family-tree-stage data-width="${canvasWidth}" data-height="${canvasHeight}" style="width:${canvasWidth}px;height:${canvasHeight}px;transform:scale(${S.familyTreeZoom})"><svg class="family-tree-lines" width="${canvasWidth}" height="${canvasHeight}" viewBox="0 0 ${canvasWidth} ${canvasHeight}" aria-hidden="true">${lineMarkup}</svg>${generationValues.map((generation, index) => {
+            const caption = generation === 0 ? "Ausgangspunkt" : generation < 0
+              ? `${Math.abs(generation)} Generation${generation < -1 ? "en" : ""} darüber`
+              : `${generation} Generation${generation > 1 ? "en" : ""} darunter`;
+            return `<div class="family-tree-row-label" style="top:${index * (cardHeight + rowGap) + 1}px"><span>${caption}</span></div>${generations.get(generation).map((key) => {
+              const source = networkNode(key);
+              const entity = source ? familyTreeEntity(source) : null;
+              const point = positions.get(key);
+              return entity && point ? `<div class="family-tree-canvas-node ${key === rootKey ? "is-root" : ""}" style="left:${point.x}px;top:${point.y}px">${networkEntityButton(entity)}</div>` : "";
+            }).join("")}`;
+          }).join("")}</div></div></div>
           ${familyEdges ? `<div class="mt-6 border-t pt-5" style="border-color:var(--line)"><h4 class="ph">${ic("share-2")}Familienverbindungen</h4><div class="space-y-3">${familyEdges}</div></div>` : ""}
           <div class="mt-5 border-t pt-4" style="border-color:var(--line)"><h4 class="mb-3 font-semibold" style="color:var(--gold)">Personen in diesem Stammbaum (${members.length})</h4><div class="grid gap-2 sm:grid-cols-2">${members.map((entity, index) => {
             const person = entity.type === "family" ? tree.people.find((item) => `family:${item.id}` === entity.key) : null;
             const editing = person && S.familyPersonEditId === person.id;
+            const personLinks = person ? tree.links.filter((edge) => edge.from === entity.key || edge.to === entity.key) : [];
             return `<div class="network-member-card">${editing
-              ? `<div class="grid w-full gap-3"><label><span class="l">Name</span><input class="inp" id="family-person-edit-name" maxlength="80" value="${esc(person.name)}"></label><label><span class="l">Notizen</span><textarea class="inp" id="family-person-edit-notes" maxlength="2000" rows="3">${esc(person.notes || "")}</textarea></label><div class="flex gap-2"><button type="button" class="btn pri" data-act="family-person-update" data-family-person-id="${esc(person.id)}">${ic("save", "w-4 h-4")}Speichern</button><button type="button" class="btn" data-family-person-edit="${esc(person.id)}">Abbrechen</button></div></div>`
+              ? `<div class="grid w-full gap-3"><div class="flex flex-wrap items-center gap-3"><span class="family-tree-crest h-14 w-14">${person.portrait ? `<img src="${esc(person.portrait)}" alt="Porträt von ${esc(person.name)}">` : ic("user", "w-6 h-6")}</span><button type="button" class="btn" data-act="family-person-portrait" data-family-person-id="${esc(person.id)}">${ic("camera", "w-4 h-4")}${person.portrait ? "Porträt ändern" : "Porträt hinzufügen"}</button>${person.portrait ? `<button type="button" class="btn dng" data-act="family-person-portrait-delete" data-family-person-id="${esc(person.id)}">${ic("trash-2", "w-4 h-4")}Entfernen</button>` : ""}</div>${personLinks.map((edge) => {
+                const from = networkNode(edge.from), to = networkNode(edge.to);
+                return from && to ? `<div class="grid gap-2 rounded border p-3" style="border-color:var(--line)"><label><span class="l">Familienrolle: ${esc(from.name)} zu ${esc(to.name)}</span><select class="inp" id="family-person-role-${esc(edge.id)}">${familyRoleOptions(edge.relation)}</select></label><button type="button" class="btn" data-act="family-person-role-update" data-family-tree-id="${esc(tree.id)}" data-family-link-id="${esc(edge.id)}">${ic("save", "w-4 h-4")}Rolle speichern</button></div>` : "";
+              }).join("")}<label><span class="l">Name</span><input class="inp" id="family-person-edit-name" maxlength="80" value="${esc(person.name)}"></label><label><span class="l">Notizen</span><textarea class="inp" id="family-person-edit-notes" maxlength="2000" rows="3">${esc(person.notes || "")}</textarea></label><div class="flex gap-2"><button type="button" class="btn pri" data-act="family-person-update" data-family-person-id="${esc(person.id)}">${ic("save", "w-4 h-4")}Person speichern</button><button type="button" class="btn" data-family-person-edit="${esc(person.id)}">Abbrechen</button></div></div>`
               : `${networkEntityButton(entity)}${person || index ? `<div class="network-member-actions">${person ? `<button type="button" class="btn" data-family-person-edit="${esc(person.id)}" aria-label="${esc(entity.name)} bearbeiten">${ic("pencil", "w-4 h-4")}</button>` : ""}${index ? `<button type="button" class="btn dng" data-family-tree-member-delete="${esc(tree.id)}" data-family-member-key="${esc(entity.key)}" aria-label="${esc(entity.name)} aus diesem Stammbaum entfernen">${ic("trash-2", "w-4 h-4")}</button>` : ""}</div>` : ""}`}</div>`;
           }).join("")}</div></div>
           </section>`;
@@ -3344,9 +3928,9 @@
       function tSheet(c) {
         const sections = orderedSheetSections(c);
         const sub = sections.find((x) => x[0] === S.sub) || sections[0];
-        return `<div class="grid gap-6 lg:grid-cols-[15rem_1fr] items-start">
-  <nav class="side panel" aria-label="Abschnitte des Charakterblatts">${sections.map(([k, l, i]) => `<button class="sub ${sub[0] === k ? "on" : ""}" data-sub="${k}" aria-current="${sub[0] === k}">${ic(i)}${l}</button>`).join("")}</nav>
-  <div class="space-y-6 fade">${sub[0] === "attribute" ? pAttr(c) : sub[0] === "geschichte" ? pStory(c) : pSecs(c, sub)}</div></div>`;
+        return `<div class="hero-sheet-layout fade">
+  <nav class="hero-sheet-subnav" aria-label="Abschnitte des Charakterblatts">${sections.map(([k, l, i]) => `<button class="hero-sheet-tab" data-sub="${k}" aria-current="${sub[0] === k ? "page" : "false"}">${ic(i, "w-4 h-4")}${l}</button>`).join("")}</nav>
+  <div class="min-w-0">${sub[0] === "attribute" ? pAttr(c) : sub[0] === "geschichte" ? pStory(c) : pSecs(c, sub)}</div></div>`;
       }
       function pAttr(c) {
         const mod = (v) => {
@@ -3388,6 +3972,19 @@
       function pSecs(c, sub) {
         const skip = ["name", "titel", "art", "klasse", "level"];
         const sections = orderedHeroSections(c).filter((section) => sub[3].includes(section.id));
+        if (sub[0] === "profil") {
+          const overviewFields = sections.flatMap((section) => {
+            const standard = section.fields
+              .filter((field) => profileFieldVisible(c, field) && c[field.k] && !skip.includes(field.k))
+              .map((field) => `<div class="hero-overview-item ${field.full || field.area ? "is-long" : ""}"><dt>${esc(profileFieldLabel(c, field))}</dt><dd class="profile-field-value">${esc(c[field.k])}</dd></div>`);
+            const custom = customFieldsForSection(c, section.id)
+              .map(({ field }) => field)
+              .filter((field) => (field.label || "").trim() || (field.value || "").trim())
+              .map((field) => `<div class="hero-overview-item"><dt>${esc(field.label) || "Unbenanntes Feld"}</dt><dd class="profile-field-value">${esc(field.value) || `<span style="color:var(--mute)">Noch keine Angabe</span>`}</dd></div>`);
+            return [...standard, ...custom];
+          }).join("");
+          return `<section class="hero-overview"><div class="hero-overview-heading"><h2 class="m-0 text-xl" style="color:var(--highlight)">Steckbrief</h2><button class="btn" data-edit="${c.id}">${ic("pencil", "w-4 h-4")}Profil bearbeiten</button></div><div class="hero-overview-content"><div class="hero-overview-portrait">${c.portrait ? `<img src="${esc(c.portrait)}" alt="Porträt von ${esc(c.name)}">` : `<div class="hero-overview-portrait-placeholder">${ic(c.crest || "user", "w-12 h-12")}</div>`}<div class="flex flex-wrap justify-center gap-2"><button class="btn" data-act="portrait" aria-label="${c.portrait ? "Porträt ändern" : "Porträt hinzufügen"}">${ic("upload", "w-4 h-4")}${c.portrait ? "Porträt ändern" : "Porträt hinzufügen"}</button>${c.portrait ? `<button class="btn dng" data-act="portraitdel" aria-label="Porträt entfernen">${ic("trash-2", "w-4 h-4")}Entfernen</button>` : ""}</div></div><div class="hero-overview-fields">${overviewFields ? `<dl class="hero-overview-grid">${overviewFields}</dl>` : `<div class="py-8 text-center"><p style="color:var(--mute)">Noch keine Profilangaben vorhanden.</p><button class="btn mt-4" data-edit="${c.id}">${ic("pencil", "w-4 h-4")}Steckbrief ergänzen</button></div>`}</div></div></section>`;
+        }
         if (!sections.length) {
           return `<section class="panel text-center py-10"><p style="color:var(--mute)">Zu „${sub[1]}“ ist noch nichts eingetragen.</p><button class="btn mt-4" data-edit="${c.id}">${ic("pencil", "w-4 h-4")}Jetzt ergänzen</button></section>`;
         }
@@ -3577,12 +4174,102 @@
       }
 
       /* ---------- Events (delegiert) ---------- */
+      const setFamilyTreeZoom = (zoom, clientX, clientY) => {
+        const stage = $("[data-family-tree-stage]");
+        const scaled = $("[data-family-tree-scaled]");
+        if (!stage || !scaled) return;
+        const viewport = stage.closest(".family-tree-viewport");
+        const rect = viewport.getBoundingClientRect();
+        const anchorX = clientX === undefined ? viewport.clientWidth / 2 : clientX - rect.left - viewport.clientLeft;
+        const anchorY = clientY === undefined ? viewport.clientHeight / 2 : clientY - rect.top - viewport.clientTop;
+        const offsetX = Number.parseFloat(stage.style.left) || 0;
+        const offsetY = Number.parseFloat(stage.style.top) || 0;
+        const contentX = (viewport.scrollLeft + anchorX - offsetX) / S.familyTreeZoom;
+        const contentY = (viewport.scrollTop + anchorY - offsetY) / S.familyTreeZoom;
+        S.familyTreeZoom = Math.max(0.5, Math.min(2, zoom));
+        updateFamilyTreeCanvas(false);
+        const nextOffsetX = Number.parseFloat(stage.style.left) || 0;
+        const nextOffsetY = Number.parseFloat(stage.style.top) || 0;
+        viewport.scrollLeft = contentX * S.familyTreeZoom + nextOffsetX - anchorX;
+        viewport.scrollTop = contentY * S.familyTreeZoom + nextOffsetY - anchorY;
+        $("#family-tree-zoom-label").textContent = `${Math.round(S.familyTreeZoom * 100)}%`;
+      };
+      function updateFamilyTreeCanvas(center) {
+        const stage = $("[data-family-tree-stage]");
+        const scaled = $("[data-family-tree-scaled]");
+        if (!stage || !scaled) return;
+        const viewport = stage.closest(".family-tree-viewport");
+        const width = Number(stage.dataset.width), height = Number(stage.dataset.height);
+        const contentWidth = width * S.familyTreeZoom, contentHeight = height * S.familyTreeZoom;
+        const scaledWidth = Math.max(viewport.clientWidth, contentWidth);
+        const scaledHeight = Math.max(viewport.clientHeight, contentHeight);
+        scaled.style.width = `${scaledWidth}px`;
+        scaled.style.height = `${scaledHeight}px`;
+        stage.style.left = `${Math.max(0, (scaledWidth - contentWidth) / 2)}px`;
+        stage.style.top = `${Math.max(0, (scaledHeight - contentHeight) / 2)}px`;
+        stage.style.transform = `scale(${S.familyTreeZoom})`;
+        if (center) {
+          viewport.scrollLeft = Math.max(0, (scaledWidth - viewport.clientWidth) / 2);
+          viewport.scrollTop = Math.max(0, (scaledHeight - viewport.clientHeight) / 2);
+        }
+      }
+      let familyTreeDrag = null;
+      let suppressFamilyTreeClick = false;
+      document.addEventListener("pointerdown", (event) => {
+        const viewport = event.target.closest(".family-tree-viewport");
+        if (!viewport || event.pointerType !== "mouse" || event.button !== 0) return;
+        if (event.target.closest("input,select,textarea,[contenteditable=true]")) return;
+        familyTreeDrag = {
+          viewport,
+          pointerId: event.pointerId,
+          startX: event.clientX,
+          startY: event.clientY,
+          scrollLeft: viewport.scrollLeft,
+          scrollTop: viewport.scrollTop,
+          moved: false,
+        };
+      });
+      document.addEventListener("pointermove", (event) => {
+        if (!familyTreeDrag || event.pointerId !== familyTreeDrag.pointerId) return;
+        const deltaX = event.clientX - familyTreeDrag.startX;
+        const deltaY = event.clientY - familyTreeDrag.startY;
+        if (!familyTreeDrag.moved && Math.hypot(deltaX, deltaY) < 4) return;
+        familyTreeDrag.moved = true;
+        familyTreeDrag.viewport.classList.add("is-panning");
+        familyTreeDrag.viewport.scrollLeft = familyTreeDrag.scrollLeft - deltaX;
+        familyTreeDrag.viewport.scrollTop = familyTreeDrag.scrollTop - deltaY;
+        event.preventDefault();
+      });
+      document.addEventListener("pointerup", (event) => {
+        if (!familyTreeDrag || event.pointerId !== familyTreeDrag.pointerId) return;
+        if (familyTreeDrag.moved) {
+          suppressFamilyTreeClick = true;
+          window.setTimeout(() => { suppressFamilyTreeClick = false; }, 500);
+          familyTreeDrag.viewport.classList.remove("is-panning");
+        }
+        familyTreeDrag = null;
+      });
+      document.addEventListener("pointercancel", (event) => {
+        if (!familyTreeDrag || event.pointerId !== familyTreeDrag.pointerId) return;
+        familyTreeDrag.viewport.classList.remove("is-panning");
+        familyTreeDrag = null;
+      });
+      document.addEventListener("click", (event) => {
+        if (!suppressFamilyTreeClick) return;
+        suppressFamilyTreeClick = false;
+        if (!event.target.closest(".family-tree-viewport")) return;
+        event.preventDefault();
+        event.stopImmediatePropagation();
+      }, true);
       document.addEventListener("click", async (e) => {
         const t = e.target.closest("button,[data-open],[data-bd],[data-companion-open],[data-contact-open]");
         if (!t) return;
         if (t.closest("#action-menu")) $("#action-menu").open = false;
         const d = t.dataset;
-        if (d.act === "dialog-accept" || d.act === "dialog-cancel") {
+        if (d.familyZoom) {
+          setFamilyTreeZoom(d.familyZoom === "reset" ? 1 : S.familyTreeZoom + (d.familyZoom === "in" ? 0.15 : -0.15));
+          return;
+        } else if (d.act === "dialog-accept" || d.act === "dialog-cancel") {
           const pending = S.actionDialog;
           if (!pending) return;
           S.actionDialog = null;
@@ -3616,6 +4303,7 @@
           const tree = {
             id: "tree" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
             name: name.slice(0, 100),
+            crest: "shield",
             members: [root],
             people: [],
             links: [],
@@ -3627,6 +4315,8 @@
           render(true);
         } else if (d.act === "family-tree-edit-toggle") {
           S.familyTreeEditOpen = !S.familyTreeEditOpen;
+          const tree = S.network.familyTrees.find((item) => item.id === S.familyTreeId);
+          S.familyTreeCrestDraft = S.familyTreeEditOpen ? tree?.crest || "shield" : null;
           render(true);
         } else if (d.act === "family-tree-update") {
           const tree = S.network.familyTrees.find((item) => item.id === d.familyTreeId);
@@ -3638,10 +4328,26 @@
           }
           if (!(await persistNetworkMutation(() => {
             tree.name = name.slice(0, 100);
+            tree.crest = CRESTS.includes(S.familyTreeCrestDraft) ? S.familyTreeCrestDraft : "shield";
             tree.members = [root, ...tree.members.filter((key) => key !== root)];
           }))) return;
           S.familyTreeEditOpen = false;
+          S.familyTreeCrestDraft = null;
           toast("Stammbaum aktualisiert.");
+          render(true);
+        } else if (d.familyTreeCrest) {
+          if (!CRESTS.includes(d.familyTreeCrest)) return;
+          S.familyTreeCrestDraft = d.familyTreeCrest;
+          document.querySelectorAll("[data-family-tree-crest]").forEach((button) => {
+            button.setAttribute("aria-pressed", String(button.dataset.familyTreeCrest === d.familyTreeCrest));
+          });
+          $("[data-family-tree-crest-preview]").innerHTML = ic(d.familyTreeCrest, "w-7 h-7");
+        } else if (d.act === "family-tree-crest-upload") {
+          $("#family-tree-crest-file").click();
+        } else if (d.act === "family-tree-crest-delete") {
+          const tree = S.network.familyTrees.find((item) => item.id === S.familyTreeId);
+          if (!tree) return;
+          if (!(await persistNetworkMutation(() => { tree.crestImage = ""; }))) return;
           render(true);
         } else if (d.familyTreeOpen) {
           if (!S.network.familyTrees.some((tree) => tree.id === d.familyTreeOpen)) return;
@@ -3759,6 +4465,20 @@
         } else if (d.familyPersonEdit) {
           S.familyPersonEditId = S.familyPersonEditId === d.familyPersonEdit ? null : d.familyPersonEdit;
           render(true);
+        } else if (d.act === "family-person-portrait") {
+          S.familyPersonPortraitId = d.familyPersonId;
+          $("#family-person-portrait-file").click();
+        } else if (d.act === "family-person-portrait-delete") {
+          const personId = d.familyPersonId;
+          const tree = S.network.familyTrees.find((item) => item.id === S.familyTreeId);
+          if (!personId || !tree?.people.some((item) => item.id === personId)) return;
+          if (!(await persistNetworkMutation(() => {
+            S.network.familyTrees.forEach((familyTree) => {
+              const person = familyTree.people.find((item) => item.id === personId);
+              if (person) person.portrait = "";
+            });
+          }))) return;
+          render(true);
         } else if (d.act === "family-person-update") {
           const personId = d.familyPersonId;
           const tree = S.network.familyTrees.find((item) => item.id === S.familyTreeId);
@@ -3779,6 +4499,19 @@
           }))) return;
           S.familyPersonEditId = null;
           toast("Person aktualisiert.");
+          render(true);
+        } else if (d.act === "family-person-role-update") {
+          const tree = S.network.familyTrees.find((item) => item.id === d.familyTreeId);
+          const edge = tree?.links.find((item) => item.id === d.familyLinkId);
+          const relation = document.getElementById(`family-person-role-${d.familyLinkId}`)?.value;
+          if (!tree || !edge || !Object.prototype.hasOwnProperty.call(familyRoleLabels, relation)) {
+            toast("Wähle eine gültige Familienrolle aus.");
+            return;
+          }
+          if (!(await persistNetworkMutation(() => {
+            edge.relation = relation;
+          }))) return;
+          toast("Familienrolle aktualisiert.");
           render(true);
         } else if (d.act === "family-link-update") {
           const tree = S.network.familyTrees.find((item) => item.id === d.familyTreeId);
@@ -4569,6 +5302,11 @@
           }
         }
       });
+      document.addEventListener("wheel", (event) => {
+        if (!event.target.closest(".family-tree-viewport")) return;
+        event.preventDefault();
+        setFamilyTreeZoom(S.familyTreeZoom + (event.deltaY < 0 ? 0.1 : -0.1), event.clientX, event.clientY);
+      }, { passive: false });
       window.desktop?.onOpenSettings(() => openSettings());
       window.desktop?.onUpdateStatus(updateStatus);
       document.addEventListener("input", (e) => {
@@ -4647,6 +5385,47 @@
         }
       });
       document.addEventListener("change", async (e) => {
+        if (e.target.id === "family-tree-crest-file") {
+          const file = e.target.files[0];
+          e.target.value = "";
+          const tree = S.network.familyTrees.find((item) => item.id === S.familyTreeId);
+          if (!file || !tree) return;
+          const editName = $("#family-tree-edit-name")?.value;
+          const editRoot = $("#family-tree-edit-root")?.value;
+          try {
+            const crestImage = await shrink(file, 600, 0.85);
+            if (!(await persistNetworkMutation(() => { tree.crestImage = crestImage; }))) return;
+            render(true);
+            if ($("#family-tree-edit-name")) $("#family-tree-edit-name").value = editName;
+            if ($("#family-tree-edit-root")) $("#family-tree-edit-root").value = editRoot;
+          } catch (error) {
+            console.error("Stammbaumwappen konnte nicht gelesen oder gespeichert werden.", error);
+            toast("Wappenbild konnte nicht gespeichert werden.");
+          }
+          return;
+        }
+        if (e.target.id === "family-person-portrait-file") {
+          const file = e.target.files[0];
+          e.target.value = "";
+          const personId = S.familyPersonPortraitId;
+          S.familyPersonPortraitId = null;
+          const tree = S.network.familyTrees.find((item) => item.id === S.familyTreeId);
+          if (!file || !personId || !tree?.people.some((item) => item.id === personId)) return;
+          try {
+            const portrait = await shrink(file, 600, 0.85);
+            if (!(await persistNetworkMutation(() => {
+              S.network.familyTrees.forEach((familyTree) => {
+                const person = familyTree.people.find((item) => item.id === personId);
+                if (person) person.portrait = portrait;
+              });
+            }))) return;
+            render(true);
+          } catch (error) {
+            console.error("Familienporträt konnte nicht gelesen oder gespeichert werden.", error);
+            toast("Porträt konnte nicht gespeichert werden.");
+          }
+          return;
+        }
         if (e.target.dataset.cap !== undefined) Store.persist();
         if (e.target.dataset.fieldToggle !== undefined) {
           const record = S.view === "companion-edit" ? S.companionDraft : S.draft;
